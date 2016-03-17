@@ -114,7 +114,7 @@ public class Shapes {
 
 	public static void cube(GLAutoDrawable drawable, float length, float height, float width) {
 		GL gl = drawable.getGL();
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
 		float x, y, z;
