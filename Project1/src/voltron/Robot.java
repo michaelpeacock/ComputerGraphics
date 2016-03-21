@@ -42,12 +42,22 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 										// get the
 	// new width after resizing the window
 
+	float xPosition;
+	float yPosition;
+	float zPosition;
+	double scale;
+		
 	public GLCanvas glcanvas;
 	public KeyEvent keyEvent;
 
-	public Robot() {
-		super("Lion");
+	public Robot(float xPosition, float yPosition, float zPosition, double scale) {
+		super("Voltron");
 
+		this.xPosition = xPosition;
+		this.yPosition = yPosition;
+		this.zPosition = zPosition;
+		this.scale = scale;
+		
 		// kill the process when the JFrame is closed
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -68,6 +78,38 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 
 	}
 
+	public float getxPosition() {
+		return xPosition;
+	}
+
+	public void setxPosition(float xPosition) {
+		this.xPosition = xPosition;
+	}
+
+	public float getyPosition() {
+		return yPosition;
+	}
+
+	public void setyPosition(float yPosition) {
+		this.yPosition = yPosition;
+	}
+
+	public float getzPosition() {
+		return zPosition;
+	}
+
+	public void setzPosition(float zPosition) {
+		this.zPosition = zPosition;
+	}
+
+	public double getScale() {
+		return scale;
+	}
+
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
+	
 	/* create an instance of each base component */
 	public LionObject createLionObject(GL gl, String objectName) {
 		LionObject lionObject = getLionObject(objectName);
@@ -692,7 +734,11 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		
-		displayChest(drawable);
+		gl.glPushMatrix();
+			gl.glTranslatef(xPosition, yPosition, zPosition);
+			gl.glScaled(scale, scale, scale);
+			displayChest(drawable);
+		gl.glPopMatrix();
 		
 		gl.glFlush(); // Process all Opengl.gl routines as quickly as possible.
 	}
@@ -786,7 +832,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	}
 	
 	public static void main(String[] args) {
-		final Robot app = new Robot();
+		final Robot app = new Robot(0, 200, 0, .75);
 		// show what we've done
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
