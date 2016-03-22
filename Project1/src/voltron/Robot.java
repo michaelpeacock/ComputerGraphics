@@ -47,6 +47,17 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	float zPosition;
 	double scale;
 		
+	private boolean leftArmForward;
+	private boolean rightArmForward;
+	private boolean upperLeftLegForward;
+	private boolean upperRightLegForward;
+	private boolean bendLowerLeftLeg;
+	private boolean bendLowerRightLeg;
+	private boolean lowerLeftLegForward;
+	private boolean lowerRightLegForward;
+	
+	private int display_smoothing_counter;
+	
 	public GLCanvas glcanvas;
 	public KeyEvent keyEvent;
 
@@ -57,6 +68,17 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		this.yPosition = yPosition;
 		this.zPosition = zPosition;
 		this.scale = scale;
+		
+		this.leftArmForward = true;
+		this.rightArmForward = false;
+		this.upperLeftLegForward = true;
+		this.upperRightLegForward = false;
+		this.lowerLeftLegForward = true;
+		this.lowerRightLegForward = false;
+		this.bendLowerLeftLeg = true;
+		this.bendLowerRightLeg = false;
+		
+		this.display_smoothing_counter =0;
 		
 		// kill the process when the JFrame is closed
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -690,6 +712,118 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		// window after resizing
 	}
 
+	private void doWalk() {
+		
+		//Lower Left Leg
+		if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() >= 0) {
+			bendLowerLeftLeg = true;
+		} else {
+			bendLowerLeftLeg = false;
+		}
+
+		if (getLionObject("YELLOW" + "LOWERLEG").getxRotation() == 30) {
+			lowerLeftLegForward = false;
+		}
+
+		if (lowerLeftLegForward && bendLowerLeftLeg) {
+			getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() + 5);
+			//leftKneeValue -= 0.5;
+		} else if (!(lowerLeftLegForward) && bendLowerLeftLeg) {
+			getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() - 5);
+			//leftKneeValue += 0.5;
+		} else if (!(lowerLeftLegForward) && !(bendLowerLeftLeg)) {
+			getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
+			//lowerLeftLegRotate = 0;
+			//leftKneeValue = 0;
+			lowerLeftLegForward = true;
+		} else {
+			lowerLeftLegForward = true;
+		}
+
+		//Upper Left Leg
+		if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() == 30) {
+			upperLeftLegForward = false;
+		}
+		if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() == -30) {
+			upperLeftLegForward = true;
+		}
+		if (upperLeftLegForward) {
+			getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() + 5);
+		} else {
+			getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() - 5);
+		}
+
+		//Lower Right Leg
+		if (getLionObject("BLUE" + "UPPERLEG").getxRotation() >= 0) {
+			bendLowerRightLeg = true;
+		} else {
+			bendLowerRightLeg = false;
+		}
+
+		if (getLionObject("BLUE" + "LOWERLEG").getxRotation() == 30) {
+			lowerRightLegForward = false;
+		}
+
+		if (lowerRightLegForward && bendLowerRightLeg) {
+			getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() + 5);
+			//rightKneeValue -= 0.5;
+		} else if (!(lowerRightLegForward) && bendLowerRightLeg) {
+			getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() - 5);
+			//rightKneeValue += 0.5;
+		} else if (!(lowerRightLegForward) && !(bendLowerRightLeg)) {
+			getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
+			//rightKneeValue = 0;
+			lowerRightLegForward = true;
+		} else {
+			lowerRightLegForward = true;
+		}
+
+		//Upper Right Leg
+		if (getLionObject("BLUE" + "UPPERLEG").getxRotation() == 30) {
+			upperRightLegForward = false;
+		}
+		if (getLionObject("BLUE" + "UPPERLEG").getxRotation() == -30) {
+			upperRightLegForward = true;
+		}
+		if (upperRightLegForward) {
+			getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() + 5);
+		} else {
+			getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() - 5);
+		}
+
+		//Left Arm
+		//System.out.printf("green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+		if (getLionObject("GREEN" + "LOWER_ARM").getxRotation() == -45) {
+			//System.out.printf("45 degree green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+			leftArmForward = false;
+		}
+		if (getLionObject("GREEN" + "LOWER_ARM").getxRotation() == 0) {
+			//System.out.printf("0 degree green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+			leftArmForward = true;
+		}
+		if (leftArmForward) {
+			getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+			//System.out.printf("after -5 degree move, green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+		} else {
+			getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+			//System.out.printf("after +5 degree move, green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+		}
+
+		//Right Arm
+		if (getLionObject("RED" + "LOWER_ARM").getxRotation() == -45) {
+			rightArmForward = false;
+		}
+		if (getLionObject("RED" + "LOWER_ARM").getxRotation() == 0) {
+			rightArmForward = true;
+		}
+		if (rightArmForward && !leftArmForward) {
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+		} else {
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+		}
+        
+	}
+	
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		//System.out.println("in init");
@@ -707,17 +841,17 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		//gl.glRotatef(180, 0, 1, 0); // Rotate World!
 		// gl.glFrustum(-50, 50, -50, 50, -5, 100);
 		
-		getLionObject("RED" + "UPPER_ARM").setxRotation(45);
-		getLionObject("GREEN" + "UPPER_ARM").setxRotation(45);
-		getLionObject("GREEN" + "LOWER_ARM").setxRotation(-45);
-		getLionObject("RED" + "LOWER_ARM").setxRotation(45);
-		getLionObject("RED" + "HAND").setzRotation(90);
-		getLionObject("BLUE" + "UPPERLEG").setxRotation(50);
-		getLionObject("YELLOW" + "UPPERLEG").setxRotation(-50);
-		getLionObject("BLUE" + "LOWERLEG").setxRotation(-30);
-		getLionObject("YELLOW" + "LOWERLEG").setxRotation(30);
-		//getLionObject("WAIST").setyRotation(30);
-		getLionObject("BLACK" + "ROBOT_HEAD").setyRotation(30);
+//		getLionObject("RED" + "UPPER_ARM").setxRotation(45);
+//		getLionObject("GREEN" + "UPPER_ARM").setxRotation(45);
+//		getLionObject("GREEN" + "LOWER_ARM").setxRotation(-45);
+//		getLionObject("RED" + "LOWER_ARM").setxRotation(45);
+//		getLionObject("RED" + "HAND").setzRotation(90);
+//		getLionObject("BLUE" + "UPPERLEG").setxRotation(50);
+//		getLionObject("YELLOW" + "UPPERLEG").setxRotation(-50);
+//		getLionObject("BLUE" + "LOWERLEG").setxRotation(-30);
+//		getLionObject("YELLOW" + "LOWERLEG").setxRotation(30);
+//		//getLionObject("WAIST").setyRotation(30);
+//		getLionObject("BLACK" + "ROBOT_HEAD").setyRotation(30);
 		
 		initializeRobot(drawable);
 
@@ -733,6 +867,16 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
+		
+		if (3 == display_smoothing_counter) {
+			deleteRobot(drawable);
+			doWalk();
+			initializeRobot(drawable);
+			display_smoothing_counter = 0;
+		}
+		else {
+			display_smoothing_counter++;
+		}
 		
 		gl.glPushMatrix();
 			gl.glTranslatef(xPosition, yPosition, zPosition);
