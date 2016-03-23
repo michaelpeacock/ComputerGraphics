@@ -3,6 +3,11 @@ package voltron;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +24,10 @@ import voltron.LionFactory.LION_COLOR;
 
 import com.sun.opengl.util.Animator;
 
-public class Robot extends JFrame implements GLEventListener, KeyListener {
+public class Robot extends JFrame implements GLEventListener, KeyListener, MouseMotionListener, MouseListener, MouseWheelListener {
 
-	public static final int WIN_WIDTH = 850;
-	public static final int WIN_HEIGHT = 800;
+	public static final int WIN_WIDTH = 1000;
+	public static final int WIN_HEIGHT = 1000;
 
 	public static final float LION_HEAD_LENGTH = 120;
 	public static final float LION_HEAD_HEIGHT = 120;
@@ -45,13 +50,15 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	float xPosition;
 	float yPosition;
 	float zPosition;
+	double rotate;
 	double scale;
 		
 	private boolean do_walking;
-	private static final double WALK_SPEED = 20;
+	private static final double WALK_SPEED = 5;
 	private boolean do_running;
-	private static final double RUN_SPEED = 5;
+	private static final double RUN_SPEED = 2;
 	private boolean do_stop;
+	private boolean prev_stop;
 	
 	private boolean leftArmForward;
 	private boolean rightArmForward;
@@ -63,6 +70,31 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	private boolean lowerRightLegForward;
 	private int display_smoothing_counter;
 	
+	private boolean left;
+	private boolean right;
+	private boolean forw;
+	private boolean back;
+	private double robot_left, robot_right;
+	
+	private boolean isRotate;
+    private int mouseX;
+    private int mouseY;
+    private int mouseOrigX;
+    private int mouseOrigY;
+    
+    private double curX;
+    private double curZ;
+    private double curY;
+	private double pan;
+	private double pitch;
+	
+	private double move;
+	private double moveAmount;
+	private double sideMove;
+	private double upMove;
+	private int chaseCam;
+	private double zoomOut;
+    
 	public GLCanvas glcanvas;
 	public KeyEvent keyEvent;
 
@@ -73,6 +105,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		this.yPosition = yPosition;
 		this.zPosition = zPosition;
 		this.scale = scale;
+		this.rotate = 0.0;
 		
 		this.leftArmForward = true;
 		this.rightArmForward = false;
@@ -88,6 +121,35 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		this.do_running = false;
 		this.do_walking = false;
 		this.do_stop = true;
+		this.prev_stop = true;
+		
+		this.mouseOrigX = 0;
+		this.mouseOrigY = 0;
+		this.mouseX = 0;
+		this.mouseY = 0;
+		this.isRotate = false;
+		
+		this.left = false;
+		this.right = false;
+		this.forw = false;
+		this.back = false;
+		
+		this.robot_left = 0;
+		this.robot_right = 0;
+		
+		this.curX = -1575.0;
+		this.curZ = -1910.0;
+		this.curY = -17.0;
+		this.pan = 0;
+		this.pitch = -6.5;
+		
+		this.moveAmount = 1.0;
+		this.move = 0.0;
+		this.sideMove = 0.0;
+		this.upMove = 0.0;
+		this.chaseCam = 0;
+		
+		this.zoomOut = -350.0;
 		
 		// kill the process when the JFrame is closed
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,6 +165,9 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		// center the JFrame on the screen
 
 		glcanvas.addKeyListener(this);
+		glcanvas.addMouseListener(this);
+        glcanvas.addMouseMotionListener(this);
+        glcanvas.addMouseWheelListener(this);
 
 		Animator animator = new Animator(glcanvas);
 		animator.start();
@@ -729,17 +794,15 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 		
 		if (0.0 == speed) {
 			if ((0 != getLionObject("YELLOW" + "LOWERLEG").getxRotation()) ||
-				(0 != getLionObject("YELLOW" + "UPPERLEG").getxRotation()) ||
-				(0 != getLionObject("BLUE" + "LOWERLEG").getxRotation()) ||
-				(0 != getLionObject("BLUE" + "UPPERLEG").getxRotation()) ||
-				(0 != getLionObject("GREEN" + "LOWER_ARM").getxRotation()) ||
-				(0 != getLionObject("RED" + "LOWER_ARM").getxRotation())) {
+				(0 != getLionObject("BLUE" + "LOWERLEG").getxRotation())) {
 					getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
 					getLionObject("YELLOW" + "UPPERLEG").setxRotation(0);
 					getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
 					getLionObject("BLUE" + "UPPERLEG").setxRotation(0);
 					getLionObject("GREEN" + "LOWER_ARM").setxRotation(0);
+					getLionObject("GREEN" + "UPPER_ARM").setxRotation(0);
 					getLionObject("RED" + "LOWER_ARM").setxRotation(0);
+					getLionObject("RED" + "UPPER_ARM").setxRotation(0);
 					performed_work = true;
 			}
 		}
@@ -822,35 +885,45 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 					getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() - 5);
 				}
 
+				if (true == prev_stop) {
+					getLionObject("GREEN" + "LOWER_ARM").setxRotation(-45);
+					getLionObject("GREEN" + "UPPER_ARM").setxRotation(-45);
+					prev_stop = false;
+				}
+				
 				//Left Arm
-				//System.out.printf("green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
 				if (getLionObject("GREEN" + "LOWER_ARM").getxRotation() == -45) {
-					//System.out.printf("45 degree green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
 					leftArmForward = false;
 				}
-				if (getLionObject("GREEN" + "LOWER_ARM").getxRotation() == 0) {
-					//System.out.printf("0 degree green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+				if (getLionObject("GREEN" + "UPPER_ARM").getxRotation() == 10) {
 					leftArmForward = true;
 				}
 				if (leftArmForward) {
 					getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
-					//System.out.printf("after -5 degree move, green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+					getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
 				} else {
-					getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
-					//System.out.printf("after +5 degree move, green arm is %f\n", getLionObject("GREEN" + "LOWER_ARM").getxRotation());
+					if (0 >= getLionObject("GREEN" + "LOWER_ARM").getxRotation()) {
+						getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+					}
+					getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
 				}
 
 				//Right Arm
 				if (getLionObject("RED" + "LOWER_ARM").getxRotation() == 45) {
 					rightArmForward = false;
 				}
-				if (getLionObject("RED" + "LOWER_ARM").getxRotation() == 0) {
+				if (getLionObject("RED" + "UPPER_ARM").getxRotation() == -10) {
 					rightArmForward = true;
 				}
-				if (rightArmForward && !leftArmForward) {
+				if (rightArmForward) {
 					getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+					getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+					
 				} else {
-					getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+					if (0 <= getLionObject("RED" + "LOWER_ARM").getxRotation()) {
+						getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+					}
+					getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
 				}
 				performed_work = true;
 				display_smoothing_counter = 0;
@@ -866,17 +939,96 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	public void init(GLAutoDrawable drawable) {
 		//System.out.println("in init");
 		GL gl = drawable.getGL();
+		GLU glu = new GLU();
 
-		gl.glEnable(GL.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL.GL_LEQUAL);
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glClearColor(0.84f, 0.95f, 1.0f, 1.0f);
+
 		gl.glShadeModel(GL.GL_SMOOTH);
 		gl.glClearDepth(1.0f);
 
-		gl.glViewport(0, 0, windowWidth, windowHeight);
-		gl.glMatrixMode(GL.GL_PROJECTION);
+//		// enables
+		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glEnable(GL.GL_NORMALIZE);
+//		////gl.glEnable(GL.GL_CULL_FACE);
+//		gl.glEnable(GL.GL_BLEND);
+//		gl.glEnable(GL.GL_LIGHTING);
+//		gl.glEnable(GL.GL_LIGHT0);
+//		gl.glEnable(GL.GL_LIGHT1);
+//		gl.glEnable(GL.GL_LIGHT2);
+//		gl.glEnable(GL.GL_LIGHT3);
+//		gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+//		// end enables
+//
+//		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+//
+//		// lighting
+//		float diffuse0[] = {0.5f, 0.3f, 0.2f, 1.0f};
+//		float ambient0[] = {0.01f, 0.01f, 0.01f, 1.0f};
+//		float specular0[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//		float light0_pos[] = {-100.0f, -50.0f, 0.0f, 1.0f};
+//		float diffuse1[] = {1.0f, 1.0f, 1.0f, 1.0f};
+//		float ambient1[] = {0.1f, 0.1f, 0.1f, 1.0f};
+//		float specular1[] = {1.0f, 1.0f, 1.0f, 1.0f};
+//		float light1_pos[] = {1600.0f, 500.0f, -300.0f, 1.0f};
+//		float light2_pos[] = {1700.0f, 500.0f, 1000.0f, 1.0f};
+//		float light3_pos[] = {2300.0f, 800.0f, 2100.0f, 1.0f};
+//
+		gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+//
+		gl.glMatrixMode(GL.GL_MODELVIEW);
+//		// light 0 (flickering flame)
+//		gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_pos, 0);
+//		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient0, 0);
+//		gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse0, 0);
+//		gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular0, 0);
+//		gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+//		gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+//		gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+//		// light 1
+//		gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_pos, 0);
+//		gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, ambient1, 0);
+//		gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, diffuse1, 0);
+//		gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, specular1, 0);
+//		gl.glLightf(GL.GL_LIGHT1, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+//		gl.glLightf(GL.GL_LIGHT1, GL.GL_LINEAR_ATTENUATION, 0.001f);
+//		gl.glLightf(GL.GL_LIGHT1, GL.GL_QUADRATIC_ATTENUATION, 0.000001f);
+//		// light 2
+//		gl.glLightfv(gl.GL_LIGHT2, gl.GL_POSITION, light2_pos, 0);
+//		gl.glLightfv(gl.GL_LIGHT2, gl.GL_AMBIENT, ambient1, 0);
+//		gl.glLightfv(gl.GL_LIGHT2, gl.GL_DIFFUSE, diffuse1, 0);
+//		gl.glLightfv(gl.GL_LIGHT2, gl.GL_SPECULAR, specular1, 0);
+//		gl.glLightf(GL.GL_LIGHT2, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+//		gl.glLightf(GL.GL_LIGHT2, GL.GL_LINEAR_ATTENUATION, 0.001f);
+//		gl.glLightf(GL.GL_LIGHT2, GL.GL_QUADRATIC_ATTENUATION, 0.000001f);
+//		// light 3
+//		gl.glLightfv(gl.GL_LIGHT3, gl.GL_POSITION, light3_pos, 0);
+//		gl.glLightfv(gl.GL_LIGHT3, gl.GL_AMBIENT, ambient1, 0);
+//		gl.glLightfv(gl.GL_LIGHT3, gl.GL_DIFFUSE, diffuse1, 0);
+//		gl.glLightfv(gl.GL_LIGHT3, gl.GL_SPECULAR, specular1, 0);
+//		gl.glLightf(GL.GL_LIGHT3, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+//		gl.glLightf(GL.GL_LIGHT3, GL.GL_LINEAR_ATTENUATION, 0.001f);
+//		gl.glLightf(GL.GL_LIGHT3, GL.GL_QUADRATIC_ATTENUATION, 0.000001f);
+		
+		//	        // Clipping volume
 		gl.glLoadIdentity();
-		gl.glOrtho(-windowWidth, windowWidth, -windowHeight, windowHeight, -1000, 1000);
-		// gl.glFrustum(-50, 50, -50, 50, -5, 100);
+		glu.gluPerspective(45.0, drawable.getWidth()/drawable.getHeight(), 1.0, 20000.0);
+
+		// set up camera
+		glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -10.0, 0.0, 1.0, 0.0);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+//
+//		gl.glEnable(GL.GL_DEPTH_TEST);
+//		gl.glDepthFunc(GL.GL_LEQUAL);
+//		gl.glShadeModel(GL.GL_SMOOTH);
+//		gl.glClearDepth(1.0f);
+//
+//		gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+//		gl.glMatrixMode(GL.GL_PROJECTION);
+//		gl.glLoadIdentity();
+//		gl.glOrtho(-windowWidth, windowWidth, -windowHeight, windowHeight, -1000, 1000);
+//		// gl.glFrustum(-50, 50, -50, 50, -5, 100);
 		
 		initializeRobot(drawable);
 
@@ -886,31 +1038,226 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 		GLU glu = new GLU();
-		processKeyEvent(drawable);
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		gl.glShadeModel(GL.GL_SMOOTH);
+		//processKeyEvent(drawable);
+		//gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		//gl.glShadeModel(GL.GL_SMOOTH);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
+		gl.glLoadIdentity();
+		
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		
 		boolean work_was_done = false;
-		if (true == do_walking) {
-			work_was_done = doWalk(WALK_SPEED);
+		
+		// these are all calculations for the robot around
+		if ((true == do_running) ||
+			(true == do_walking)) {
+
+			float speedMult = 1.0f;
+			if (do_running) {
+				speedMult = 4.0f;
+			}
+        
+			robot_left = 0.0f;
+			robot_right = 0.0f;
+			if (left) {
+				robot_left -= 2.0f * speedMult;
+				robot_right += 2.0f * speedMult;
+			}
+			if (right) {
+				robot_left += 2.0f * speedMult;
+				robot_right -= 2.0f * speedMult;
+			}
+			if (forw) {
+				robot_left += 4.0f * speedMult;
+				robot_right += 4.0f * speedMult;
+			}
+			if (back) {
+				robot_left -= 4.0f * speedMult;
+				robot_right -= 4.0f * speedMult;
+			}
+			if (left && !forw && !back) {
+				robot_left -= 4.0f * speedMult;
+				robot_right += 4.0f * speedMult;
+			}
+			if (right && !forw && !back) {
+				robot_left += 4.0f * speedMult;
+				robot_right -= 4.0f * speedMult;
+			}
+			// end robot movement
+			
+			if (robot_left > robot_right && (forw || back)) {
+				rotate -= 0.4 * speedMult;
+			}
+			else if (robot_left < robot_right && (forw || back)) {
+				rotate += 0.4 * speedMult;
+			}
+			else if (robot_left > robot_right && !forw && !back) {
+				rotate -= 0.8 * speedMult;
+			}
+			else if (robot_left < robot_right && !forw && !back) {
+				rotate += 0.8 * speedMult;
+			}
+			System.out.printf("robot_left is %f and robot_right is %f\n", robot_left, robot_right);
+			if (robot_left > 0.0 && robot_right > 0.0) {
+				double x = 1.75 * speedMult*Math.cos(Math.toRadians(-rotate));
+				double y = 1.75 * speedMult*Math.sin(Math.toRadians(-rotate));
+				xPosition -= x;
+				zPosition -= y;
+			}
+			else if (robot_left < 0.0 && robot_right < 0.0) {
+				double x = 1.75 * speedMult*Math.cos(Math.toRadians(-rotate));
+				double y = 1.75 * speedMult*Math.sin(Math.toRadians(-rotate));
+				xPosition += x;
+				zPosition += y;
+			}	
+			System.out.printf("xPosition is %f and zPosition is %f\n", xPosition, zPosition);
+			if (true == do_walking ||
+				true == do_running) {
+				work_was_done = doWalk(speedMult);
+			}
 		}
-		else if (true == do_running) {
-			work_was_done = doWalk(RUN_SPEED);
-		}
-		else if (true == do_stop) {
+		else {
 			work_was_done = doWalk(0.0);
 		}
+		
+        // set up the camera position
+        // Camera movements
+        // rotate the camera
+		double lastZ = curZ;
+		double lastY = curY;
+		double lastX = curX;
+		
+        if (isRotate && (mouseOrigX - mouseX != 0) && (mouseY - mouseOrigY != 0)) {
+            pan = pan + Math.pow(mouseOrigX - mouseX, 2) *((mouseOrigX - mouseX) / Math.abs(mouseOrigX - mouseX))  / 50000.0;
+            pitch = pitch + Math.pow(mouseY - mouseOrigY, 2) * ((mouseY - mouseOrigY) / Math.abs(mouseY - mouseOrigY)) / 50000.0;
+        }
+        // move the camera forward and backward
+        double yLook = Math.sin(Math.toRadians(pitch));
+        double xzLength = Math.cos(Math.toRadians(pitch));
+        double xLook = xzLength * Math.sin(Math.toRadians(pan));
+        double zLook = xzLength * Math.cos(Math.toRadians(pan));
+        curX = curX + xLook * (move * moveAmount);
+        curZ = curZ + zLook * (move * moveAmount);
+        curY = curY + yLook * (move * moveAmount);
+        curY -= moveAmount * upMove;
+        
+        // move the camera side to side (strafe)
+        xLook = xzLength * Math.sin(Math.toRadians(pan + 90.0));
+        zLook = xzLength * Math.cos(Math.toRadians(pan + 90.0));
+        curX += xLook * (sideMove * moveAmount);
+        curZ += zLook * (sideMove * moveAmount);
+        // move the camera up and down
+        
+        if (curY > 97.0) {
+            curY = 97.0;
+        }
+        else if (curY < -450.0) {
+            curY = -450.0;
+        }
+        
+        if(curX > -1300.0) {
+            if (lastZ >= -190.0 && lastZ <= 190.0) {
+                if (curZ < -190.0) {
+                    curZ = -190.0;
+                }
+                else if (curZ > 190.0) {
+                    curZ = 190.0;
+                }
+            }
+            if (!(curZ >= -190.0 && curZ <= 190.0)) {
+                curX = -1300.0;
+            }
+            if (lastY >= 22.0) {
+                if (curY < 22.0) {
+                    curY = 22.0;
+                }
+            }
+            if (!(curZ >= -190.0 && curZ <= 190.0)) {
+                curX = -1300.0;
+            }
+            if (!(curY >= 22)) {
+                curX = -1300.0;
+            }
+        }
+        if (curX > 1500.0) {
+            curX = 1500.0;
+        }
+        if (curZ > 1650.0) {
+            curZ = 1650.0;
+        }
+        else if (curZ < -1750.0) {
+            curZ = -1750.0;
+        }
+        if (curX < -1650.0) {
+            curX = -1650.0;
+        }
+        // end camera calcs
+        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glLoadIdentity();
+        double aspect = drawable.getWidth()*1.0 / drawable.getHeight()*1.0; 
+        glu.gluPerspective(45.0, aspect, 1.0, 20000.0);
+        gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+        
+        if (pitch > 90.0) {
+            pitch = 90.0;
+        }
+        else if (pitch < -90.0) {
+            pitch = -90.0;
+        }
+        if (chaseCam == 0) {
+            gl.glRotated(pitch, 1.0, 0.0, 0.0);
+            gl.glRotated(-pan, 0.0, 1.0, 0.0);
+            gl.glTranslated(curX, curY, curZ);
+        }
+        else if (chaseCam == 1) {
+            if (pitch < -11.0) {
+                pitch = -11.0;
+            }
+            gl.glTranslated(0.0, 0.0, zoomOut);
+            gl.glRotated(pitch, 1.0, 0.0, 0.0);
+            gl.glRotated(-pan, 0.0, 1.0, 0.0);
+            gl.glRotated(-90.0, 0.0, 1.0, 0.0);
+            gl.glRotated(-rotate, 0.0, 1.0, 0.0);
+            gl.glTranslated(0.0, 0.0, 0.0);
+            gl.glTranslated(-xPosition, 0.0, -zPosition);
+        }
+        else {
+            if (pan < -90.0) {
+                pan = -90.0;
+            }
+            else if (pan > 90.0) {
+                pan = 90.0;
+            }
+            if (pitch < -45.0) {
+                pitch = -45.0;
+            }
+            else if (pitch > 45.0) {
+                pitch = 45.0;
+            }
+            gl.glRotated(pitch, 1.0, 0.0, 0.0);
+            gl.glRotated(-pan, 0.0, 1.0, 0.0);
+            gl.glRotated(-90.0, 0.0, 1.0, 0.0);
+            gl.glTranslated(40.0, -10.0, -50.0);
+            //gl.glRotated(-truck.getTopRot(), 0.0, 1.0, 0.0);
+            gl.glRotated(-rotate, 0.0, 1.0, 0.0);
+            gl.glTranslated(-xPosition, 0.0, -zPosition);
+        }
+        gl.glMatrixMode(GL.GL_MODELVIEW);
+        glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -10.0, 0.0, 1.0, 0.0);
+        // end camera setup
 		
 		if (work_was_done == true) {
 			deleteRobot(drawable);
 			initializeRobot(drawable);
 		}
 		
+		//gl.glMatrixMode(GL.GL_MODELVIEW);
+	    //glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -10.0, 0.0, 1.0, 0.0);
+		
+		System.out.printf("Display, xPosition is %f, yPosition is %f, zPosition is %f\n", xPosition, yPosition, zPosition);
 		gl.glPushMatrix();
 			gl.glTranslatef(xPosition, yPosition, zPosition);
+			gl.glRotated(rotate, 0, 1, 0);
 			gl.glScaled(scale, scale, scale);
 			displayChest(drawable);
 		gl.glPopMatrix();
@@ -919,8 +1266,14 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
+	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
 		// method body
+		GL gl = drawable.getGL();
+		GLU glu = new GLU();
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+		gl.glMatrixMode(GL.GL_MODELVIEW);
+		glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -10.0, 0.0, 1.0, 0.0);
 	}
 
 	@Override
@@ -935,10 +1288,71 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		System.out.printf("keyPressed keycode is %d, char version is %s\n", e.getKeyCode(), e.getKeyChar());
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_LEFT: 
+				left = true; 
+				System.out.printf("keyPressed, VK_LEFT\n");
+				do_walking = true;
+				do_stop = false;
+				break;
+        case KeyEvent.VK_RIGHT: 
+        		right = true; 
+        		System.out.printf("keyPressed, VK_RIGHT\n");
+        		do_walking = true;
+        		do_stop = false;
+        		break;
+        case KeyEvent.VK_DOWN: 
+        		back = true; 
+        		do_walking = true;
+        		do_stop = false;
+        		System.out.printf("keyPressed, VK_DOWN\n");
+        		break;
+        case KeyEvent.VK_UP: 
+        		forw = true; 
+        		do_walking = true;
+        		do_stop = false;
+        		System.out.printf("keyPressed, VK_UP\n");
+        		break;
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_LEFT: 
+				left = false; 
+				System.out.printf("keyReleased, VK_LEFT\n");
+				do_stop = true;
+				prev_stop = true;
+				do_walking = false;
+				do_running = false;
+				break;
+        case KeyEvent.VK_RIGHT: 
+        		right = false; 
+        		System.out.printf("keyReleased, VK_RIGHT\n");
+				do_stop = true;
+				prev_stop = true;
+				do_walking = false;
+				do_running = false;
+        		break;
+        case KeyEvent.VK_DOWN: 
+        		back = false;
+				do_stop = true;
+				prev_stop = true;
+				do_walking = false;
+				do_running = false;
+				System.out.printf("keyReleased, VK_DOWN\n");
+        		break;
+        case KeyEvent.VK_UP: 
+        		forw = false;
+				do_stop = true;
+				prev_stop = true;
+				do_walking = false;
+				do_running = false;
+				System.out.printf("keyReleased, VK_UP\n");
+        		break;
+		}
 	}
 
 	public void processKeyEvent(GLAutoDrawable drawable) {
@@ -992,6 +1406,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 				do_stop = true;
 				do_walking = false;
 				do_running = false;
+				prev_stop = true;
 				break;
 //			case 'o': // rotate right arm counterclockwise
 //				if (ROT_OBz[8] > -180.0) {
@@ -1022,7 +1437,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 	}
 	
 	public static void main(String[] args) {
-		final Robot app = new Robot(0, 200, 0, .75);
+		final Robot app = new Robot(2000, 0, 0, .50);
 		// show what we've done
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -1030,5 +1445,61 @@ public class Robot extends JFrame implements GLEventListener, KeyListener {
 				app.setVisible(true);
 			}
 		});
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// TODO Auto-generated method stub
+        moveAmount += (-e.getWheelRotation());
+        if (moveAmount < 1.0) {
+            moveAmount = 1.0;
+        }
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+        isRotate = true;
+        mouseOrigX = e.getX();
+        mouseOrigY = e.getY();
+        mouseX = mouseOrigX;
+        mouseY = mouseOrigY;	
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		isRotate = false;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+	    mouseX = e.getX();
+        mouseY = e.getY();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
