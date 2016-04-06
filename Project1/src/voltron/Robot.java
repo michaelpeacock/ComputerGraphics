@@ -98,7 +98,39 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
     
 	public GLCanvas glcanvas;
 	public KeyEvent keyEvent;
+	private GL gl;
+	
+	//material definitions
+	private float mat_specularWHITE[] ={255.0f,255.0f,255.0f,1.0f};
+	private float mat_ambientWHITE[] ={255.0f,255.0f,255.0f,1.0f};
+	private float mat_diffuseWHITE[] ={255.0f,255.0f,255.0f,1.0f};
+	private float mat_shininessWHITE[] ={128.0f * 0.4f};
 
+	private float mat_specularGRAY[] ={0.75f,0.75f,0.75f,1.0f};
+	private float mat_ambientGRAY[] ={0.5f,0.5f,0.5f,1.0f};
+	private float mat_diffuseGRAY[] ={0.50f,0.50f,0.50f,1.0f};
+	private float mat_shininessGRAY[] ={128.0f * 0.6f};
+
+	private float mat_specularBLUE[] ={0.75f,0.75f,0.75f,1.0f};
+	private float mat_ambientBLUE[] ={0,0f,1f,1.0f};
+	private float mat_diffuseBLUE[] ={0.50f,0.50f,0.50f,1.0f};
+	private float mat_shininessBLUE[] ={128.0f };
+
+	private float mat_specularGREEN[] ={0.633f, 0.727811f, 0.633f,1.0f};
+	private float mat_ambientGREEN[] ={0.0215f, 0.1745f, 0.0215f,1.0f};
+	private float mat_diffuseGREEN[] ={0.07568f, 0.61424f, 0.07568f,1.0f};
+	private float mat_shininessGREEN[] ={128.0f};
+
+	private float mat_specularYELLOW[] ={0.75f,0.75f,0.75f,1.0f};
+	private float mat_ambientYELLOW[] ={1f,1f,0f,1.0f};
+	private float mat_diffuseYELLOW[] ={0.50f,0.50f,0.50f,1.0f};
+	private float mat_shininessYELLOW[] ={128.0f};
+
+	private float mat_specularRED[] ={0.75f,0.75f,0.75f,1.0f};
+	private float mat_ambientRED[] ={1.0f,0.0f,0.0f,1.0f};
+	private float mat_diffuseRED[] ={0.50f,0.50f,0.50f,1.0f};
+	private float mat_shininessRED[] ={128.0f};
+	
 	public Robot(float xPosition, float yPosition, float zPosition, double scale) {
 		super("Voltron");
 
@@ -393,6 +425,12 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslated(-55, -170, -55);
+				if ("YELLOW" == whichColor) {
+					SetMaterial(gl, mat_specularYELLOW, mat_ambientYELLOW, mat_diffuseYELLOW, mat_shininessYELLOW);
+				}
+				else {
+					SetMaterial(gl, mat_specularBLUE, mat_ambientBLUE, mat_diffuseBLUE, mat_shininessBLUE);
+				}
 				gl.glColor3d(red, green, blue);
 				Shapes.cube(drawable, 110, 195, 110);
 			gl.glPopMatrix();
@@ -819,6 +857,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 				leg_angle = 5;
 				low_arm_angle = 5;
 				upper_arm_angle = 0;
+				speed = 40;
 			}
 			if (speed <= display_smoothing_counter) {
 				//Lower Left Leg
@@ -951,7 +990,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		//System.out.println("in init");
-		GL gl = drawable.getGL();
+		gl = drawable.getGL();
 		GLU glu = new GLU();
 
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -964,28 +1003,28 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glEnable(GL.GL_NORMALIZE);
 //		////gl.glEnable(GL.GL_CULL_FACE);
-//		gl.glEnable(GL.GL_BLEND);
+		gl.glEnable(GL.GL_BLEND);
 //		gl.glEnable(GL.GL_LIGHTING);
-//		gl.glEnable(GL.GL_LIGHT0);
-//		gl.glEnable(GL.GL_LIGHT1);
-//		gl.glEnable(GL.GL_LIGHT2);
-//		gl.glEnable(GL.GL_LIGHT3);
-//		gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+		gl.glEnable(GL.GL_LIGHT0);
+		gl.glEnable(GL.GL_LIGHT1);
+		gl.glEnable(GL.GL_LIGHT2);
+		gl.glEnable(GL.GL_LIGHT3);
+		gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
 //		// end enables
 //
-//		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 //
 //		// lighting
-//		float diffuse0[] = {0.5f, 0.3f, 0.2f, 1.0f};
-//		float ambient0[] = {0.01f, 0.01f, 0.01f, 1.0f};
-//		float specular0[] = {1.0f, 0.5f, 0.0f, 1.0f};
-//		float light0_pos[] = {-100.0f, -50.0f, 0.0f, 1.0f};
-//		float diffuse1[] = {1.0f, 1.0f, 1.0f, 1.0f};
-//		float ambient1[] = {0.1f, 0.1f, 0.1f, 1.0f};
-//		float specular1[] = {1.0f, 1.0f, 1.0f, 1.0f};
-//		float light1_pos[] = {1600.0f, 500.0f, -300.0f, 1.0f};
-//		float light2_pos[] = {1700.0f, 500.0f, 1000.0f, 1.0f};
-//		float light3_pos[] = {2300.0f, 800.0f, 2100.0f, 1.0f};
+		float diffuse0[] = {0.5f, 0.3f, 0.2f, 1.0f};
+		float ambient0[] = {0.01f, 0.01f, 0.01f, 1.0f};
+		float specular0[] = {1.0f, 0.5f, 0.0f, 1.0f};
+		float light0_pos[] = {-100.0f, -50.0f, 0.0f, 1.0f};
+		float diffuse1[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		float ambient1[] = {0.1f, 0.1f, 0.1f, 1.0f};
+		float specular1[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		float light1_pos[] = {1600.0f, 500.0f, -300.0f, 1.0f};
+		float light2_pos[] = {1700.0f, 500.0f, 1000.0f, 1.0f};
+		float light3_pos[] = {2300.0f, 800.0f, 2100.0f, 1.0f};
 //
 		gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
 //
@@ -998,7 +1037,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 //		gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
 //		gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
 //		gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
-//		// light 1
+		// light 1
 //		gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_pos, 0);
 //		gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, ambient1, 0);
 //		gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, diffuse1, 0);
@@ -1023,9 +1062,10 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 //		gl.glLightf(GL.GL_LIGHT3, GL.GL_LINEAR_ATTENUATION, 0.001f);
 //		gl.glLightf(GL.GL_LIGHT3, GL.GL_QUADRATIC_ATTENUATION, 0.000001f);
 		
-		//	        // Clipping volume
+		// Clipping volume
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0, drawable.getWidth()/drawable.getHeight(), 1.0, 20000.0);
+		//glu.gluOrtho2D(1000, 2000, -1000, 1000);
 
 		// set up camera
 		glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -10.0, 0.0, 1.0, 0.0);
@@ -1105,8 +1145,12 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 				work_was_done = doWalk(moveSpeed/speedMult, do_turn);
 			}
 		}
+		else {
+			work_was_done = doWalk(0.0, do_turn);
+		}
+		
 		//Do jumping
-		else if (true == do_jump) {
+		if (true == do_jump) {
 			if (false == done_jumping) {
 				if (yPosition < 100) {
 					yPosition += 5;
@@ -1124,10 +1168,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 				}
 			}
 		}
-		else {
-			work_was_done = doWalk(0.0, do_turn);
-		}
-		System.out.printf("do_jump is %b, yPosition is %f\n", do_jump, yPosition);
+		//System.out.printf("do_jump is %b, yPosition is %f\n", do_jump, yPosition);
         // set up the camera position
         // Camera movements
         // rotate the camera
@@ -1205,6 +1246,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
         gl.glLoadIdentity();
         double aspect = drawable.getWidth()*1.0 / drawable.getHeight()*1.0; 
         glu.gluPerspective(45.0, aspect, 1.0, 20000.0);
+        //glu.gluOrtho2D(1000, 2000, -1000, 1000);
         gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
         
         if (pitch > 90.0) {
@@ -1327,11 +1369,17 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
     		do_running = true;
     		System.out.printf("keyPressed, VK_SHIFT\n");
     		break;
-		case KeyEvent.VK_J: 
-			do_jump = true;
-			done_jumping = false;
-			System.out.printf("keyPressed, VK_J\n");
-			break;
+        case KeyEvent.VK_W : move = 1.0; break;
+        case KeyEvent.VK_S : move = -1.0; break;
+        case KeyEvent.VK_A : pan++; break;
+        case KeyEvent.VK_D : pan--; break;
+        case KeyEvent.VK_Q : sideMove = 1.0; break;
+        case KeyEvent.VK_E : sideMove = -1.0; break;
+        case KeyEvent.VK_V : upMove = 1.0; break;
+        case KeyEvent.VK_C : upMove = -1.0; break;
+        case KeyEvent.VK_F : chaseCam++; if(chaseCam > 2){ chaseCam = 0;} pitch = 0.0; pan = 0.0; break;
+        case KeyEvent.VK_R : pitch = 0.0; pan = 0.0; break;
+ 
 		}
 	}
 
@@ -1507,5 +1555,13 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 	public void mouseMoved(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void SetMaterial(GL gl, float spec[], float amb[], float diff[], float shin[])
+	{
+	  gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, spec, 0);
+	  gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, shin, 0);
+	  gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, amb, 0);
+	  gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, diff, 0);
 	}
 }
