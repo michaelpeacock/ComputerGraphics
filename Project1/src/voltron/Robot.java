@@ -168,7 +168,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 		this.back = false;
 		
 		this.do_jump = false;
-		this.done_jumping = true;;
+		this.done_jumping = true;
 		
 		this.curX = -1575.0;
 		this.curZ = -1910.0;
@@ -857,7 +857,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 				leg_angle = 5;
 				low_arm_angle = 5;
 				upper_arm_angle = 0;
-				speed = 40;
+				speed = 10;
 			}
 			if (speed <= display_smoothing_counter) {
 				//Lower Left Leg
@@ -1104,10 +1104,10 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 			(true == left) ||
 			(true == right)) {
 			
-			float speedMult = 1.0f;
-			float moveSpeed = 4.0f;
+			float speedMult = 4.0f;
+			float moveSpeed = 8.0f;
 			if (do_running) {
-				speedMult = 4.0f;
+				speedMult = 8.0f;
 			}
         
 			if (true == left) {
@@ -1151,6 +1151,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 		
 		//Do jumping
 		if (true == do_jump) {
+			//System.out.printf("do_jump is true, done_jumping is %b and yPosition is %f\n", done_jumping, yPosition);
 			if (false == done_jumping) {
 				if (yPosition < 100) {
 					yPosition += 5;
@@ -1339,7 +1340,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.printf("keyPressed keycode is %d, char version is %s\n", e.getKeyCode(), e.getKeyChar());
+		System.out.printf("keyPressed keycode is %d, char version is %s, VK_J is %d\n", e.getKeyCode(), e.getKeyChar(), KeyEvent.VK_J);
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_LEFT: 
 				left = true; 
@@ -1379,6 +1380,7 @@ public class Robot extends JFrame implements GLEventListener, KeyListener, Mouse
         case KeyEvent.VK_C : upMove = -1.0; break;
         case KeyEvent.VK_F : chaseCam++; if(chaseCam > 2){ chaseCam = 0;} pitch = 0.0; pan = 0.0; break;
         case KeyEvent.VK_R : pitch = 0.0; pan = 0.0; break;
+        case KeyEvent.VK_J : do_jump = true; done_jumping = false; break;
  
 		}
 	}
