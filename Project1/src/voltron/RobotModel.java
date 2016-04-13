@@ -493,24 +493,24 @@ public class RobotModel {
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
 				Shapes.cube(drawable, 300, 100, LION_HEAD_LENGTH);
 			gl.glPopMatrix();
-//			gl.glPushMatrix();
-//				gl.glTranslatef(0, -100, 100);
-//				gl.glCallList(lionObjects.get("WAIST").getListID());
-//			gl.glPopMatrix();
-//			gl.glPushMatrix();
-//				gl.glTranslatef(-230, 140, 100);
-//				gl.glRotated(180, 0, 1, 0);
-//				gl.glCallList(lionObjects.get("RED" + "UPPER_ARM").getListID());
-//			gl.glPopMatrix();
-//			gl.glPushMatrix();
-//				gl.glTranslatef(230, 140, 110);
-//				gl.glCallList(lionObjects.get("GREEN" + "UPPER_ARM").getListID());
-//			gl.glPopMatrix();
-//			gl.glPushMatrix();
-//				gl.glTranslated(0 ,260, 90);
-//				gl.glRotated(180, 0, 1, 0);
-//				gl.glCallList(lionObjects.get("BLACK" + "ROBOT_HEAD").getListID());
-//			gl.glPopMatrix();
+			gl.glPushMatrix();
+				gl.glTranslatef(0, -100, 100);
+				gl.glCallList(lionObjects.get("WAIST").getListID());
+			gl.glPopMatrix();
+			gl.glPushMatrix();
+				gl.glTranslatef(-230, 140, 100);
+				gl.glRotated(180, 0, 1, 0);
+				gl.glCallList(lionObjects.get("RED" + "UPPER_ARM").getListID());
+			gl.glPopMatrix();
+			gl.glPushMatrix();
+				gl.glTranslatef(230, 140, 110);
+				gl.glCallList(lionObjects.get("GREEN" + "UPPER_ARM").getListID());
+			gl.glPopMatrix();
+			gl.glPushMatrix();
+				gl.glTranslated(0 ,260, 90);
+				gl.glRotated(180, 0, 1, 0);
+				gl.glCallList(lionObjects.get("BLACK" + "ROBOT_HEAD").getListID());
+			gl.glPopMatrix();
 		gl.glPopMatrix();	
 		
 		gl.glEndList();
@@ -670,12 +670,12 @@ public class RobotModel {
 	
 	/* Initialize Robot at its initial position */
 	public void initializeRobot(GLAutoDrawable drawable) {
-//		createLeg(drawable, "BLUE", 0.0, 0.4, 0.8);
-//		createLeg(drawable, "YELLOW", 0.8, 0.8, 0.0);
-//		createArm(drawable, "GREEN", 0.031, .6, 0.165);
-//		createArm(drawable, "RED", .788, .176, .133);
-//		createWaist(drawable);
-//		createRobotHead(drawable, "BLACK", 0, 0, 0);
+		createLeg(drawable, "BLUE", 0.0, 0.4, 0.8);
+		createLeg(drawable, "YELLOW", 0.8, 0.8, 0.0);
+		createArm(drawable, "GREEN", 0.031, .6, 0.165);
+		createArm(drawable, "RED", .788, .176, .133);
+		createWaist(drawable);
+		createRobotHead(drawable, "BLACK", 0, 0, 0);
 		createChest(drawable);
 	}
 	

@@ -116,9 +116,10 @@ public class RobotScene extends JFrame
 		gl.glRotatef(rot_x, 1, 0, 0);
 		gl.glRotatef(rot_y, 0, 1, 0);
 		gl.glRotatef(rot_z, 0, 0, 1);
-		//voltron.drawRobot(drawable);
+		gl.glScaled(0.5, 0.5, 0.5);
+		voltron.drawRobot(drawable);
 		//gl.glCallList(1); // cube call list
-		voltron.displayChest(drawable);
+		//voltron.displayChest(drawable);
 		gl.glPopMatrix();
 
 		gl.glFlush();
@@ -228,7 +229,8 @@ public class RobotScene extends JFrame
 	private void reset() {
 		camera_x = 0;
 		camera_y = 1;
-		camera_z = -6.20f;
+		//camera_z = -6.20f;
+		camera_z = -1000;
 
 		center_x = 0;
 		center_y = 0;
