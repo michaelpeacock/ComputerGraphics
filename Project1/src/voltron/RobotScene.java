@@ -145,27 +145,27 @@ public class RobotScene extends JFrame
 			break;
 
 		case 'q':
-			rot_x += 1.0f;
+			rot_x += 5.0f;
 			break;
 
 		case 'w':
-			rot_y += 1.0f;
+			rot_y += 5.0f;
 			break;
 
 		case 'e':
-			rot_z += 1.0f;
+			rot_z += 5.0f;
 			break;
 
 		case 'a':
-			rot_x -= 1.0f;
+			rot_x -= 5.0f;
 			break;
 
 		case 's':
-			rot_y -= 1.0f;
+			rot_y -= 5.0f;
 			break;
 
 		case 'd':
-			rot_z -= 1.0f;
+			rot_z -= 5.0f;
 			break;
 		}
 	}
@@ -230,7 +230,7 @@ public class RobotScene extends JFrame
 		camera_x = 0;
 		camera_y = 1;
 		//camera_z = -6.20f;
-		camera_z = -1000;
+		camera_z = 2000;
 
 		center_x = 0;
 		center_y = 0;
@@ -252,80 +252,12 @@ public class RobotScene extends JFrame
 
 		// Perspective.
 		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		glu.gluPerspective(45, widthHeightRatio, 1, 1000);
+		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
 
 		gl.glRotatef(0, 0, 1, 0);
 		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
 
 		gl.glRotatef(0, 0, 1, 0); // Panning
-
-	}
-
-	public static void createCube(GLAutoDrawable drawable, float length, float height, float width) {
-		GL gl = drawable.getGL();
-		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-
-		float x, y, z;
-
-		x = length;
-		y = height;
-		z = width;
-
-		gl.glNewList(1, GL.GL_COMPILE);
-		gl.glTranslated(-(length / 2.0), -(height / 2.0), -(width / 2.0));
-
-		// Draw Sides of Cube
-		gl.glPushMatrix();
-		gl.glColor3f(1, 0, 0);
-		gl.glBegin(GL.GL_QUAD_STRIP);
-		gl.glNormal3d(0.0, 0.0, -1.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, y, 0.0);
-
-		gl.glNormal3d(0.0, 0.0, -1.0);
-		gl.glVertex3d(x, 0.0, 0.0);
-		gl.glVertex3d(x, y, 0.0);
-
-		gl.glNormal3d(1.0, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, z);
-		gl.glVertex3d(x, y, z);
-
-		gl.glNormal3d(0.0, 0.0, 1.0);
-		gl.glVertex3d(0.0, 0.0, z);
-		gl.glVertex3d(0.0, y, z);
-
-		gl.glNormal3d(-1.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, height, 0.0);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		// Draw the Bottom of the Cube
-		gl.glPushMatrix();
-		gl.glColor3f(0, 1, 0);
-		gl.glBegin(GL.GL_QUADS);
-		gl.glNormal3d(0.0, -1.0, 0.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, z);
-		gl.glVertex3d(0.0, 0.0, z);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		// Draw the Top of the Cube
-		gl.glPushMatrix();
-		gl.glColor3f(0, 0, 1);
-		gl.glBegin(GL.GL_QUADS);
-		gl.glNormal3d(0.0, 1.0, 0.0);
-		gl.glVertex3d(0.0, y, 0.0);
-		gl.glVertex3d(x, y, 0.0);
-		gl.glVertex3d(x, y, z);
-		gl.glVertex3d(0.0, y, z);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		gl.glEndList();
 
 	}
 	
