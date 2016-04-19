@@ -1,4 +1,4 @@
-package voltron;
+package robot;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -46,7 +46,8 @@ public class RobotScene extends JFrame
 	private float rot_y;
 	private float rot_z;
 	
-	private RobotModel voltron;
+	private RobotModel_I voltron;
+	private RobotState_I state;
 
 	public RobotScene() {
 		reset();
@@ -60,6 +61,8 @@ public class RobotScene extends JFrame
 		canvas.addMouseWheelListener(this);
 
 		voltron = new RobotModel();
+		state = new RobotState(0.0, 0.0, 0.0, 0.0, 0.5, voltron);
+		canvas.addKeyListener(state);
 		
 		add(canvas);
 
@@ -98,7 +101,6 @@ public class RobotScene extends JFrame
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
 		voltron.initializeRobot(drawable);
-		//createCube(drawable, 1, 1, 1);
 	}
 
 	@Override
@@ -112,14 +114,16 @@ public class RobotScene extends JFrame
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		//voltron.deleteRobot(drawable);
+		if (true == state.doStateUpdates()) {
+			voltron.deleteRobot(drawable);
+			voltron.initializeRobot(drawable);
+		}
+		
 		gl.glPushMatrix();
-		gl.glRotatef(rot_x, 1, 0, 0);
-		gl.glRotatef(rot_y, 0, 1, 0);
-		gl.glRotatef(rot_z, 0, 0, 1);
-		gl.glScaled(0.5, 0.5, 0.5);
+		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+		gl.glRotated(state.getRotation(), 0, 1, 0);
+		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
 		voltron.drawRobot(drawable);
-		//gl.glCallList(1); // cube call list
-		//voltron.displayChest(drawable);
 		gl.glPopMatrix();
 
 		gl.glFlush();
