@@ -115,8 +115,9 @@ public class RobotState implements RobotState_I{
 
 	public boolean doStateUpdates() {
 		boolean stateWasChanged = false;	
-	
-		if (true == doWalk() || 
+
+		if (true == doStateReset() ||
+			true == doWalk() || 
 			true == doJump()) {
 			stateWasChanged = true;
 		}

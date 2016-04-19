@@ -51,8 +51,7 @@ public class RobotScene extends JFrame
 
 	public RobotScene() {
 		reset();
-
-		GLCapabilities caps = new GLCapabilities();
+		
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
@@ -113,7 +112,6 @@ public class RobotScene extends JFrame
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
-		//voltron.deleteRobot(drawable);
 		if (true == state.doStateUpdates()) {
 			voltron.deleteRobot(drawable);
 			voltron.initializeRobot(drawable);
@@ -149,27 +147,27 @@ public class RobotScene extends JFrame
 			break;
 
 		case 'q':
-			rot_x += 5.0f;
+			rot_x += 10.0f;
 			break;
 
 		case 'w':
-			rot_y += 5.0f;
+			rot_y += 10.0f;
 			break;
 
 		case 'e':
-			rot_z += 5.0f;
+			rot_z += 10.0f;
 			break;
 
 		case 'a':
-			rot_x -= 5.0f;
+			rot_x -= 10.0f;
 			break;
 
 		case 's':
-			rot_y -= 5.0f;
+			rot_y -= 10.0f;
 			break;
 
 		case 'd':
-			rot_z -= 5.0f;
+			rot_z -= 10.0f;
 			break;
 		}
 	}
