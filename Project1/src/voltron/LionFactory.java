@@ -19,10 +19,9 @@ public class LionFactory {
 		this.glcanvas = glcanvas;
 	}
 
-	public Lion createLion(String lionName, LION_COLOR lionColor, float xPosition, float yPosition, float zPosition,
-			double scale) {
+	public Lion createLion(String lionName, LION_COLOR lionColor) {
 		if (!lions.containsKey(lionName)) {
-			Lion newLion = new Lion(glcanvas, lionColor, xPosition, yPosition, zPosition, scale);
+			Lion newLion = new Lion(glcanvas, lionColor);
 			lions.put(lionName, newLion);
 		}
 
