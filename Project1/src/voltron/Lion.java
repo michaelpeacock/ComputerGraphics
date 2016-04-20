@@ -610,7 +610,7 @@ public class Lion {
 		gl.glTranslatef(LION_BODY_LENGTH / 2, LION_BODY_LENGTH / 2, LION_BODY_LENGTH * 2);
 		gl.glCallList(lionObjects.get("TAIL").getListID());
 		gl.glPopMatrix();
-		gl.glPopMatrix();
+		// gl.glPopMatrix();
 		gl.glEndList();
 	}
 
@@ -673,6 +673,7 @@ public class Lion {
 
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
+		gl.glRotatef(180, 0, 1, 0);
 
 		switch (position) {
 		case BACK:

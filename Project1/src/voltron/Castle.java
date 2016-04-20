@@ -5,11 +5,18 @@ import java.util.Map;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+
+import voltron.LionFactory.LION_COLOR;
 
 public class Castle {
-	Map<String, Integer> objectList = new HashMap<String, Integer>();
+	private Map<String, Integer> objectList = new HashMap<String, Integer>();
+	private GLCanvas glcanvas;
+	private LionFactory lionFactory;
 
-	public void initializeCastle(GLAutoDrawable drawable) {
+	public void initializeCastle(GLCanvas glcanvas, GLAutoDrawable drawable) {
+		this.glcanvas = glcanvas;
+
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
 		createLeft(drawable);
@@ -20,6 +27,13 @@ public class Castle {
 		createWater(drawable);
 		createLand(drawable);
 		createSky(drawable);
+
+		lionFactory = new LionFactory(glcanvas);
+		lionFactory.createLion("Red", LION_COLOR.RED);
+		lionFactory.createLion("Black", LION_COLOR.BLACK);
+		lionFactory.createLion("Green", LION_COLOR.GREEN);
+		lionFactory.createLion("Blue", LION_COLOR.BLUE);
+		lionFactory.createLion("Yellow", LION_COLOR.YELLOW);
 		gl.glPopMatrix();
 
 	}
@@ -481,7 +495,7 @@ public class Castle {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glTranslated(-5000.0, -11.0, -5000.0);
+		gl.glTranslated(-5000.0, -12.0, -5000.0);
 		gl.glCallList(objectList.get("Sky"));
 		gl.glCallList(objectList.get("Land"));
 		gl.glPopMatrix();
@@ -489,13 +503,41 @@ public class Castle {
 		gl.glPushMatrix();
 		gl.glCallList(objectList.get("Center"));
 
-		gl.glTranslated(0.0, 0.0, 600.0);
+		gl.glTranslated(0.0, -10.0, 600.0);
 		gl.glCallList(objectList.get("Path"));
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glTranslated(0.0, -10.0, 0.0);
+		gl.glTranslated(0.0, -11.0, 0.0);
 		gl.glCallList(objectList.get("Water"));
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glScaled(0.5, 0.5, 0.5);
+		gl.glTranslated(0.0, 80.0, 4500.0);
+		gl.glPushMatrix();
+		lionFactory.getLion("Black").display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-500.0, 0.0, 0.0);
+		lionFactory.getLion("Red").display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-1000.0, 0.0, 0.0);
+		lionFactory.getLion("Blue").display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(500.0, 0.0, 0.0);
+		lionFactory.getLion("Yellow").display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(1000.0, 0.0, 0.0);
+		lionFactory.getLion("Green").display(drawable);
+		gl.glPopMatrix();
 		gl.glPopMatrix();
 
 	}

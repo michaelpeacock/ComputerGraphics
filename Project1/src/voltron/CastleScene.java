@@ -21,8 +21,6 @@ import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
 
-import voltron.LionFactory.LION_COLOR;
-
 public class CastleScene extends JFrame
 		implements GLEventListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -49,8 +47,6 @@ public class CastleScene extends JFrame
 	private float rot_z;
 
 	private Castle castle;
-
-	private LionFactory lionFactory;
 
 	public CastleScene() {
 		reset();
@@ -97,15 +93,10 @@ public class CastleScene extends JFrame
 		gl.glShadeModel(GL.GL_SMOOTH);
 		gl.glClearDepth(1.0f);
 
-		// gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		gl.glClearColor(0.8f, 0.898f, 1.0f, 0.0f);
-		// createCube(drawable, 1, 1, 1);
-
-		lionFactory = new LionFactory(canvas);
-		lionFactory.createLion("1", LION_COLOR.RED);
 
 		castle = new Castle();
-		castle.initializeCastle(drawable);
+		castle.initializeCastle(canvas, drawable);
 
 	}
 
@@ -125,13 +116,6 @@ public class CastleScene extends JFrame
 		gl.glRotatef(rot_z, 0, 0, 1);
 		castle.display(drawable);
 		gl.glPopMatrix();
-
-		// gl.glPushMatrix();
-		// gl.glRotatef(rot_x, 1, 0, 0);
-		// gl.glRotatef(rot_y, 0, 1, 0);
-		// gl.glRotatef(rot_z, 0, 0, 1);
-		// lionFactory.getLion("1").display(drawable);
-		// gl.glPopMatrix();
 
 		gl.glFlush();
 	}
@@ -233,14 +217,12 @@ public class CastleScene extends JFrame
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		camera_z += e.getWheelRotation() * 100;
-
-		System.out.println("camera_z " + camera_z);
 	}
 
 	private void reset() {
 		camera_x = 0;
 		camera_y = 1;
-		camera_z = 3000f;
+		camera_z = 6000f;
 
 		center_x = 0;
 		center_y = 0;
@@ -268,74 +250,6 @@ public class CastleScene extends JFrame
 		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
 
 		gl.glRotatef(0, 0, 1, 0); // Panning
-
-	}
-
-	public static void createCube(GLAutoDrawable drawable, float length, float height, float width) {
-		GL gl = drawable.getGL();
-		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-
-		float x, y, z;
-
-		x = length;
-		y = height;
-		z = width;
-
-		gl.glNewList(1, GL.GL_COMPILE);
-		gl.glTranslated(-(length / 2.0), -(height / 2.0), -(width / 2.0));
-
-		// Draw Sides of Cube
-		gl.glPushMatrix();
-		gl.glColor3f(1, 0, 0);
-		gl.glBegin(GL.GL_QUAD_STRIP);
-		gl.glNormal3d(0.0, 0.0, -1.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, y, 0.0);
-
-		gl.glNormal3d(0.0, 0.0, -1.0);
-		gl.glVertex3d(x, 0.0, 0.0);
-		gl.glVertex3d(x, y, 0.0);
-
-		gl.glNormal3d(1.0, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, z);
-		gl.glVertex3d(x, y, z);
-
-		gl.glNormal3d(0.0, 0.0, 1.0);
-		gl.glVertex3d(0.0, 0.0, z);
-		gl.glVertex3d(0.0, y, z);
-
-		gl.glNormal3d(-1.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(0.0, height, 0.0);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		// Draw the Bottom of the Cube
-		gl.glPushMatrix();
-		gl.glColor3f(0, 1, 0);
-		gl.glBegin(GL.GL_QUADS);
-		gl.glNormal3d(0.0, -1.0, 0.0);
-		gl.glVertex3d(0.0, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, 0.0);
-		gl.glVertex3d(x, 0.0, z);
-		gl.glVertex3d(0.0, 0.0, z);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		// Draw the Top of the Cube
-		gl.glPushMatrix();
-		gl.glColor3f(0, 0, 1);
-		gl.glBegin(GL.GL_QUADS);
-		gl.glNormal3d(0.0, 1.0, 0.0);
-		gl.glVertex3d(0.0, y, 0.0);
-		gl.glVertex3d(x, y, 0.0);
-		gl.glVertex3d(x, y, z);
-		gl.glVertex3d(0.0, y, z);
-		gl.glEnd();
-		gl.glPopMatrix();
-
-		gl.glEndList();
 
 	}
 
