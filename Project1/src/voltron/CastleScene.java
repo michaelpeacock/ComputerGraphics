@@ -23,9 +23,14 @@ import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
 
+import robot.RobotModel;
+import robot.RobotModel_I;
+import robot.RobotState;
+import robot.RobotState_I;
 import voltron.objects.Castle;
 import voltron.objects.LionFactory;
 import voltron.objects.LionFactory.LION_COLOR;
+import voltron.objects.LionHouse;
 import voltron.objects.Tree;
 
 public class CastleScene extends JFrame
@@ -57,6 +62,9 @@ public class CastleScene extends JFrame
 	private Castle castle;
 	private Tree tree;
 	private LionFactory lionFactory;
+	private LionHouse lionHouse;
+	private RobotModel_I voltron;
+	private RobotState_I state;
 
 	public CastleScene() {
 		reset();
@@ -107,6 +115,9 @@ public class CastleScene extends JFrame
 
 		tree = new Tree();
 		castle = new Castle();
+		lionHouse = new LionHouse();
+		voltron = new RobotModel();
+		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
 
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
@@ -117,6 +128,8 @@ public class CastleScene extends JFrame
 
 		lionFactory = new LionFactory(canvas);
 		lionFactory.createLion("Black", LION_COLOR.BLACK);
+
+		voltron.initializeRobot(drawable);
 
 	}
 
@@ -163,6 +176,26 @@ public class CastleScene extends JFrame
 		gl.glPushMatrix();
 		lionFactory.getLion("Black").display(drawable);
 		gl.glPopMatrix();
+		gl.glPopMatrix();
+
+		// lion house
+		gl.glPushMatrix();
+		// gl.glScaled(5, 5, 5);
+		gl.glTranslated(-2000.0, 0.0, 0.0);
+		lionHouse.display(drawable);
+		gl.glPopMatrix();
+
+		// voltron
+		if (true == state.doStateUpdates()) {
+			voltron.deleteRobot(drawable);
+			voltron.initializeRobot(drawable);
+		}
+
+		gl.glPushMatrix();
+		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+		gl.glRotated(state.getRotation(), 0, 1, 0);
+		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
+		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
 
 		gl.glPopMatrix();
