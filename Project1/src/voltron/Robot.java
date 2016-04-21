@@ -20,9 +20,10 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import voltron.LionFactory.LION_COLOR;
-
 import com.sun.opengl.util.Animator;
+
+import voltron.objects.LionObject;
+import voltron.objects.LionFactory.LION_COLOR;
 
 public class Robot extends JFrame implements GLEventListener, KeyListener, MouseMotionListener, MouseListener, MouseWheelListener {
 

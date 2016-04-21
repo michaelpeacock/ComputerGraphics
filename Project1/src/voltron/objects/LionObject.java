@@ -1,4 +1,4 @@
-package voltron;
+package voltron.objects;
 
 public class LionObject {
 	private int listID;

@@ -1,4 +1,4 @@
-package voltron;
+package voltron.objects;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -8,7 +8,8 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 
-import voltron.LionFactory.LION_COLOR;
+import voltron.Shapes;
+import voltron.objects.LionFactory.LION_COLOR;
 
 public class Lion {
 
@@ -610,7 +611,7 @@ public class Lion {
 		gl.glTranslatef(LION_BODY_LENGTH / 2, LION_BODY_LENGTH / 2, LION_BODY_LENGTH * 2);
 		gl.glCallList(lionObjects.get("TAIL").getListID());
 		gl.glPopMatrix();
-		gl.glPopMatrix();
+		// gl.glPopMatrix();
 		gl.glEndList();
 	}
 
@@ -673,6 +674,7 @@ public class Lion {
 
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
+		gl.glRotatef(180, 0, 1, 0);
 
 		switch (position) {
 		case BACK:
