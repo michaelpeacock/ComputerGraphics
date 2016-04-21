@@ -24,6 +24,8 @@ import javax.swing.JFrame;
 import com.sun.opengl.util.Animator;
 
 import voltron.objects.Castle;
+import voltron.objects.LionFactory;
+import voltron.objects.LionFactory.LION_COLOR;
 import voltron.objects.Tree;
 
 public class CastleScene extends JFrame
@@ -54,6 +56,7 @@ public class CastleScene extends JFrame
 
 	private Castle castle;
 	private Tree tree;
+	private LionFactory lionFactory;
 
 	public CastleScene() {
 		reset();
@@ -106,10 +109,14 @@ public class CastleScene extends JFrame
 		castle = new Castle();
 
 		castle.initializeCastle(canvas, drawable);
+		createPost(drawable);
 		createPath(drawable);
 		createWater(drawable);
 		createLand(drawable);
 		createSky(drawable);
+
+		lionFactory = new LionFactory(canvas);
+		lionFactory.createLion("Black", LION_COLOR.BLACK);
 
 	}
 
@@ -147,6 +154,15 @@ public class CastleScene extends JFrame
 		gl.glPushMatrix();
 		gl.glTranslated(0.0, -11.0, 0.0);
 		gl.glCallList(objectList.get("Water"));
+		gl.glPopMatrix();
+
+		// lions
+		gl.glPushMatrix();
+		gl.glScaled(0.5, 0.5, 0.5);
+		gl.glTranslated(100.0, 480.0, 9200.0);
+		gl.glPushMatrix();
+		lionFactory.getLion("Black").display(drawable);
+		gl.glPopMatrix();
 		gl.glPopMatrix();
 
 		gl.glPopMatrix();
@@ -294,7 +310,9 @@ public class CastleScene extends JFrame
 		gl.glNewList(objectList.get("Path"), GL.GL_COMPILE);
 		gl.glPushMatrix();
 		gl.glColor3d(0.4, 0.2, 0);
-		Shapes.cube(drawable, 200, -10, 2000);
+		Shapes.cube(drawable, 200, -10, 4000);
+		gl.glTranslated(-100, 0, 4000);
+		gl.glCallList(objectList.get("Post"));
 		gl.glPopMatrix();
 
 		gl.glEndList();
@@ -354,6 +372,8 @@ public class CastleScene extends JFrame
 		objectList.put("Post", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Post"), GL.GL_COMPILE);
 		gl.glPushMatrix();
+		gl.glColor3d(0.753, 0.753, 0.753);
+		Shapes.cube(drawable, 400, 200, 400);
 		gl.glPopMatrix();
 
 		gl.glEndList();

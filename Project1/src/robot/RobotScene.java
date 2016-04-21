@@ -41,6 +41,10 @@ public class RobotScene extends JFrame
 	private float up_x;
 	private float up_y;
 	private float up_z;
+	
+	private int chaseCam;
+	//private double pan;
+	//private double pitch;
 
 	private float rot_x;
 	private float rot_y;
@@ -141,33 +145,42 @@ public class RobotScene extends JFrame
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyChar()) {
-		case 'r':
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_R:
 			reset();
 			break;
 
-		case 'q':
+		case KeyEvent.VK_Q:
 			rot_x += 10.0f;
 			break;
 
-		case 'w':
+		case KeyEvent.VK_W:
 			rot_y += 10.0f;
 			break;
 
-		case 'e':
+		case KeyEvent.VK_E:
 			rot_z += 10.0f;
 			break;
 
-		case 'a':
+		case KeyEvent.VK_A:
 			rot_x -= 10.0f;
 			break;
 
-		case 's':
+		case KeyEvent.VK_S:
 			rot_y -= 10.0f;
 			break;
 
-		case 'd':
+		case KeyEvent.VK_D:
 			rot_z -= 10.0f;
+			break;
+			
+		case KeyEvent.VK_F: 
+			chaseCam++; 
+			if(chaseCam > 3) { 
+				chaseCam = 0;
+			} 
+			//pitch = 0.0; 
+			//pan = 0.0; 
 			break;
 		}
 	}
@@ -245,6 +258,8 @@ public class RobotScene extends JFrame
 		rot_x = 0;
 		rot_y = 0;
 		rot_z = 0;
+		
+		this.chaseCam = 0;
 	}
 
 	private void setCamera(GL gl, GLU glu) {
@@ -256,10 +271,23 @@ public class RobotScene extends JFrame
 		float widthHeightRatio = (float) getWidth() / (float) getHeight();
 		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
 
-		gl.glRotatef(0, 0, 1, 0);
-		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+		if (0 == chaseCam) {
+			//gl.glRotatef(0, 0, 1, 0);
+			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
 
-		gl.glRotatef(0, 0, 1, 0); // Panning
+			//gl.glRotatef(0, 0, 1, 0); // Panning
+		}
+		else if (1 == chaseCam) {
+			glu.gluLookAt(state.getxPosition()-100, state.getyPosition()+500, state.getzPosition()-200, state.getxPosition(), state.getyPosition()+300, state.getzPosition(), up_x, up_y, up_z);
+		}
+		else if (2 == chaseCam) {
+			glu.gluLookAt(state.getxPosition(), state.getyPosition(), state.getzPosition(), center_x, center_y, center_z, up_x, up_y, up_z);
+		}
+		else if (3 == chaseCam) {
+			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
+		}
+		
+		
 
 	}
 	

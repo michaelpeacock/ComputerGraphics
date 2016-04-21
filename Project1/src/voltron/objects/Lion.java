@@ -51,6 +51,7 @@ public class Lion {
 	public KeyEvent keyEvent;
 	GLCanvas glcanvas;
 	GLAutoDrawable drawable;
+	private Logo logo;
 
 	public Lion(GLCanvas glcanvas, LION_COLOR lionColor) {
 		this.glcanvas = glcanvas;
@@ -58,6 +59,8 @@ public class Lion {
 
 		this.action = LION_ACTION.STANDING;
 		this.position = LION_POSITION.FRONT;
+
+		logo = new Logo();
 	}
 
 	/* create an instance of each base component */
@@ -572,12 +575,20 @@ public class Lion {
 		LionObject lionObject = createLionObject(gl, "BODY");
 		setObjectColor(gl);
 		gl.glPushMatrix();
-		// gl.glTranslatef(-LION_BODY_LENGTH / 2, -LION_BODY_HEIGHT / 2, 0.0f);
 
 		System.out.println("body y rotation " + lionObjects.get("BODY").getyRotation());
 		rotateObject(gl, lionObject);
 
 		Shapes.cube(drawable, LION_BODY_LENGTH, LION_BODY_HEIGHT, LION_BODY_LENGTH * 2);
+		if (this.lionColor == LION_COLOR.BLACK) {
+			gl.glPushMatrix();
+			gl.glRotated(180, 0, 1, 0);
+			gl.glScaled(0.75, 0.75, 0.75);
+			gl.glTranslatef(-205, 205, 10);
+			logo.display(drawable);
+			gl.glPopMatrix();
+		}
+
 		gl.glPushMatrix();
 		gl.glTranslatef(LION_BODY_LENGTH / 8, LION_BODY_HEIGHT / 8, -5.0f);
 		gl.glColor3d(0.0, 0.0, 0.0);
@@ -611,7 +622,6 @@ public class Lion {
 		gl.glTranslatef(LION_BODY_LENGTH / 2, LION_BODY_LENGTH / 2, LION_BODY_LENGTH * 2);
 		gl.glCallList(lionObjects.get("TAIL").getListID());
 		gl.glPopMatrix();
-		// gl.glPopMatrix();
 		gl.glEndList();
 	}
 
@@ -641,6 +651,10 @@ public class Lion {
 		createKnee(drawable, "RIGHT_BACK_KNEE");
 		createUpperLeg(drawable, "LEFT_BACK_UPPER_LEG");
 		createUpperLeg(drawable, "RIGHT_BACK_UPPER_LEG");
+
+		if (this.lionColor == LION_COLOR.BLACK) {
+			logo.createLogo(drawable);
+		}
 
 		createNose(drawable);
 		createMouth(drawable, "LOWER_MOUTH");
