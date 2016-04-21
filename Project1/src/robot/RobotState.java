@@ -135,20 +135,30 @@ public class RobotState implements RobotState_I{
 				(true == left) ||
 				(true == right)) {
 
-			float speedMult = 4.0f;
-			float moveSpeed = 4.0f;
+			float speedMult = 0.5f;
+			float moveSpeed = 8.0f;
 			if (do_running) {
-				speedMult = 8.0f;
+				speedMult = 1.0f;
 			}
 
+			double rotate = 0.0;
 			if (true == left) {
-				this.setRotation(this.rotation + (speedMult * 0.8));
+				rotate = this.rotation + (speedMult * 0.8);
 				do_turn = true;
 			}
 			else if (true == right) {
-				this.setRotation(this.rotation - (speedMult * 0.8));
-
+				rotate = this.rotation - (speedMult * 0.8);
 				do_turn = true;
+			}
+			
+			if (true == do_turn) {
+				if (359 < rotate) {
+					rotate -= 360;
+				}
+				else if (0 > rotate) {
+					rotate += 360;
+				}
+				this.setRotation(rotate);
 			}
 
 			double calc_rotate = 270 + this.rotation;

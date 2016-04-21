@@ -112,8 +112,6 @@ public class RobotScene extends JFrame
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		setCamera(gl, glu);
-
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		if (true == state.doStateUpdates()) {
@@ -127,6 +125,10 @@ public class RobotScene extends JFrame
 		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
 		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
+		
+		//System.out.printf("display, rotation angle is %f\n", state.getRotation());
+		
+		setCamera(gl, glu);
 
 		gl.glFlush();
 	}
@@ -278,10 +280,31 @@ public class RobotScene extends JFrame
 			//gl.glRotatef(0, 0, 1, 0); // Panning
 		}
 		else if (1 == chaseCam) {
-			glu.gluLookAt(state.getxPosition()-100, state.getyPosition()+500, state.getzPosition()-200, state.getxPosition(), state.getyPosition()+300, state.getzPosition(), up_x, up_y, up_z);
+			double rotate = state.getRotation() + 270;
+			double pos_rotate = rotate - 180;
+	
+			double position_x = state.getxPosition() + (500 * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition() - (500 * Math.sin(Math.toRadians(pos_rotate)));
+			double position_y = state.getyPosition() + 300;
+			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+			double look_y = state.getyPosition();
+			
+			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
 		}
 		else if (2 == chaseCam) {
-			glu.gluLookAt(state.getxPosition(), state.getyPosition(), state.getzPosition(), center_x, center_y, center_z, up_x, up_y, up_z);
+			double rotate = state.getRotation() + 270;
+			double pos_rotate = rotate;
+			//double pos_rotate = rotate - 180;
+	
+			double position_x = state.getxPosition() + (75 * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition() - (75 * Math.sin(Math.toRadians(pos_rotate)));
+			double position_y = state.getyPosition() + 130;
+			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+			double look_y = state.getyPosition();
+			
+			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
 		}
 		else if (3 == chaseCam) {
 			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
