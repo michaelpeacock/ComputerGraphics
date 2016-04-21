@@ -55,6 +55,7 @@ public class SpaceScene extends JFrame
 	private float test_fly_y_inc;
 	private float test_fly_z_inc;
 	private static final float NUM_FLY_INC = 100;
+	private float sample_rate;
 	
 	private Moon moon;
 	private Earth earth;
@@ -132,8 +133,17 @@ public class SpaceScene extends JFrame
 		gl.glRotatef(rot_x, 1, 0, 0);
 		gl.glRotatef(rot_y, 0, 1, 0);
 		gl.glRotatef(rot_z, 0, 0, 1);
-		moon.display(drawable);
+		
+		gl.glPushMatrix();
+		gl.glTranslated(-3000.0, -11.0, -5000.0);
+		moon.display(drawable);		
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+		gl.glPopMatrix();
+
 		if (test_fly)
 			testFly(drawable);
 		else if (test_fly_displayed)
@@ -250,11 +260,16 @@ public class SpaceScene extends JFrame
 	}
 
 	private void testFly(GLAutoDrawable drawable) {
-		gl = drawable.getGL();
-		test_fly_x -= test_fly_x_inc;
-		test_fly_y -= test_fly_y_inc;
-		test_fly_z -= test_fly_z_inc;
-		System.out.println("test_fly_z" + test_fly_z);
+		if (sample_rate >=10) {
+			gl = drawable.getGL();
+			test_fly_x -= test_fly_x_inc;
+			test_fly_y -= test_fly_y_inc;
+			test_fly_z -= test_fly_z_inc;
+			sample_rate = 0;
+		} 
+		else {
+			sample_rate++;
+		}
 		gl.glPushMatrix();
 		gl.glTranslated(test_fly_x, test_fly_y, test_fly_z);
 		flyer.display(drawable);
@@ -263,7 +278,6 @@ public class SpaceScene extends JFrame
 			test_fly = false;
 			test_fly_displayed = true;
 		}
-		
 	}
 	
 	private void reset() {
@@ -277,6 +291,7 @@ public class SpaceScene extends JFrame
 
 		up_x = 0;
 		up_y = 1;
+		//up_y = 0;
 		up_z = 0;
 
 		rot_x = 10;
@@ -291,6 +306,7 @@ public class SpaceScene extends JFrame
 		test_fly_x_inc = test_fly_x / NUM_FLY_INC;
 		test_fly_y_inc = test_fly_y / NUM_FLY_INC;
 		test_fly_z_inc = test_fly_z / NUM_FLY_INC;
+		sample_rate = 0;
 
 	}
 

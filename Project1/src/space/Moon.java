@@ -30,8 +30,12 @@ public class Moon {
 		objectList.put("MoonSphere", gl.glGenLists(1));
 		gl.glNewList(objectList.get("MoonSphere"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glColor3d(0.7, 0.7, 0.7);
+		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glColor4d(0.7, 0.7, 0.7, 1.0);
 		Shapes.sphere(drawable,MOON_RADIUS,10.0);
+		gl.glColor4d(0.8, 0.8, 0.8, .6);
+		Shapes.sphere(drawable,MOON_RADIUS+10,10.0);
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
@@ -51,9 +55,9 @@ public class Moon {
 	      int craterRadius = randomGenerator.nextInt(4);
 	      double s = aroundZAxis * Shapes.PI / 180;
 	      double t = height * Shapes.PI / 180;
-	      double xTran = (MOON_RADIUS - 4) * Math.cos(s) * Math.sin(t);
-	      double yTran = (MOON_RADIUS - 4) * Math.sin(s) * Math.sin(t);
-	      double zTran = (MOON_RADIUS - 4) * Math.cos(t);
+	      double xTran = (MOON_RADIUS - craterRadius * 4.0) * Math.cos(s) * Math.sin(t);
+	      double yTran = (MOON_RADIUS - craterRadius * 4.0) * Math.sin(s) * Math.sin(t);
+	      double zTran = (MOON_RADIUS - craterRadius * 4.0) * Math.cos(t);
 	      
 	      gl.glPushMatrix();
 	      gl.glTranslated(xTran, yTran, zTran);
@@ -84,7 +88,6 @@ public class Moon {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glTranslated(-4000.0, -11.0, -5000.0);
 		gl.glCallList(objectList.get("MoonSphere"));
 		gl.glCallList(objectList.get("MoonCraters"));
 		gl.glPopMatrix();
