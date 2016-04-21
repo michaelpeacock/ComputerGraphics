@@ -9,9 +9,9 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
-import voltron.LionObject;
 import voltron.Shapes;
-import voltron.LionFactory.LION_COLOR;
+import voltron.objects.LionObject;
+import voltron.objects.LionFactory.LION_COLOR;
 
 import com.sun.opengl.util.Animator;
 

@@ -1,4 +1,4 @@
-package voltron;
+package voltron.objects;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -8,7 +8,8 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 
-import voltron.LionFactory.LION_COLOR;
+import voltron.Shapes;
+import voltron.objects.LionFactory.LION_COLOR;
 
 public class Lion {
 

@@ -1,4 +1,4 @@
-package voltron;
+package voltron.objects;
 
 import java.util.HashMap;
 import java.util.Map;
