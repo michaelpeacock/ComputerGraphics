@@ -151,7 +151,7 @@ public class SpaceScene extends JFrame
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glTranslated(-1000.0, -1000.0, -5000.0);
+		gl.glTranslated(-1000.0, 0.0, 0.0);
 		iss.display(drawable);
 		gl.glPopMatrix();
 
