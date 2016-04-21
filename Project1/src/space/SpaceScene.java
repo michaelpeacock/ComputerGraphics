@@ -61,6 +61,7 @@ public class SpaceScene extends JFrame
 	private Earth earth;
 	private Sun sun;
 	private TestFlyer flyer;
+	private ISS iss;
 
 	public SpaceScene() {
 		reset();
@@ -113,10 +114,12 @@ public class SpaceScene extends JFrame
 
 		moon = new Moon();
 		earth = new Earth();
+		iss = new ISS();
 		flyer = new TestFlyer();
 		sun = new Sun();
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
+		iss.initializeISS(drawable);
 		flyer.initializeFlyer(drawable);
 		sun.initializeSun(drawable);
 
@@ -145,6 +148,11 @@ public class SpaceScene extends JFrame
 		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-1000.0, -1000.0, -5000.0);
+		iss.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
