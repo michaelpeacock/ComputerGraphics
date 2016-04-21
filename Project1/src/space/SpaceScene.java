@@ -277,6 +277,7 @@ public class SpaceScene extends JFrame
 
 		up_x = 0;
 		up_y = 1;
+		//up_y = 0;
 		up_z = 0;
 
 		rot_x = 10;

@@ -28,7 +28,7 @@ public class Earth {
 		gl.glNewList(objectList.get("EarthSphere"), GL.GL_COMPILE);
 		gl.glPushMatrix();
 		gl.glColor3d(0.0, 0.0, 1.0);
-		Shapes.sphere(drawable,EARTH_RADIUS,10.0);
+		Shapes.sphere(drawable,EARTH_RADIUS,60.0);
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
@@ -39,6 +39,7 @@ public class Earth {
 
 		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
+		// test - gl.glTranslated(1000.0, 2000.0, -5000.0);
 		gl.glCallList(objectList.get("EarthSphere"));
 		gl.glPopMatrix();
 	}
