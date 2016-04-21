@@ -59,6 +59,7 @@ public class SpaceScene extends JFrame
 	
 	private Moon moon;
 	private Earth earth;
+	private Sun sun;
 	private TestFlyer flyer;
 
 	public SpaceScene() {
@@ -113,9 +114,11 @@ public class SpaceScene extends JFrame
 		moon = new Moon();
 		earth = new Earth();
 		flyer = new TestFlyer();
+		sun = new Sun();
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
 		flyer.initializeFlyer(drawable);
+		sun.initializeSun(drawable);
 
 	}
 
@@ -135,13 +138,18 @@ public class SpaceScene extends JFrame
 		gl.glRotatef(rot_z, 0, 0, 1);
 		
 		gl.glPushMatrix();
-		gl.glTranslated(-3000.0, -11.0, -5000.0);
+		gl.glTranslated(2000.0, -2900.0, -5500.0);
 		moon.display(drawable);		
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-5500.0, 2500.0, -10000.0);
+		sun.display(drawable);
 		gl.glPopMatrix();
 
 		if (test_fly)
