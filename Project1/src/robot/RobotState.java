@@ -209,13 +209,13 @@ public class RobotState implements RobotState_I {
 			// System.out.printf("do_jump is true, done_jumping is %b and
 			// yPosition is %f\n", done_jumping, yPosition);
 			if (false == done_jumping) {
-				if (yPosition < 100) {
+				if (yPosition < (default_yPosition + 200)) {
 					yPosition += 5;
 				} else {
 					done_jumping = true;
 				}
 			} else {
-				if (0 == yPosition) {
+				if (default_yPosition == yPosition) {
 					do_jump = false;
 				} else {
 					yPosition -= 5;
