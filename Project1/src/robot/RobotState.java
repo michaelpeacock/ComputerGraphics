@@ -156,16 +156,9 @@ public class RobotState implements RobotState_I {
 			if (true == left) {
 				rotate = this.rotation + (speedMult * 0.8);
 				do_turn = true;
-<<<<<<< HEAD
 			}
 			else if (true == right) {
 				rotate = this.rotation - (speedMult * 0.8);
-=======
-			} else if (true == right) {
-				this.setRotation(this.rotation - (speedMult * 0.8));
-
->>>>>>> 5522249582d2cd2d54a9b226b44a3a46806f1226
-				do_turn = true;
 			}
 			
 			if (true == do_turn) {
