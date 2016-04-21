@@ -15,8 +15,8 @@ import javax.swing.SwingUtilities;
 
 import com.sun.opengl.util.Animator;
 
-import voltron.Lion.LION_POSITION;
-import voltron.LionFactory.LION_COLOR;
+import voltron.objects.Lion.LION_POSITION;
+import voltron.objects.LionFactory.LION_COLOR;
 
 public class SpaceScene extends JFrame implements KeyListener, GLEventListener {
 	public static final int WIN_WIDTH = 1000;
