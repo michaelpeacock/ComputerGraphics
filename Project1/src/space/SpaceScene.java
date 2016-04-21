@@ -132,8 +132,17 @@ public class SpaceScene extends JFrame
 		gl.glRotatef(rot_x, 1, 0, 0);
 		gl.glRotatef(rot_y, 0, 1, 0);
 		gl.glRotatef(rot_z, 0, 0, 1);
-		moon.display(drawable);
+		
+		gl.glPushMatrix();
+		gl.glTranslated(-3000.0, -11.0, -5000.0);
+		moon.display(drawable);		
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+		gl.glPopMatrix();
+
 		if (test_fly)
 			testFly(drawable);
 		else if (test_fly_displayed)
