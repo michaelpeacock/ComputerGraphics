@@ -22,7 +22,7 @@ public class ISS {
 	private static final float iss_white[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	private static final float iss_gray[] = {0.65f, 0.65f, 0.65f, 1.0f};
 	private static final float iss_darkGray[] = {0.5f, 0.5f, 0.5f, 1.0f};
-	private static final float iss_lightGray[] = {0.87f, 0.97f, 0.87f, 1.0f};
+	private static final float iss_lightGray[] = {0.8f, 0.8f, 0.8f, 1.0f};
 	private static final float iss_black[] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 	
@@ -149,7 +149,7 @@ public class ISS {
 		
 		// More of the center
 		gl.glPushMatrix();
-		gl.glColor3d(0.87, 0.87, 0.87);
+		gl.glColor3d(0.8, 0.8, 0.8);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_lightGray, 0);
 		gl.glTranslatef(MAIN_ISS_BODY_LENGTH / 2, MAIN_ISS_BODY_WIDTH / 2, MAIN_ISS_BODY_HEIGHT/2);
 		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 2,MAIN_ISS_BODY_LENGTH/4, 10);
