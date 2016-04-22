@@ -127,6 +127,20 @@ public class ISS {
 		gl.glColor3d(0.65, 0.65, 0.65);
 		gl.glTranslatef(-MAIN_ISS_BODY_LENGTH / 2, -MAIN_ISS_BODY_WIDTH / 2, 0.0f);
 		Shapes.cube(drawable, MAIN_ISS_BODY_LENGTH, MAIN_ISS_BODY_WIDTH, MAIN_ISS_BODY_HEIGHT);
+		
+		// More of the center
+		gl.glPushMatrix();
+		gl.glColor3d(0.87, 0.87, 0.87);
+		gl.glTranslatef(MAIN_ISS_BODY_LENGTH / 2, MAIN_ISS_BODY_WIDTH / 2, MAIN_ISS_BODY_HEIGHT/2);
+		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 2,MAIN_ISS_BODY_LENGTH/4, 10);
+		gl.glTranslatef(0,MAIN_ISS_BODY_LENGTH/4,0);
+		Shapes.cylinder(drawable,MAIN_ISS_BODY_WIDTH / 4, MAIN_ISS_BODY_LENGTH/16, 10);
+		gl.glPushMatrix();
+		gl.glTranslatef(-(MAIN_ISS_BODY_WIDTH/2),0,0);
+		gl.glRotatef(90,0,0,1);
+		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 1.8,MAIN_ISS_BODY_LENGTH/8, 10);
+		gl.glPopMatrix();
+		gl.glPopMatrix();
 
 		// now call the left panel
 		gl.glPushMatrix();
