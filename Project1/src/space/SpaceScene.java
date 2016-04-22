@@ -112,6 +112,8 @@ public class SpaceScene extends JFrame
 		gl.glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		// createCube(drawable, 1, 1, 1);
 
+		setupLight(drawable);
+		
 		moon = new Moon();
 		earth = new Earth();
 		iss = new ISS();
@@ -123,6 +125,33 @@ public class SpaceScene extends JFrame
 		flyer.initializeFlyer(drawable);
 		sun.initializeSun(drawable);
 
+	}
+	
+	private void setupLight(GLAutoDrawable drawable){
+		gl = drawable.getGL();
+		glu = new GLU();
+		
+		//float light_position[] = { -5500, 2500, -10000f, 1 };
+		float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = {.8f, .8f, .8f, 1.0f};
+        float ambient[] = {.8f, .8f, .8f, 1.0f};
+        float specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position,0 );
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+		
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GL.GL_LIGHT0);
+		gl.glEnable(GL.GL_DEPTH_TEST);
 	}
 
 	@Override
