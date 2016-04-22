@@ -23,14 +23,18 @@ public class Earth {
 
 	public void createEarthSphere(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
-
 		objectList.put("EarthSphere", gl.glGenLists(1));
 		gl.glNewList(objectList.get("EarthSphere"), GL.GL_COMPILE);
+
+		float inner_color[] = {0.0f, 0.0f, 1.0f, 1.0f};
+		float outer_color[] = {0.57f, 0.89f, 0.93f, 0.3f};
 		gl.glPushMatrix();
 		gl.glEnable(GL.GL_BLEND);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
 		gl.glColor4d(0.0, 0.0, 1.0, 1.0);
 		Shapes.sphere(drawable,EARTH_RADIUS,60.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
 		gl.glColor4d(0.57, 0.89, 0.93, 0.3);
 		Shapes.sphere(drawable,EARTH_RADIUS*1.05,60.0);
 		gl.glPopMatrix();

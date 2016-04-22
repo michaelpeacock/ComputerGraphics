@@ -19,6 +19,12 @@ public class ISS {
 	private static final float MAIN_ISS_BODY_WIDTH = 30.0f;
 	private static final float MAIN_ISS_BODY_DIAMETER = 20.0f;
 	private static final float MAIN_ISS_BODY_HEIGHT = 10.0f;
+	private static final float iss_white[] = {1.0f, 1.0f, 1.0f, 1.0f};
+	private static final float iss_gray[] = {0.65f, 0.65f, 0.65f, 1.0f};
+	private static final float iss_darkGray[] = {0.5f, 0.5f, 0.5f, 1.0f};
+	private static final float iss_lightGray[] = {0.87f, 0.97f, 0.87f, 1.0f};
+	private static final float iss_black[] = {0.0f, 0.0f, 0.0f, 1.0f};
+
 	
 	private float current_x_rot;
 	private float current_x_count;
@@ -40,6 +46,7 @@ public class ISS {
 		objectList.put(whichPanel, gl.glGenLists(1));
 		gl.glNewList(objectList.get(whichPanel), GL.GL_COMPILE);
 
+
 		gl.glPushMatrix();
 
 		// top half of panel - 4 solar arrays
@@ -48,9 +55,11 @@ public class ISS {
 		for (int i = 0; i <4; i++) {
 			gl.glPushMatrix();
 			gl.glColor3d(1.0, 1.0, 1.0); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_white, 0);
 			gl.glTranslatef(-4.0f,0,0);
 			Shapes.cube(drawable,(MAIN_PANEL_WIDTH + 4.0f), (MAIN_PANEL_LENGTH + 4.0f), 1.0f  );
 			gl.glColor3d(0.65, 0.65, 0.65); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
 			gl.glTranslatef(2.0f, 2.0f, MAIN_PANEL_DEPTH);
 			Shapes.cube(drawable,MAIN_PANEL_WIDTH, MAIN_PANEL_LENGTH, MAIN_PANEL_DEPTH );
 			gl.glTranslated(0,  0, -(1 + 2* MAIN_PANEL_DEPTH));
@@ -63,6 +72,7 @@ public class ISS {
 		// center strut
 		gl.glPushMatrix();
 		gl.glColor3d(0.50, 0.50, 0.50);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_darkGray, 0);
 		switch (whichPanel) {
 		case "LEFT_PANEL":
 			gl.glTranslated(MAIN_PANEL_WIDTH, -30.0, 5.0);
@@ -74,21 +84,27 @@ public class ISS {
 		Shapes.cube(drawable, 30.0f, 30.0f, 10.0f);
 		gl.glTranslated(30.0, 0.0, 0.0);
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_black, 0);
 		Shapes.cube(drawable, 2.0f, 30.0f, 10.0f);
 		gl.glTranslated(2.0, 0.0, 0.0);
 		gl.glColor3d(0.50, 0.50, 0.50);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_darkGray, 0);
 		Shapes.cube(drawable, 30.0f, 30.0f, 10.0f);
 		gl.glTranslated(30.0, 0.0, 0.0);
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_black, 0);
 		Shapes.cube(drawable, 2.0f, 30.0f, 10.0f);
 		gl.glTranslated(2.0, 0.0, 0.0);
 		gl.glColor3d(0.50, 0.50, 0.50);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_darkGray, 0);
 		Shapes.cube(drawable, 30.0f, 30.0f, 10.0f);		
 		gl.glTranslated(30.0, 0.0, 0.0);
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_black, 0);
 		Shapes.cube(drawable, 2.0f, 30.0f, 10.0f);
 		gl.glTranslated(2.0, 0.0, 0.0);
 		gl.glColor3d(0.50, 0.50, 0.50);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_darkGray, 0);
 		Shapes.cube(drawable, 30.0f, 30.0f, 10.0f);
 		gl.glPopMatrix();
 		// end center strut	
@@ -99,9 +115,11 @@ public class ISS {
 		for (int i = 0; i <4; i++) {
 			gl.glPushMatrix();
 			gl.glColor3d(1.0, 1.0, 1.0); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_white, 0);
 			gl.glTranslatef(-4.0f,0,0);
 			Shapes.cube(drawable,(MAIN_PANEL_WIDTH + 4.0f), (MAIN_PANEL_LENGTH + 4.0f), 1.0f  );
 			gl.glColor3d(0.65, 0.65, 0.65); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
 			gl.glTranslatef(2.0f, 2.0f, MAIN_PANEL_DEPTH);
 			Shapes.cube(drawable,MAIN_PANEL_WIDTH, MAIN_PANEL_LENGTH, MAIN_PANEL_DEPTH );
 			gl.glTranslated(0,  0, -(1 + 2 * MAIN_PANEL_DEPTH));
@@ -125,12 +143,14 @@ public class ISS {
 
 		gl.glPushMatrix();
 		gl.glColor3d(0.65, 0.65, 0.65);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
 		gl.glTranslatef(-MAIN_ISS_BODY_LENGTH / 2, -MAIN_ISS_BODY_WIDTH / 2, 0.0f);
 		Shapes.cube(drawable, MAIN_ISS_BODY_LENGTH, MAIN_ISS_BODY_WIDTH, MAIN_ISS_BODY_HEIGHT);
 		
 		// More of the center
 		gl.glPushMatrix();
 		gl.glColor3d(0.87, 0.87, 0.87);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_lightGray, 0);
 		gl.glTranslatef(MAIN_ISS_BODY_LENGTH / 2, MAIN_ISS_BODY_WIDTH / 2, MAIN_ISS_BODY_HEIGHT/2);
 		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 2,MAIN_ISS_BODY_LENGTH/4, 10);
 		gl.glTranslatef(0,MAIN_ISS_BODY_LENGTH/4,0);
