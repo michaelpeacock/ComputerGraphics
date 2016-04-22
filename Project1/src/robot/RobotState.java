@@ -2,7 +2,7 @@ package robot;
 
 import java.awt.event.KeyEvent;
 
-public class RobotState implements RobotState_I {
+public class RobotState implements State_I {
 
 	private double xPosition;
 	private double default_xPosition;
@@ -128,7 +128,7 @@ public class RobotState implements RobotState_I {
 	}
 
 	@Override
-	public boolean doStateUpdates() {
+	public boolean update() {
 		boolean stateWasChanged = false;
 
 		if (true == doStateReset() || true == doWalk() || true == doJump()) {
@@ -146,10 +146,17 @@ public class RobotState implements RobotState_I {
 		// these are all calculations for the robot around
 		if ((true == do_walking) || (true == left) || (true == right)) {
 
-			float speedMult = 4f;
-			float moveSpeed = 8.0f;
+			//For Macs
+//			float speedMult = 4f;
+//			float moveSpeed = 8.0f;
+//			if (do_running) {
+//				speedMult = 4f;
+//			}
+			//For Windows
+			float speedMult = 1.0f;
+			float moveSpeed = 5.0f;
 			if (do_running) {
-				speedMult = 4f;
+				speedMult = 2.5f;
 			}
 
 			double rotate = 0.0;
@@ -159,6 +166,7 @@ public class RobotState implements RobotState_I {
 			}
 			else if (true == right) {
 				rotate = this.rotation - (speedMult * 0.8);
+				do_turn = true;
 			}
 			
 			if (true == do_turn) {
@@ -193,10 +201,10 @@ public class RobotState implements RobotState_I {
 			// System.out.printf("xPosition is %f and zPosition is %f\n",
 			// xPosition, zPosition);
 			if (true == do_walking || true == do_turn) {
-				work_was_done = voltron.doRobotModelWalk(moveSpeed / speedMult, do_turn);
+				work_was_done = voltron.doRobotModelWalk(moveSpeed / speedMult, do_turn, do_jump);
 			}
 		} else {
-			work_was_done = voltron.doRobotModelWalk(0.0, do_turn);
+			work_was_done = voltron.doRobotModelWalk(0.0, do_turn, do_jump);
 		}
 		return work_was_done;
 	}
@@ -217,6 +225,7 @@ public class RobotState implements RobotState_I {
 			} else {
 				if (default_yPosition == yPosition) {
 					do_jump = false;
+					voltron.resetRobot();
 				} else {
 					yPosition -= 5;
 				}

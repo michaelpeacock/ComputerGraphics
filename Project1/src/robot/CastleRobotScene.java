@@ -26,7 +26,7 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
-import robot.RobotState_I;
+import robot.State_I;
 import voltron.Shapes;
 import voltron.objects.Castle;
 import voltron.objects.LionFactory;
@@ -67,7 +67,7 @@ public class CastleRobotScene extends JFrame
 	private LionFactory lionFactory;
 	private LionHouse lionHouse;
 	private RobotModel_I voltron;
-	private RobotState_I state;
+	private State_I state;
 
 	public CastleRobotScene() {
 		reset();
@@ -193,7 +193,7 @@ public class CastleRobotScene extends JFrame
 		gl.glPopMatrix();
 
 		// voltron
-		if (true == state.doStateUpdates()) {
+		if (true == state.update()) {
 			voltron.deleteRobot(drawable);
 			voltron.initializeRobot(drawable);
 		}

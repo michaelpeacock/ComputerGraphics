@@ -51,7 +51,7 @@ public class RobotScene extends JFrame
 	private float rot_z;
 	
 	private RobotModel_I voltron;
-	private RobotState_I state;
+	private State_I state;
 
 	public RobotScene() {
 		reset();
@@ -114,7 +114,7 @@ public class RobotScene extends JFrame
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
-		if (true == state.doStateUpdates()) {
+		if (true == state.update()) {
 			voltron.deleteRobot(drawable);
 			voltron.initializeRobot(drawable);
 		}

@@ -2,7 +2,7 @@ package robot;
 
 import java.awt.event.KeyListener;
 
-public interface RobotState_I extends KeyListener{
+public interface State_I extends KeyListener{
 
 	/**
 	 * @return the xPosition
@@ -32,6 +32,6 @@ public interface RobotState_I extends KeyListener{
 	/**
 	 * @return boolean
 	 */
-	public boolean doStateUpdates();
+	public boolean update();
 	
 }

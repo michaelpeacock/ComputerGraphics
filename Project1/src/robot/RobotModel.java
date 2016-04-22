@@ -40,7 +40,6 @@ public class RobotModel implements RobotModel_I {
 	
 	//material definitions
 	private float mat_specularWHITE[] ={255.0f,255.0f,255.0f,1.0f};
-	private float mat_ambientWHITE[] ={255.0f,255.0f,255.0f,1.0f};
 	private float mat_diffuseWHITE[] ={255.0f,255.0f,255.0f,1.0f};
 	private float mat_shininessWHITE[] ={128.0f * 0.4f};
 
@@ -812,7 +811,7 @@ public class RobotModel implements RobotModel_I {
 		}
 	}
 
-	public boolean doRobotModelWalk(double speed, boolean do_turn) {
+	public boolean doRobotModelWalk(double speed, boolean do_turn, boolean do_jump) {
 		
 		boolean performed_work = false;
 		float leg_angle = 30;
@@ -820,153 +819,179 @@ public class RobotModel implements RobotModel_I {
 		float upper_arm_angle = 10;
 		//System.out.printf("doWalk, speed is %f, display_smoothing_counter = %d\n", speed, display_smoothing_counter);
 			
-		
-		if (0.0 == speed) {
-			if ((0 != getLionObject("YELLOW" + "LOWERLEG").getxRotation()) ||
-				(0 != getLionObject("BLUE" + "LOWERLEG").getxRotation())) {
-					getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
-					getLionObject("YELLOW" + "UPPERLEG").setxRotation(0);
-					getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
-					getLionObject("BLUE" + "UPPERLEG").setxRotation(0);
-					getLionObject("GREEN" + "LOWER_ARM").setxRotation(0);
-					getLionObject("GREEN" + "UPPER_ARM").setxRotation(0);
-					getLionObject("RED" + "LOWER_ARM").setxRotation(0);
-					getLionObject("RED" + "UPPER_ARM").setxRotation(0);
+		if (false == do_jump)  //Don't move arms and legs when jumping
+		{
+			if (0.0 == speed) {
+				if ((0 != getLionObject("YELLOW" + "LOWERLEG").getxRotation()) ||
+						(0 != getLionObject("BLUE" + "LOWERLEG").getxRotation())) {
+					resetRobot();	
 					performed_work = true;
-			}
-		}
-		else {
-			if (true == do_turn) {
-				leg_angle = 5;
-				low_arm_angle = 5;
-				upper_arm_angle = 0;
-				speed = 10;
-			}
-			if (speed <= display_smoothing_counter) {
-				//Lower Left Leg
-				if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() >= 0) {
-					bendLowerLeftLeg = true;
-				} else {
-					bendLowerLeftLeg = false;
 				}
-
-				if (getLionObject("YELLOW" + "LOWERLEG").getxRotation() >= leg_angle) {
-					lowerLeftLegForward = false;
-				}
-
-				if (lowerLeftLegForward && bendLowerLeftLeg) {
-					getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() + 5);
-					//leftKneeValue -= 0.5;
-				} else if (!(lowerLeftLegForward) && bendLowerLeftLeg) {
-					getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() - 5);
-					//leftKneeValue += 0.5;
-				} else if (!(lowerLeftLegForward) && !(bendLowerLeftLeg)) {
-					getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
-					//lowerLeftLegRotate = 0;
-					//leftKneeValue = 0;
-					lowerLeftLegForward = true;
-				} else {
-					lowerLeftLegForward = true;
-				}
-
-				//Upper Left Leg
-				if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() >= leg_angle) {
-					upperLeftLegForward = false;
-				}
-				if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() <= -leg_angle) {
-					upperLeftLegForward = true;
-				}
-				if (upperLeftLegForward) {
-					getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() + 5);
-				} else {
-					getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() - 5);
-				}
-
-				//Lower Right Leg
-				if (getLionObject("BLUE" + "UPPERLEG").getxRotation() >= 0) {
-					bendLowerRightLeg = true;
-				} else {
-					bendLowerRightLeg = false;
-				}
-
-				if (getLionObject("BLUE" + "LOWERLEG").getxRotation() >= leg_angle) {
-					lowerRightLegForward = false;
-				}
-
-				if (lowerRightLegForward && bendLowerRightLeg) {
-					getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() + 5);
-					//rightKneeValue -= 0.5;
-				} else if (!(lowerRightLegForward) && bendLowerRightLeg) {
-					getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() - 5);
-					//rightKneeValue += 0.5;
-				} else if (!(lowerRightLegForward) && !(bendLowerRightLeg)) {
-					getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
-					//rightKneeValue = 0;
-					lowerRightLegForward = true;
-				} else {
-					lowerRightLegForward = true;
-				}
-
-				//Upper Right Leg
-				if (getLionObject("BLUE" + "UPPERLEG").getxRotation() >= leg_angle) {
-					upperRightLegForward = false;
-				}
-				if (getLionObject("BLUE" + "UPPERLEG").getxRotation() <= -leg_angle) {
-					upperRightLegForward = true;
-				}
-				if (upperRightLegForward) {
-					getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() + 5);
-				} else {
-					getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() - 5);
-				}
-
-//				if (true == prev_stop) {
-//					getLionObject("GREEN" + "LOWER_ARM").setxRotation(-low_arm_angle);
-//					getLionObject("GREEN" + "UPPER_ARM").setxRotation(-low_arm_angle);
-//					prev_stop = false;
-//				}
-				
-				//Left Arm
-				if (getLionObject("GREEN" + "LOWER_ARM").getxRotation() <= -low_arm_angle) {
-					leftArmForward = false;
-				}
-				if (getLionObject("GREEN" + "UPPER_ARM").getxRotation() >= upper_arm_angle) {
-					leftArmForward = true;
-				}
-				if (leftArmForward) {
-					getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
-					getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
-				} else {
-					if (0 >= getLionObject("GREEN" + "LOWER_ARM").getxRotation()) {
-						getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
-					}
-					getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
-				}
-
-				//Right Arm
-				if (getLionObject("RED" + "LOWER_ARM").getxRotation() >= low_arm_angle) {
-					rightArmForward = false;
-				}
-				if (getLionObject("RED" + "UPPER_ARM").getxRotation() <= -upper_arm_angle) {
-					rightArmForward = true;
-				}
-				if (rightArmForward) {
-					getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
-					getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
-					
-				} else {
-					if (0 <= getLionObject("RED" + "LOWER_ARM").getxRotation()) {
-						getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
-					}
-					getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
-				}
-				performed_work = true;
-				display_smoothing_counter = 0;
 			}
 			else {
-				display_smoothing_counter++;
+				if (true == do_turn) {
+					leg_angle = 5;
+					low_arm_angle = 5;
+					upper_arm_angle = 0;
+					//speed = 10;  //For Macs
+					speed = 50;  //For Windows
+				}
+				if (speed <= display_smoothing_counter) {
+					//Lower Left Leg
+					if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() >= 0) {
+						bendLowerLeftLeg = true;
+					} else {
+						bendLowerLeftLeg = false;
+					}
+
+					if (getLionObject("YELLOW" + "LOWERLEG").getxRotation() >= leg_angle) {
+						lowerLeftLegForward = false;
+					}
+
+					if (lowerLeftLegForward && bendLowerLeftLeg) {
+						getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() + 5);
+					} 
+					else if (!(lowerLeftLegForward) && bendLowerLeftLeg) {
+						getLionObject("YELLOW" + "LOWERLEG").setxRotation(getLionObject("YELLOW" + "LOWERLEG").getxRotation() - 5);
+					} 
+					else if (!(lowerLeftLegForward) && !(bendLowerLeftLeg)) {
+						getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
+						lowerLeftLegForward = true;
+					} 
+					else {
+						lowerLeftLegForward = true;
+					}
+
+					//Upper Left Leg
+					if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() >= leg_angle) {
+						upperLeftLegForward = false;
+					}
+					if (getLionObject("YELLOW" + "UPPERLEG").getxRotation() <= -leg_angle) {
+						upperLeftLegForward = true;
+					}
+					if (upperLeftLegForward) {
+						getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() + 5);
+					} else {
+						getLionObject("YELLOW" + "UPPERLEG").setxRotation(getLionObject("YELLOW" + "UPPERLEG").getxRotation() - 5);
+					}
+
+					//Lower Right Leg
+					if (getLionObject("BLUE" + "UPPERLEG").getxRotation() >= 0) {
+						bendLowerRightLeg = true;
+					} else {
+						bendLowerRightLeg = false;
+					}
+
+					if (getLionObject("BLUE" + "LOWERLEG").getxRotation() >= leg_angle) {
+						lowerRightLegForward = false;
+					}
+
+					if (lowerRightLegForward && bendLowerRightLeg) {
+						getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() + 5);
+						//rightKneeValue -= 0.5;
+					} else if (!(lowerRightLegForward) && bendLowerRightLeg) {
+						getLionObject("BLUE" + "LOWERLEG").setxRotation(getLionObject("BLUE" + "LOWERLEG").getxRotation() - 5);
+						//rightKneeValue += 0.5;
+					} else if (!(lowerRightLegForward) && !(bendLowerRightLeg)) {
+						getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
+						//rightKneeValue = 0;
+						lowerRightLegForward = true;
+					} else {
+						lowerRightLegForward = true;
+					}
+
+					//Upper Right Leg
+					if (getLionObject("BLUE" + "UPPERLEG").getxRotation() >= leg_angle) {
+						upperRightLegForward = false;
+					}
+					if (getLionObject("BLUE" + "UPPERLEG").getxRotation() <= -leg_angle) {
+						upperRightLegForward = true;
+					}
+					if (upperRightLegForward) {
+						getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() + 5);
+					} else {
+						getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() - 5);
+					}
+
+					//Left Arm		
+					if (false == upperRightLegForward) {
+						leftArmForward = true;
+					}
+					else {
+						leftArmForward = false;
+					}
+					
+					if (leftArmForward) {
+						getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+						getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
+					} else {
+						if (0 >= getLionObject("GREEN" + "LOWER_ARM").getxRotation()) {
+							getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+						}
+						getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
+					}
+	
+					//Right Arm
+					if (false == upperLeftLegForward) {
+						rightArmForward = true;
+					}
+					else {
+						rightArmForward = false;
+					}
+					
+					if (rightArmForward) {
+						getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+						getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+
+					} else {
+						if (0 <= getLionObject("RED" + "LOWER_ARM").getxRotation()) {
+							getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+						}
+						getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+					}
+					
+					performed_work = true;
+					display_smoothing_counter = 0;
+				}
+				else {
+					display_smoothing_counter++;
+				}
 			}
 		}
+		else
+		{
+			float lower_leg_angle = 10;
+			//Set up jumping legs and arms
+			if (true == upperLeftLegForward) {
+				//Left Leg
+				getLionObject("YELLOW" + "UPPERLEG").setxRotation(-leg_angle);
+				getLionObject("YELLOW" + "LOWERLEG").setxRotation(lower_leg_angle);
+				//Right Leg
+				getLionObject("BLUE" + "UPPERLEG").setxRotation(leg_angle);
+				getLionObject("BLUE" + "LOWERLEG").setxRotation(lower_leg_angle);
+				//Left Arm
+				getLionObject("GREEN" + "UPPER_ARM").setxRotation(low_arm_angle);
+				getLionObject("GREEN" + "LOWER_ARM").setxRotation(-low_arm_angle);
+				//Right Arm
+				getLionObject("RED" + "UPPER_ARM").setxRotation(low_arm_angle);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(low_arm_angle);
+			}
+			else {
+				//Left Leg
+				getLionObject("YELLOW" + "UPPERLEG").setxRotation(leg_angle);
+				getLionObject("YELLOW" + "LOWERLEG").setxRotation(lower_leg_angle);
+				//Right Leg
+				getLionObject("BLUE" + "UPPERLEG").setxRotation(-leg_angle);
+				getLionObject("BLUE" + "LOWERLEG").setxRotation(lower_leg_angle);
+				//Left Arm
+				getLionObject("GREEN" + "UPPER_ARM").setxRotation(-low_arm_angle);
+				getLionObject("GREEN" + "LOWER_ARM").setxRotation(-low_arm_angle);
+				//Right Arm
+				getLionObject("RED" + "UPPER_ARM").setxRotation(-low_arm_angle);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(low_arm_angle);
+			}
+		}
+		
         return performed_work;
 	}
 
@@ -980,6 +1005,31 @@ public class RobotModel implements RobotModel_I {
 
 	@Override
 	public boolean doRobotModelJump() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void resetRobot() {
+		// TODO Auto-generated method stub
+		getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
+		getLionObject("YELLOW" + "UPPERLEG").setxRotation(0);
+		getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
+		getLionObject("BLUE" + "UPPERLEG").setxRotation(0);
+		getLionObject("GREEN" + "LOWER_ARM").setxRotation(0);
+		getLionObject("GREEN" + "UPPER_ARM").setxRotation(0);
+		getLionObject("RED" + "LOWER_ARM").setxRotation(0);
+		getLionObject("RED" + "UPPER_ARM").setxRotation(0);
+	}
+
+	@Override
+	public boolean doRobotModelPunch(String whichArm) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean doRobotModelKick(String whichLeg) {
 		// TODO Auto-generated method stub
 		return false;
 	}
