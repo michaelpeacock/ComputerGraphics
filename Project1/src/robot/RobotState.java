@@ -146,10 +146,10 @@ public class RobotState implements RobotState_I {
 		// these are all calculations for the robot around
 		if ((true == do_walking) || (true == left) || (true == right)) {
 
-			float speedMult = 0.5f;
+			float speedMult = 4f;
 			float moveSpeed = 8.0f;
 			if (do_running) {
-				speedMult = 1.0f;
+				speedMult = 4f;
 			}
 
 			double rotate = 0.0;
@@ -270,16 +270,16 @@ public class RobotState implements RobotState_I {
 		case KeyEvent.VK_DOWN:
 			back = true;
 			do_walking = true;
-			System.out.printf("keyPressed, VK_DOWN\n");
+			//System.out.printf("keyPressed, VK_DOWN\n");
 			break;
 		case KeyEvent.VK_UP:
 			forw = true;
 			do_walking = true;
-			System.out.printf("keyPressed, VK_UP\n");
+			//System.out.printf("keyPressed, VK_UP\n");
 			break;
 		case KeyEvent.VK_SHIFT:
 			do_running = true;
-			System.out.printf("keyPressed, VK_SHIFT\n");
+			//System.out.printf("keyPressed, VK_SHIFT\n");
 			break;
 		case KeyEvent.VK_J:
 			do_jump = true;
@@ -307,17 +307,17 @@ public class RobotState implements RobotState_I {
 			back = false;
 			do_walking = false;
 			do_running = false;
-			System.out.printf("keyReleased, VK_DOWN\n");
+			//System.out.printf("keyReleased, VK_DOWN\n");
 			break;
 		case KeyEvent.VK_UP:
 			forw = false;
 			do_walking = false;
 			do_running = false;
-			System.out.printf("keyReleased, VK_UP\n");
+			//System.out.printf("keyReleased, VK_UP\n");
 			break;
 		case KeyEvent.VK_SHIFT:
 			do_running = false;
-			System.out.printf("keyPressed, VK_SHIFT\n");
+			//System.out.printf("keyPressed, VK_SHIFT\n");
 			break;
 		}
 	}

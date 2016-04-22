@@ -148,9 +148,12 @@ public class CastleRobotScene extends JFrame
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		gl.glPushMatrix();
-		gl.glRotatef(rot_x, 1, 0, 0);
-		gl.glRotatef(rot_y, 0, 1, 0);
-		gl.glRotatef(rot_z, 0, 0, 1);
+		if (0 == chaseCam ||
+			3 == chaseCam) {	
+			gl.glRotatef(rot_x, 1, 0, 0);
+			gl.glRotatef(rot_y, 0, 1, 0);
+			gl.glRotatef(rot_z, 0, 0, 1);
+		}
 
 		gl.glPushMatrix();
 		gl.glTranslated(-5000.0, -12.0, -5000.0);
@@ -334,65 +337,69 @@ public class CastleRobotScene extends JFrame
 	}
 
 	private void setCamera(GL gl, GLU glu) {
-		// Change to projection matrix.
+//		// Change to projection matrix.
+//		gl.glMatrixMode(GL.GL_PROJECTION);
+//		gl.glLoadIdentity();
+//
+//		// Perspective.
+//		float widthHeightRatio = (float) getWidth() / (float) getHeight();
+//		glu.gluPerspective(45, widthHeightRatio, 1, 15000);
+//
+//		gl.glRotatef(0, 0, 1, 0);
+//		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+//
+//		gl.glRotatef(0, 0, 1, 0); // Panning
+		
+//		// Change to projection matrix.
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 
 		// Perspective.
 		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		glu.gluPerspective(45, widthHeightRatio, 1, 15000);
+		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
 
-		gl.glRotatef(0, 0, 1, 0);
-		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+		if (0 == chaseCam) {
+			//gl.glRotatef(0, 0, 1, 0);
+			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
 
-		gl.glRotatef(0, 0, 1, 0); // Panning
-		
-//		// Change to projection matrix.
-//		gl.glMatrixMode(GL.GL_PROJECTION);
-//		gl.glLoadIdentity();
-
-		// Perspective.
-//		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-//		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
-//
-//		if (0 == chaseCam) {
-//			//gl.glRotatef(0, 0, 1, 0);
-//			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
-//
-//			//gl.glRotatef(0, 0, 1, 0); // Panning
-//		}
-//		else if (1 == chaseCam) {
-//			double rotate = state.getRotation() + 270;
-//			double pos_rotate = rotate - 180;
-//	
-//			double position_x = state.getxPosition() + (500 * Math.cos(Math.toRadians(pos_rotate)));
-//			double position_z = state.getzPosition() - (500 * Math.sin(Math.toRadians(pos_rotate)));
-//			double position_y = state.getyPosition() + 300;
-//			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
-//			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
-//			double look_y = state.getyPosition();
-//			
-//			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-//		}
-//		else if (2 == chaseCam) {
-//			double rotate = state.getRotation() + 270;
-//			double pos_rotate = rotate;
-//			//double pos_rotate = rotate - 180;
-//	
-//			double position_x = state.getxPosition() + (75 * Math.cos(Math.toRadians(pos_rotate)));
-//			double position_z = state.getzPosition() - (75 * Math.sin(Math.toRadians(pos_rotate)));
-//			double position_y = state.getyPosition() + 130;
-//			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
-//			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
-//			double look_y = state.getyPosition();
-//			
-//			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-//		}
-//		else if (3 == chaseCam) {
-//			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
-//		}
-//		
-		
+			//gl.glRotatef(0, 0, 1, 0); // Panning
+		}
+		else if (1 == chaseCam) {
+			double rotate = state.getRotation() + 270;
+			double pos_rotate = rotate - 180;
+	
+			double position_x = state.getxPosition() + (500 * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition() - (500 * Math.sin(Math.toRadians(pos_rotate)));
+			double position_y = state.getyPosition() + 300;
+			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+			double look_y = state.getyPosition();
+			
+//			System.out.printf("object x is %f, y is %f, z is %f\n", state.getxPosition(), state.getyPosition(), state.getzPosition());
+//			System.out.printf("cam position x is %f, y is %f, z is %f\n", position_x, position_y, position_z);
+//			System.out.printf("Cam look x is %f, y is %f, z is %f\n", look_x, look_y, look_z);
+//			System.out.printf("rotate is %f, pos_rotate is %f\n", rotate, pos_rotate);
+//			System.out.printf("\n");
+			
+			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
+		}
+		else if (2 == chaseCam) {
+			double rotate = state.getRotation() + 270;
+			double pos_rotate = rotate;
+    		//double pos_rotate = rotate - 180;
+	
+			double position_x = state.getxPosition() + (80 * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition() - (80 * Math.sin(Math.toRadians(pos_rotate)));
+			double position_y = state.getyPosition() + 130;
+			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+			double look_y = state.getyPosition();
+			
+			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
+		}
+		else if (3 == chaseCam) {
+			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
+		}
 
 	}
 
