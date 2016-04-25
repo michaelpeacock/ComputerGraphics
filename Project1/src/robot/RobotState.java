@@ -126,14 +126,16 @@ public class RobotState implements State_I {
 			stateWasChanged = true;
 		}
 		
-		if (false == do_flying ) {
+		if (false == currently_flying ) {
 			if (true == doWalk() || 
 					true == doJump() ||
 					true == doBlock()) {
 				stateWasChanged = true;
 			}
 		}
-		else {
+		
+		if (true == do_flying || 
+				true == currently_flying) {
 			if (true == doFly()) {
 				stateWasChanged = true;
 			}
@@ -148,18 +150,18 @@ public class RobotState implements State_I {
 		boolean do_turn = false;
 		
 		//For Macs
-		float speedMult = 4f;
-		float moveSpeed = 8.0f;
-		if (do_running) {
-			speedMult = 4f;
-		}
+//		float speedMult = 4f;
+//		float moveSpeed = 8.0f;
+//		if (do_running) {
+//			speedMult = 4f;
+//		}
 		//For Windows
-		//			float speedMult = 1.0f;
-		//			float moveSpeed = 5.0f;
-		//			if (do_running) {
-		//				speedMult = 2.5f;
-		//			}
-		
+		float speedMult = 1.0f;
+		float moveSpeed = 5.0f;
+		if (do_running) {
+			speedMult = 2.5f;
+		}
+		//System.out.printf("doFly: do_flying is %b, currently_flying is %b, default_yPosition is %f, yPosition is %f\n", do_flying, currently_flying, default_yPosition, yPosition);
 		if (false == do_flying) {
 			if (true == currently_flying) {
 				if (default_yPosition >= yPosition) {
@@ -266,17 +268,17 @@ public class RobotState implements State_I {
 		if ((true == do_walking) || (true == left) || (true == right)) {
 
 			//For Macs
-			float speedMult = 4f;
-			float moveSpeed = 8.0f;
-			if (do_running) {
-				speedMult = 4f;
-			}
-			//For Windows
-//			float speedMult = 1.0f;
-//			float moveSpeed = 5.0f;
+//			float speedMult = 4f;
+//			float moveSpeed = 8.0f;
 //			if (do_running) {
-//				speedMult = 2.5f;
+//				speedMult = 4f;
 //			}
+			//For Windows
+			float speedMult = 1.0f;
+			float moveSpeed = 5.0f;
+			if (do_running) {
+				speedMult = 2.5f;
+			}
 
 			double rotate = 0.0;
 			if (true == left) {
@@ -403,9 +405,7 @@ public class RobotState implements State_I {
 		this.fly_down = false;
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+	public void handleKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			left = true;
@@ -459,8 +459,7 @@ public class RobotState implements State_I {
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+	public void handleKeyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			left = false;
@@ -498,11 +497,6 @@ public class RobotState implements State_I {
 		}
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public double getxRotation() {
@@ -544,6 +538,36 @@ public class RobotState implements State_I {
 	 */
 	public void setZRotation(double rotation) {
 		this.z_rotation = rotation;
+	}
+
+	@Override
+	public double getCameraXOffset(boolean first_person) {
+		// TODO Auto-generated method stub
+		double ret_value = 500;
+		if (true == first_person) {
+			ret_value = 80;
+		}
+		return ret_value;
+	}
+
+	@Override
+	public double getCameraYOffset(boolean first_person) {
+		// TODO Auto-generated method stub
+		double ret_value = 300;
+		if (true == first_person) {
+			ret_value = 130;
+		}
+		return ret_value;
+	}
+
+	@Override
+	public double getCameraZOffset(boolean first_person) {
+		// TODO Auto-generated method stub
+		double ret_value = 500;
+		if (true == first_person) {
+			ret_value = 80;
+		}
+		return ret_value;
 	}
 
 }

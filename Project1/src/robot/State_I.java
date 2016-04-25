@@ -1,8 +1,8 @@
 package robot;
 
-import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
-public interface State_I extends KeyListener{
+public interface State_I {
 
 	/**
 	 * @return the xPosition
@@ -38,7 +38,15 @@ public interface State_I extends KeyListener{
 	 * @return the scale
 	 */
 	double getScale();
-
+	
+	
+	double getCameraXOffset(boolean first_person);
+	double getCameraYOffset(boolean first_person);
+	double getCameraZOffset(boolean first_person);
+	
+	void handleKeyPressed(KeyEvent e);
+	void handleKeyReleased(KeyEvent e);
+	
 	/**
 	 * @return boolean
 	 */

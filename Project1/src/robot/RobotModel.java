@@ -836,8 +836,8 @@ public class RobotModel implements RobotModel_I {
 					leg_angle = 5;
 					low_arm_angle = 5;
 					upper_arm_angle = 0;
-					speed = 10;  //For Macs
-					//speed = 50;  //For Windows
+					//speed = 10;  //For Macs
+					speed = 50;  //For Windows
 				}
 				if (speed <= display_smoothing_counter) {
 					//Lower Left Leg
@@ -1107,7 +1107,16 @@ public class RobotModel implements RobotModel_I {
 	@Override
 	public boolean doRobotModelFly(double speed, boolean backward) {
 		// TODO Auto-generated method stub
-		return false;
+		boolean work_done = false;
+		if (false == backward){
+			getLionObject("GREEN" + "UPPER_ARM").setzRotation(180);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(180);
+		}
+		else {
+			getLionObject("GREEN" + "UPPER_ARM").setzRotation(0);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+		}
+		return work_done;
 	}
 
 }
