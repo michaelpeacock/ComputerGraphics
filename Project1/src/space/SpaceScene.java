@@ -131,11 +131,11 @@ public class SpaceScene extends JFrame
 		gl = drawable.getGL();
 		glu = new GLU();
 		
-		//float light_position[] = { -5500, 2500, -10000f, 1 };
-		float light_position[] = { -100, 1000, -10000, 1 };
+		float light_position[] = { -1, 1, -1, 0 };  // directional light source
+		//float light_position[] = { -100, 1000, -10000, 1 };
 		float diffuse[] = {.8f, .8f, .8f, 1.0f};
         float ambient[] = {.8f, .8f, .8f, 1.0f};
-        float specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        float specular[] = {.8f, .8f, .8f, 1.0f};
         
         //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
         //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
