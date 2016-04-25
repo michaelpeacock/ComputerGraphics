@@ -205,7 +205,15 @@ public class ISS {
 		gl.glTranslatef((MINI_PANEL_WIDTH * 4 +60) , 0.0f, 0.0f);
 		gl.glCallList(objectList.get("RIGHT_MINI_PANEL"));
 		gl.glPopMatrix();
-
+		
+		// opposite side cylinder
+		gl.glPushMatrix();
+		gl.glColor3d(0.8, 0.8, 0.8);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_lightGray, 0);
+		gl.glTranslatef(MAIN_ISS_BODY_LENGTH / 2 + 60, MAIN_ISS_BODY_WIDTH / 2, MAIN_ISS_BODY_HEIGHT/2);
+		gl.glRotatef(90,1,0,0);
+		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 2,MAIN_ISS_BODY_LENGTH/4, 10);
+		gl.glPopMatrix();
 
 		// now call the left panel
 		gl.glPushMatrix();
