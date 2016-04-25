@@ -176,7 +176,7 @@ public class RobotScene extends JFrame
 			rot_z -= 10.0f;
 			break;
 			
-		case KeyEvent.VK_F: 
+		case KeyEvent.VK_C: 
 			chaseCam++; 
 			if(chaseCam > 3) { 
 				chaseCam = 0;

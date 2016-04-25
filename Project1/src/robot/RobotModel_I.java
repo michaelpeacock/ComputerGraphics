@@ -9,6 +9,8 @@ public interface RobotModel_I {
 	public void resetRobot();
 	public boolean doRobotModelWalk(double speed, boolean do_turn, boolean do_jump);
 	public boolean doRobotModelJump();
+	public boolean doRobotModelBlock(boolean doBlock, boolean currentlyBlocking);
 	public boolean doRobotModelPunch(String whichArm);
 	public boolean doRobotModelKick(String whichLeg);
+	public boolean doRobotModelFly(double speed, boolean backward);
 }

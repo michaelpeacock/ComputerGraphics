@@ -38,6 +38,8 @@ public class RobotModel implements RobotModel_I {
 	private boolean lowerRightLegForward;
 	private int display_smoothing_counter;
 	
+	private boolean currentlyBlocking;
+
 	//material definitions
 	private float mat_specularWHITE[] ={255.0f,255.0f,255.0f,1.0f};
 	private float mat_diffuseWHITE[] ={255.0f,255.0f,255.0f,1.0f};
@@ -79,8 +81,9 @@ public class RobotModel implements RobotModel_I {
 		this.bendLowerLeftLeg = true;
 		this.bendLowerRightLeg = false;
 		
-		this.display_smoothing_counter =0;
+		this.display_smoothing_counter = 0;
 		
+		this.currentlyBlocking = false;
 	}
 	
 	/* create an instance of each base component */
@@ -833,8 +836,8 @@ public class RobotModel implements RobotModel_I {
 					leg_angle = 5;
 					low_arm_angle = 5;
 					upper_arm_angle = 0;
-					//speed = 10;  //For Macs
-					speed = 50;  //For Windows
+					speed = 10;  //For Macs
+					//speed = 50;  //For Windows
 				}
 				if (speed <= display_smoothing_counter) {
 					//Lower Left Leg
@@ -913,41 +916,43 @@ public class RobotModel implements RobotModel_I {
 						getLionObject("BLUE" + "UPPERLEG").setxRotation(getLionObject("BLUE" + "UPPERLEG").getxRotation() - 5);
 					}
 
-					//Left Arm		
-					if (false == upperRightLegForward) {
-						leftArmForward = true;
-					}
-					else {
-						leftArmForward = false;
-					}
-					
-					if (leftArmForward) {
-						getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
-						getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
-					} else {
-						if (0 >= getLionObject("GREEN" + "LOWER_ARM").getxRotation()) {
-							getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+					if (false == currentlyBlocking) {
+						//Left Arm		
+						if (false == upperRightLegForward) {
+							leftArmForward = true;
 						}
-						getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
-					}
-	
-					//Right Arm
-					if (false == upperLeftLegForward) {
-						rightArmForward = true;
-					}
-					else {
-						rightArmForward = false;
-					}
-					
-					if (rightArmForward) {
-						getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
-						getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+						else {
+							leftArmForward = false;
+						}
 
-					} else {
-						if (0 <= getLionObject("RED" + "LOWER_ARM").getxRotation()) {
-							getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+						if (leftArmForward) {
+							getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+							getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
+						} else {
+							if (0 >= getLionObject("GREEN" + "LOWER_ARM").getxRotation()) {
+								getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+							}
+							getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
 						}
-						getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+
+						//Right Arm
+						if (false == upperLeftLegForward) {
+							rightArmForward = true;
+						}
+						else {
+							rightArmForward = false;
+						}
+
+						if (rightArmForward) {
+							getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+							getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+
+						} else {
+							if (0 <= getLionObject("RED" + "LOWER_ARM").getxRotation()) {
+								getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+							}
+							getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+						}
 					}
 					
 					performed_work = true;
@@ -961,33 +966,24 @@ public class RobotModel implements RobotModel_I {
 		else
 		{
 			float lower_leg_angle = 10;
+			int multiplier = 1;
 			//Set up jumping legs and arms
 			if (true == upperLeftLegForward) {
-				//Left Leg
-				getLionObject("YELLOW" + "UPPERLEG").setxRotation(-leg_angle);
-				getLionObject("YELLOW" + "LOWERLEG").setxRotation(lower_leg_angle);
-				//Right Leg
-				getLionObject("BLUE" + "UPPERLEG").setxRotation(leg_angle);
-				getLionObject("BLUE" + "LOWERLEG").setxRotation(lower_leg_angle);
-				//Left Arm
-				getLionObject("GREEN" + "UPPER_ARM").setxRotation(low_arm_angle);
-				getLionObject("GREEN" + "LOWER_ARM").setxRotation(-low_arm_angle);
-				//Right Arm
-				getLionObject("RED" + "UPPER_ARM").setxRotation(low_arm_angle);
-				getLionObject("RED" + "LOWER_ARM").setxRotation(low_arm_angle);
+				multiplier = -1;
 			}
-			else {
-				//Left Leg
-				getLionObject("YELLOW" + "UPPERLEG").setxRotation(leg_angle);
-				getLionObject("YELLOW" + "LOWERLEG").setxRotation(lower_leg_angle);
-				//Right Leg
-				getLionObject("BLUE" + "UPPERLEG").setxRotation(-leg_angle);
-				getLionObject("BLUE" + "LOWERLEG").setxRotation(lower_leg_angle);
+			//Left Leg
+			getLionObject("YELLOW" + "UPPERLEG").setxRotation(-leg_angle * multiplier);
+			getLionObject("YELLOW" + "LOWERLEG").setxRotation(lower_leg_angle);
+			//Right Leg
+			getLionObject("BLUE" + "UPPERLEG").setxRotation(leg_angle * multiplier);
+			getLionObject("BLUE" + "LOWERLEG").setxRotation(lower_leg_angle);
+			
+			if (false == currentlyBlocking) {
 				//Left Arm
-				getLionObject("GREEN" + "UPPER_ARM").setxRotation(-low_arm_angle);
+				getLionObject("GREEN" + "UPPER_ARM").setxRotation(low_arm_angle * multiplier);
 				getLionObject("GREEN" + "LOWER_ARM").setxRotation(-low_arm_angle);
 				//Right Arm
-				getLionObject("RED" + "UPPER_ARM").setxRotation(-low_arm_angle);
+				getLionObject("RED" + "UPPER_ARM").setxRotation(low_arm_angle * multiplier);
 				getLionObject("RED" + "LOWER_ARM").setxRotation(low_arm_angle);
 			}
 		}
@@ -1013,13 +1009,37 @@ public class RobotModel implements RobotModel_I {
 	public void resetRobot() {
 		// TODO Auto-generated method stub
 		getLionObject("YELLOW" + "LOWERLEG").setxRotation(0);
+		getLionObject("YELLOW" + "LOWERLEG").setyRotation(0);
+		getLionObject("YELLOW" + "LOWERLEG").setzRotation(0);
+		
 		getLionObject("YELLOW" + "UPPERLEG").setxRotation(0);
+		getLionObject("YELLOW" + "UPPERLEG").setyRotation(0);
+		getLionObject("YELLOW" + "UPPERLEG").setzRotation(0);
+		
 		getLionObject("BLUE" + "LOWERLEG").setxRotation(0);
+		getLionObject("BLUE" + "LOWERLEG").setyRotation(0);
+		getLionObject("BLUE" + "LOWERLEG").setzRotation(0);
+		
 		getLionObject("BLUE" + "UPPERLEG").setxRotation(0);
+		getLionObject("BLUE" + "UPPERLEG").setyRotation(0);
+		getLionObject("BLUE" + "UPPERLEG").setzRotation(0);
+		
 		getLionObject("GREEN" + "LOWER_ARM").setxRotation(0);
+		getLionObject("GREEN" + "LOWER_ARM").setyRotation(0);
+		getLionObject("GREEN" + "LOWER_ARM").setzRotation(0);
+		
 		getLionObject("GREEN" + "UPPER_ARM").setxRotation(0);
+		getLionObject("GREEN" + "UPPER_ARM").setyRotation(0);
+		getLionObject("GREEN" + "UPPER_ARM").setzRotation(0);
+		
 		getLionObject("RED" + "LOWER_ARM").setxRotation(0);
+		getLionObject("RED" + "LOWER_ARM").setyRotation(0);
+		getLionObject("RED" + "LOWER_ARM").setzRotation(0);
+		
 		getLionObject("RED" + "UPPER_ARM").setxRotation(0);
+		getLionObject("RED" + "UPPER_ARM").setyRotation(0);
+		getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+		
 	}
 
 	@Override
@@ -1030,6 +1050,62 @@ public class RobotModel implements RobotModel_I {
 
 	@Override
 	public boolean doRobotModelKick(String whichLeg) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean doRobotModelBlock(boolean doBlock, boolean currentlyBlocking) {
+		double upperArmAngle = 45;
+		double currentArmAngle = getLionObject("RED" + "UPPER_ARM").getxRotation();
+		boolean work_done = false;	
+		if (false == this.currentlyBlocking && true == currentlyBlocking) {
+			resetRobot();
+		}
+		this.currentlyBlocking = currentlyBlocking;
+		
+		//System.out.printf("doRobotModelBlock, doBlock is %b, currentlyBlocking is %b\n", doBlock, currentlyBlocking);
+		if (true == doBlock) {
+			work_done = true;
+			if (upperArmAngle > currentArmAngle) {
+				getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
+				getLionObject("GREEN" + "UPPER_ARM").setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() - 5);
+				getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+				getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() - 5);
+				
+				getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+				getLionObject("GREEN" + "LOWER_ARM").setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() - 5);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+				getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() - 5);
+				work_done = true;
+			}
+		}
+		else if (true == currentlyBlocking) {
+			System.out.printf("doRobotModelBlock, current Arm Angle is %f\n", currentArmAngle);
+			if (0 < currentArmAngle) {
+				getLionObject("GREEN" + "UPPER_ARM").setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "UPPER_ARM").setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() + 5);
+				getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() + 5);
+				
+				getLionObject("GREEN" + "LOWER_ARM").setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "LOWER_ARM").setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() + 5);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() + 5);
+				
+				work_done = true;
+			}
+			else
+			{
+				work_done = false;
+			}
+		}
+		
+		return work_done;
+	}
+
+	@Override
+	public boolean doRobotModelFly(double speed, boolean backward) {
 		// TODO Auto-generated method stub
 		return false;
 	}

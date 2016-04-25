@@ -200,7 +200,9 @@ public class CastleRobotScene extends JFrame
 
 		gl.glPushMatrix();
 		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
-		gl.glRotated(state.getRotation(), 0, 1, 0);
+		gl.glRotated(state.getxRotation(), 1, 0, 0);
+		gl.glRotated(state.getyRotation(), 0, 1, 0);
+		gl.glRotated(state.getzRotation(), 0, 0, 1);
 		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
 		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
@@ -365,7 +367,7 @@ public class CastleRobotScene extends JFrame
 			//gl.glRotatef(0, 0, 1, 0); // Panning
 		}
 		else if (1 == chaseCam) {
-			double rotate = state.getRotation() + 270;
+			double rotate = state.getyRotation() + 270;
 			double pos_rotate = rotate - 180;
 	
 			double position_x = state.getxPosition() + (500 * Math.cos(Math.toRadians(pos_rotate)));
@@ -384,7 +386,7 @@ public class CastleRobotScene extends JFrame
 			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
 		}
 		else if (2 == chaseCam) {
-			double rotate = state.getRotation() + 270;
+			double rotate = state.getyRotation() + 270;
 			double pos_rotate = rotate;
     		//double pos_rotate = rotate - 180;
 	

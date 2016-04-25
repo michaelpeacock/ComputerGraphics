@@ -20,9 +20,19 @@ public interface State_I extends KeyListener{
 	double getzPosition();
 
 	/**
-	 * @return the rotation
+	 * @return the x rotation
 	 */
-	double getRotation();
+	double getxRotation();
+	
+	/**
+	 * @return the y rotation
+	 */
+	double getyRotation();
+	
+	/**
+	 * @return the z rotation
+	 */
+	double getzRotation();
 
 	/**
 	 * @return the scale
