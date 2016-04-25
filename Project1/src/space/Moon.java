@@ -35,10 +35,10 @@ public class Moon {
 
 		float inner_color[] = {0.7f, 0.7f, 0.7f, 1.0f};
 		float outer_color[] = {0.8f, 0.8f, 0.8f, .6f};
-		gl.glColor4d(0.7, 0.7, 0.7, 1.0);
+//		gl.glColor4d(0.7, 0.7, 0.7, 1.0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
 		Shapes.sphere(drawable,MOON_RADIUS,10.0);
-		gl.glColor4d(0.8, 0.8, 0.8, .6);
+//		gl.glColor4d(0.8, 0.8, 0.8, .6);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
 		Shapes.sphere(drawable,MOON_RADIUS+10,10.0);
 		gl.glPopMatrix();
@@ -54,7 +54,7 @@ public class Moon {
 		float inner_color[] = {0.5f, 0.5f, 0.5f, 1.0f};
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.5, 0.5, 0.5);
+//		gl.glColor3d(0.5, 0.5, 0.5);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
 
 		Random randomGenerator = new Random();

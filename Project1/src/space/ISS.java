@@ -65,6 +65,7 @@ public class ISS {
 			Shapes.cube(drawable,(MAIN_PANEL_WIDTH + 4.0f), (MAIN_PANEL_LENGTH + 4.0f), 1.0f  );
 			gl.glColor3d(0.65, 0.65, 0.65); 
 			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
+			//gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, iss_gray, 0);
 			gl.glTranslatef(2.0f, 2.0f, MAIN_PANEL_DEPTH);
 			Shapes.cube(drawable,MAIN_PANEL_WIDTH, MAIN_PANEL_LENGTH, MAIN_PANEL_DEPTH );
 			gl.glTranslated(0,  0, -(1 + 2* MAIN_PANEL_DEPTH));
