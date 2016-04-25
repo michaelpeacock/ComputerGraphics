@@ -15,6 +15,9 @@ public class ISS {
 	private static final float MAIN_PANEL_WIDTH = 30.0f;
 	private static final float MAIN_PANEL_LENGTH = 240.0f;
 	private static final float MAIN_PANEL_DEPTH = 5.0f;
+	private static final float MINI_PANEL_WIDTH = 20.0f;
+	private static final float MINI_PANEL_LENGTH = 120.0f;
+	private static final float MINI_PANEL_DEPTH = 5.0f;
 	private static final float MAIN_ISS_BODY_LENGTH = 300.0f;
 	private static final float MAIN_ISS_BODY_WIDTH = 30.0f;
 	private static final float MAIN_ISS_BODY_DIAMETER = 20.0f;
@@ -34,6 +37,8 @@ public class ISS {
 		gl.glPushMatrix();
 		createPanel(drawable, "RIGHT_PANEL");
 		createPanel(drawable, "LEFT_PANEL");
+		createMiniPanel(drawable, "RIGHT_MINI_PANEL");
+		createMiniPanel(drawable, "LEFT_MINI_PANEL");
 		createMainStation(drawable);
 		gl.glPopMatrix();
 		current_x_rot=0;
@@ -60,6 +65,7 @@ public class ISS {
 			Shapes.cube(drawable,(MAIN_PANEL_WIDTH + 4.0f), (MAIN_PANEL_LENGTH + 4.0f), 1.0f  );
 			gl.glColor3d(0.65, 0.65, 0.65); 
 			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
+			//gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, iss_gray, 0);
 			gl.glTranslatef(2.0f, 2.0f, MAIN_PANEL_DEPTH);
 			Shapes.cube(drawable,MAIN_PANEL_WIDTH, MAIN_PANEL_LENGTH, MAIN_PANEL_DEPTH );
 			gl.glTranslated(0,  0, -(1 + 2* MAIN_PANEL_DEPTH));
@@ -135,6 +141,36 @@ public class ISS {
 
 	}
 
+	public void createMiniPanel(GLAutoDrawable drawable, String whichPanel) {
+		GL gl = drawable.getGL();
+		
+		objectList.put(whichPanel, gl.glGenLists(1));
+		gl.glNewList(objectList.get(whichPanel), GL.GL_COMPILE);
+
+
+		gl.glPushMatrix();
+
+		for (int i = 0; i <4; i++) {
+			gl.glPushMatrix();
+			gl.glColor3d(1.0, 1.0, 1.0); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_white, 0);
+			gl.glTranslatef(-4.0f,0,0);
+			Shapes.cube(drawable,(MINI_PANEL_WIDTH + 4.0f), (MINI_PANEL_LENGTH + 4.0f), 1.0f  );
+			gl.glColor3d(0.65, 0.65, 0.65); 
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, iss_gray, 0);
+			gl.glTranslatef(2.0f, 2.0f, MINI_PANEL_DEPTH);
+			Shapes.cube(drawable,MINI_PANEL_WIDTH, MINI_PANEL_LENGTH, MINI_PANEL_DEPTH );
+			gl.glTranslated(0,  0, -(1 + 2* MINI_PANEL_DEPTH));
+			Shapes.cube(drawable, MINI_PANEL_WIDTH, MINI_PANEL_LENGTH, MINI_PANEL_DEPTH );
+			gl.glPopMatrix();
+			gl.glTranslated((MINI_PANEL_WIDTH + 10), 0,  0);
+		}
+		
+		gl.glPopMatrix();
+		gl.glEndList();
+
+	}
+
 	void createMainStation(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
@@ -161,6 +197,15 @@ public class ISS {
 		Shapes.cylinder(drawable, MAIN_ISS_BODY_WIDTH / 1.8,MAIN_ISS_BODY_LENGTH/8, 10);
 		gl.glPopMatrix();
 		gl.glPopMatrix();
+		
+		// mini panels
+		gl.glPushMatrix();
+		gl.glTranslatef((20.0f) , -125.0f, 0.0f);
+		gl.glCallList(objectList.get("LEFT_MINI_PANEL"));
+		gl.glTranslatef((MINI_PANEL_WIDTH * 4 +60) , 0.0f, 0.0f);
+		gl.glCallList(objectList.get("RIGHT_MINI_PANEL"));
+		gl.glPopMatrix();
+
 
 		// now call the left panel
 		gl.glPushMatrix();
@@ -194,7 +239,6 @@ public class ISS {
 		}
 		gl.glPushMatrix();
 		gl.glRotatef(current_x_rot, 1, 0, 0);
-		// test - gl.glTranslated(1000.0, 2000.0, -5000.0);
 		gl.glCallList(objectList.get("MainStation"));
 		gl.glPopMatrix();
 	}
