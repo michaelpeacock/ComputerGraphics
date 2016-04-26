@@ -1,6 +1,7 @@
 package space;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.media.opengl.GL;
@@ -13,7 +14,7 @@ public class Stars {
 	Map<String, Integer> objectList = new HashMap<String, Integer>();
 
 	private static final float STAR_RADIUS = 20;
-	private static final float NUM_STARS = 500;
+	private static final float NUM_STARS = 300;
 	
 	public void initializeStars(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();

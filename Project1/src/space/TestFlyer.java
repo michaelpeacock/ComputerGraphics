@@ -22,11 +22,14 @@ public class TestFlyer {
 
 	public void createFlyer(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
+		
+		float[] test_color = {1.0f, 0.0f, 0.0f, 1.0f};
 
 		objectList.put("TestFlyer", gl.glGenLists(1));
 		gl.glNewList(objectList.get("TestFlyer"), GL.GL_COMPILE);
 		gl.glPushMatrix();
 		gl.glColor3d(1.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, test_color, 0);
 		Shapes.sphere(drawable,50.0,10.0);
 		gl.glPopMatrix();
 		gl.glEndList();
