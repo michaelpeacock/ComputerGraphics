@@ -304,30 +304,6 @@ public class Castle {
 		gl.glCallList(objectList.get("Center"));
 		gl.glPopMatrix();
 
-		gl.glPushMatrix();
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glTranslated(0.0, 80.0, 4500.0);
-
-		gl.glPushMatrix();
-		gl.glTranslated(-500.0, 0.0, 0.0);
-		lionFactory.getLion("Red").display(drawable);
-		gl.glPopMatrix();
-
-		gl.glPushMatrix();
-		gl.glTranslated(-1000.0, 0.0, 0.0);
-		lionFactory.getLion("Blue").display(drawable);
-		gl.glPopMatrix();
-
-		gl.glPushMatrix();
-		gl.glTranslated(500.0, 0.0, 0.0);
-		lionFactory.getLion("Yellow").display(drawable);
-		gl.glPopMatrix();
-
-		gl.glPushMatrix();
-		gl.glTranslated(1000.0, 0.0, 0.0);
-		lionFactory.getLion("Green").display(drawable);
-		gl.glPopMatrix();
-		gl.glPopMatrix();
 
 	}
 

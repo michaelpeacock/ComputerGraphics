@@ -305,4 +305,33 @@ public class Shapes {
 		gl.glEnd();
 	}
 
+	// full or partial n-sided polygonal shaped torus & cross-section
+	// torus component from quad strip
+	public static void torus(GLAutoDrawable drawable, int crossSection, int numSteps, int lessSegment, int slice) {
+		GL gl = drawable.getGL();
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+
+		int i, j, k;
+		double s, t, x, y, z;
+
+		for (i = slice; i < crossSection; i++) {
+			gl.glBegin(GL.GL_QUAD_STRIP);
+			// lessSegment removes torus circular segments
+			for (j = lessSegment; j <= numSteps; j++) {
+				for (k = 0; k < 2; k++) {
+					s = (i + k) % crossSection + 0.5;
+					t = j % numSteps;
+					// x coordinate
+					x = (1 + .1 * Math.cos(s * (PI * 2) / crossSection)) * Math.cos(t * (PI * 2) / numSteps);
+					// y coordinate
+					y = .1 * Math.sin(s * (PI * 2) / crossSection);
+					// z coordinate
+					z = (1 + .1 * Math.cos(s * (PI * 2) / crossSection)) * Math.sin(t * (PI * 2) / numSteps);
+					gl.glNormal3d(x, -y, z + 1.0);
+					gl.glVertex3d(x, y, z);
+				}
+			}
+			gl.glEnd();
+		}
+	}
 }
