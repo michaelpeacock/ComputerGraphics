@@ -26,12 +26,15 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
-import robot.State_I;
 import voltron.Shapes;
+import voltron.camera.CameraController;
+import voltron.camera.CameraController_I;
+import voltron.camera.CameraMode;
 import voltron.objects.Castle;
 import voltron.objects.LionFactory;
 import voltron.objects.LionFactory.LION_COLOR;
 import voltron.objects.LionHouse;
+import voltron.objects.State_I;
 import voltron.objects.Tree;
 
 public class CastleRobotScene extends JFrame
@@ -42,8 +45,8 @@ public class CastleRobotScene extends JFrame
 	private GL gl;
 	private GLU glu;
 
-	int winWidth = 1200, winHeight = 1000; // Initial display-window size.
-
+	private int winWidth = 1200, winHeight = 1000; // Initial display-window size.
+	
 	private float rot_x;
 	private float rot_y;
 	private float rot_z;
@@ -54,6 +57,7 @@ public class CastleRobotScene extends JFrame
 	private LionHouse lionHouse;
 	private RobotModel_I voltron;
 	private State_I state;
+	private CameraController_I camera;
 
 	public CastleRobotScene() {
 		reset();
@@ -65,17 +69,14 @@ public class CastleRobotScene extends JFrame
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		canvas.addMouseWheelListener(this);
-
-		this.chaseCam = 0;
-		
 		add(canvas);
-
+		
 		setTitle("CastleRobotScene");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(winWidth, winHeight);
 		setLocation(0, 0);
 		setVisible(true);
-
+		
 		Animator animator = new Animator(canvas);
 		animator.start();
 
@@ -121,6 +122,8 @@ public class CastleRobotScene extends JFrame
 		lionFactory.createLion("Black", LION_COLOR.BLACK);
 
 		voltron.initializeRobot(drawable);
+		
+		camera = new CameraController(getHeight(), getWidth(),  10000, 0, 1, 6000);
 
 	}
 
@@ -133,8 +136,8 @@ public class CastleRobotScene extends JFrame
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		gl.glPushMatrix();
-		if (0 == chaseCam ||
-			3 == chaseCam) {	
+		if (CameraMode.CAM_DEFAULT == camera.getCurrentCameraMode() ||
+			CameraMode.CAM_CENTER_FOLLOW == camera.getCurrentCameraMode()) {	
 			gl.glRotatef(rot_x, 1, 0, 0);
 			gl.glRotatef(rot_y, 0, 1, 0);
 			gl.glRotatef(rot_z, 0, 0, 1);
@@ -194,7 +197,7 @@ public class CastleRobotScene extends JFrame
 
 		gl.glPopMatrix();
 
-		setCamera(gl, glu);
+		camera.updateCamera(gl, glu, state);
 		
 		gl.glFlush();
 	}
@@ -242,19 +245,15 @@ public class CastleRobotScene extends JFrame
 			rot_z -= 1.0f;
 			break;
 			
-		case 'c': 
-			chaseCam++; 
-			if(chaseCam > 3) { 
-				chaseCam = 0;
-			} 
-			break;	
 		}
 		state.handleKeyPressed(e);
+		camera.handleKeyPressed(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		state.handleKeyReleased(e);
+		camera.handleKeyRelease(e);
 	}
 
 	@Override
@@ -281,21 +280,17 @@ public class CastleRobotScene extends JFrame
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
+		camera.handleMousePressed(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		camera.handleMouseRelease(e);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		camera_x = (mouseX - e.getX());
-		center_x = camera_x;
-
-		camera_y = (mouseY - e.getY());
-		center_y = camera_y;
+		camera.handleMouseDragged(e);
 	}
 
 	@Override
@@ -304,69 +299,57 @@ public class CastleRobotScene extends JFrame
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		camera_z += e.getWheelRotation() * 100;
+		camera.handleMouseWheelMoved(e);
 	}
 
 	private void reset() {
-		camera_x = 0;
-		camera_y = 1;
-		camera_z = 6000f;
-
-		center_x = 0;
-		center_y = 0;
-		center_z = 0;
-
-		up_x = 0;
-		up_y = 1;
-		up_z = 0;
-
 		rot_x = 10;
 		rot_y = 0;
 		rot_z = 0;
 	}
 
-	private void setCamera(GL gl, GLU glu) {	
-		// Change to projection matrix.
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		gl.glLoadIdentity();
-
-		// Perspective.
-		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
-
-		if (0 == chaseCam) {
-			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
-		}
-		else if (1 == chaseCam) {
-			double rotate = state.getyRotation() + 270;
-			double pos_rotate = rotate - 180;
-
-			double position_x = state.getxPosition() + (state.getCameraXOffset(false) * Math.cos(Math.toRadians(pos_rotate)));
-			double position_z = state.getzPosition() - (state.getCameraZOffset(false) * Math.sin(Math.toRadians(pos_rotate)));
-			double position_y = state.getyPosition() + state.getCameraYOffset(false);
-			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
-			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
-			double look_y = state.getyPosition();
-
-			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-		}
-		else if (2 == chaseCam) {
-			double rotate = state.getyRotation() + 270;
-			double pos_rotate = rotate;
-
-			double position_x = state.getxPosition() + (state.getCameraXOffset(true) * Math.cos(Math.toRadians(pos_rotate)));
-			double position_z = state.getzPosition() - (state.getCameraZOffset(true) * Math.sin(Math.toRadians(pos_rotate)));
-			double position_y = state.getyPosition() + state.getCameraYOffset(true);
-			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
-			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
-			double look_y = state.getyPosition();
-
-			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-		}
-		else if (3 == chaseCam) {
-			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
-		}
-	}
+//	private void setCamera(GL gl, GLU glu) {	
+//		// Change to projection matrix.
+//		gl.glMatrixMode(GL.GL_PROJECTION);
+//		gl.glLoadIdentity();
+//
+//		// Perspective.
+//		float widthHeightRatio = (float) getWidth() / (float) getHeight();
+//		glu.gluPerspective(45, widthHeightRatio, 1, 10000);
+//
+//		if (0 == chaseCam) {
+//			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+//		}
+//		else if (1 == chaseCam) {
+//			double rotate = state.getyRotation() + 270;
+//			double pos_rotate = rotate - 180;
+//
+//			double position_x = state.getxPosition() + (state.getCameraXOffset(false) * Math.cos(Math.toRadians(pos_rotate)));
+//			double position_z = state.getzPosition() - (state.getCameraZOffset(false) * Math.sin(Math.toRadians(pos_rotate)));
+//			double position_y = state.getyPosition() + state.getCameraYOffset(false);
+//			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+//			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+//			double look_y = state.getyPosition();
+//
+//			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
+//		}
+//		else if (2 == chaseCam) {
+//			double rotate = state.getyRotation() + 270;
+//			double pos_rotate = rotate;
+//
+//			double position_x = state.getxPosition() + (state.getCameraXOffset(true) * Math.cos(Math.toRadians(pos_rotate)));
+//			double position_z = state.getzPosition() - (state.getCameraZOffset(true) * Math.sin(Math.toRadians(pos_rotate)));
+//			double position_y = state.getyPosition() + state.getCameraYOffset(true);
+//			double look_x = state.getxPosition() + (1000 * Math.cos(Math.toRadians(rotate)));
+//			double look_z = state.getzPosition() - (1000 * Math.sin(Math.toRadians(rotate)));
+//			double look_y = state.getyPosition();
+//
+//			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
+//		}
+//		else if (3 == chaseCam) {
+//			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
+//		}
+//	}
 
 	public void createPath(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();

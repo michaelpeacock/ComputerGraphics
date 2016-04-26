@@ -2,6 +2,8 @@ package robot;
 
 import java.awt.event.KeyEvent;
 
+import voltron.objects.State_I;
+
 public class RobotState implements State_I {
 
 	private double xPosition;
@@ -150,17 +152,17 @@ public class RobotState implements State_I {
 		boolean do_turn = false;
 		
 		//For Macs
-//		float speedMult = 4f;
-//		float moveSpeed = 8.0f;
-//		if (do_running) {
-//			speedMult = 4f;
-//		}
-		//For Windows
-		float speedMult = 1.0f;
-		float moveSpeed = 5.0f;
+		float speedMult = 4f;
+		float moveSpeed = 8.0f;
 		if (do_running) {
-			speedMult = 2.5f;
+			speedMult = 4f;
 		}
+//		//For Windows
+//		float speedMult = 1.0f;
+//		float moveSpeed = 5.0f;
+//		if (do_running) {
+//			speedMult = 2.5f;
+//		}
 		//System.out.printf("doFly: do_flying is %b, currently_flying is %b, default_yPosition is %f, yPosition is %f\n", do_flying, currently_flying, default_yPosition, yPosition);
 		if (false == do_flying) {
 			if (true == currently_flying) {
@@ -268,17 +270,17 @@ public class RobotState implements State_I {
 		if ((true == do_walking) || (true == left) || (true == right)) {
 
 			//For Macs
-//			float speedMult = 4f;
-//			float moveSpeed = 8.0f;
-//			if (do_running) {
-//				speedMult = 4f;
-//			}
-			//For Windows
-			float speedMult = 1.0f;
-			float moveSpeed = 5.0f;
+			float speedMult = 4f;
+			float moveSpeed = 8.0f;
 			if (do_running) {
-				speedMult = 2.5f;
+				speedMult = 4f;
 			}
+			//For Windows
+//			float speedMult = 1.0f;
+//			float moveSpeed = 5.0f;
+//			if (do_running) {
+//				speedMult = 2.5f;
+//			}
 
 			double rotate = 0.0;
 			if (true == left) {

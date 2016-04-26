@@ -1,4 +1,4 @@
-package robot;
+package voltron.objects;
 
 import java.awt.event.KeyEvent;
 

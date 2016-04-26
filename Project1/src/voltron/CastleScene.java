@@ -26,11 +26,11 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
-import robot.State_I;
 import voltron.objects.Castle;
 import voltron.objects.LionFactory;
 import voltron.objects.LionFactory.LION_COLOR;
 import voltron.objects.LionHouse;
+import voltron.objects.State_I;
 import voltron.objects.Tree;
 
 public class CastleScene extends JFrame
@@ -193,7 +193,7 @@ public class CastleScene extends JFrame
 
 		gl.glPushMatrix();
 		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
-		gl.glRotated(state.getRotation(), 0, 1, 0);
+		gl.glRotated(state.getyRotation(), 0, 1, 0);
 		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
 		voltron.drawRobot(drawable);
 		gl.glPopMatrix();

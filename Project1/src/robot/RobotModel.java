@@ -836,8 +836,8 @@ public class RobotModel implements RobotModel_I {
 					leg_angle = 5;
 					low_arm_angle = 5;
 					upper_arm_angle = 0;
-					//speed = 10;  //For Macs
-					speed = 50;  //For Windows
+					speed = 10;  //For Macs
+					//speed = 50;  //For Windows
 				}
 				if (speed <= display_smoothing_counter) {
 					//Lower Left Leg
