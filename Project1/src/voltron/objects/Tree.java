@@ -6,6 +6,7 @@ import javax.media.opengl.GLAutoDrawable;
 import voltron.Shapes;
 
 public class Tree {
+	Boolean dead = false;
 
 	private Shapes shape;
 
@@ -31,6 +32,11 @@ public class Tree {
 		gl.glPopMatrix();
 	}
 
+	public void drawDeadTree(GLAutoDrawable drawable) {
+		dead = true;
+		drawTree(drawable);
+	}
+
 	private void drawTrunk(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
@@ -39,7 +45,8 @@ public class Tree {
 		shape.cylinder(drawable, 5, 50, 15);
 		gl.glTranslated(0.0, 75.0, 0.0);
 		gl.glColor3d(0.0, 0.5, 0.0);
-		shape.sphere(drawable, 30, 15);
+		if (false == dead)
+			shape.sphere(drawable, 30, 15);
 		gl.glPopMatrix();
 	}
 
@@ -51,7 +58,8 @@ public class Tree {
 		shape.cylinder(drawable, 4, 30, 15);
 		gl.glTranslated(0.0, 35, 0.0);
 		gl.glColor3d(0.0, 0.5, 0.0);
-		shape.sphere(drawable, 17, 15);
+		if (false == dead)
+			shape.sphere(drawable, 17, 15);
 		gl.glPopMatrix();
 	}
 
@@ -63,7 +71,8 @@ public class Tree {
 		shape.cylinder(drawable, 4, 30, 15);
 		gl.glTranslated(0.0, 35, 0.0);
 		gl.glColor3d(0.0, 0.5, 0.0);
-		shape.sphere(drawable, 17, 15);
+		if (false == dead)
+			shape.sphere(drawable, 17, 15);
 		gl.glPopMatrix();
 	}
 
