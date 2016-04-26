@@ -21,6 +21,14 @@ import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
 
+import robot.RobotModel;
+import robot.RobotModel_I;
+import robot.RobotState;
+import voltron.camera.CameraController;
+import voltron.camera.CameraController_I;
+import voltron.camera.CameraMode;
+import voltron.objects.State_I;
+
 public class SpaceScene extends JFrame
 		implements GLEventListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -56,7 +64,10 @@ public class SpaceScene extends JFrame
 	private float test_fly_z_inc;
 	private static final float NUM_FLY_INC = 100;
 	private float sample_rate;
-	
+
+	private CameraController_I camera;
+	private State_I state;
+	private RobotModel_I voltron;
 	private Moon moon;
 	private Earth earth;
 	private Sun sun;
@@ -115,6 +126,9 @@ public class SpaceScene extends JFrame
 
 		setupLight(drawable);
 		
+		voltron = new RobotModel();
+		state = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
+
 		moon = new Moon();
 		earth = new Earth();
 		iss = new ISS();
@@ -127,6 +141,10 @@ public class SpaceScene extends JFrame
 		flyer.initializeFlyer(drawable);
 		sun.initializeSun(drawable);
 		stars.initializeStars(drawable);
+		voltron.initializeRobot(drawable);
+
+		camera = new CameraController(getHeight(), getWidth(),  15000, 0, 0, 2000);
+
 	}
 	
 	private void setupLight(GLAutoDrawable drawable){
@@ -162,14 +180,16 @@ public class SpaceScene extends JFrame
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		setCamera(gl, glu);
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		gl.glPushMatrix();
-		gl.glRotatef(rot_x, 1, 0, 0);
-		gl.glRotatef(rot_y, 0, 1, 0);
-		gl.glRotatef(rot_z, 0, 0, 1);
+		if (CameraMode.CAM_DEFAULT == camera.getCurrentCameraMode() ||
+				CameraMode.CAM_CENTER_FOLLOW == camera.getCurrentCameraMode()) {	
+				gl.glRotatef(rot_x, 1, 0, 0);
+				gl.glRotatef(rot_y, 0, 1, 0);
+				gl.glRotatef(rot_z, 0, 0, 1);
+		}
 		
 		gl.glPushMatrix();
 		gl.glTranslated(2000.0, -2900.0, -5500.0);
@@ -182,7 +202,7 @@ public class SpaceScene extends JFrame
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glTranslated(-1000.0, 0.0, 0.0);
+		gl.glTranslated(-1000.0, 0.0, -1000.0);
 		iss.display(drawable);
 		gl.glPopMatrix();
 
@@ -195,13 +215,32 @@ public class SpaceScene extends JFrame
 		stars.display(drawable);
 		gl.glPopMatrix();
 
+		// voltron
+		if (true == state.update()) {
+			voltron.deleteRobot(drawable);
+			voltron.initializeRobot(drawable);
+		}
+
+		
+
 		if (test_fly)
 			testFly(drawable);
-		else if (test_fly_displayed)
-			flyer.display(drawable);
+		else if (test_fly_displayed) {
+
+			gl.glPushMatrix();
+			gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+			gl.glRotated(state.getxRotation(), 1, 0, 0);
+			gl.glRotated(state.getyRotation(), 0, 1, 0);
+			gl.glRotated(state.getzRotation(), 0, 0, 1);
+			gl.glScaled(state.getScale(), state.getScale(), state.getScale());
+			voltron.drawRobot(drawable);
+			gl.glPopMatrix();
+		}
 
 		gl.glPopMatrix();
-		
+
+		setCamera(gl, glu);
+
 		gl.glFlush();
 
 	}
@@ -252,10 +291,14 @@ public class SpaceScene extends JFrame
 			test_fly = true;
 			break;
 		}
+		camera.handleKeyPressed(e);
+
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent e) {
+		state.handleKeyReleased(e);
+		camera.handleKeyRelease(e);
 	}
 
 	@Override
@@ -265,6 +308,30 @@ public class SpaceScene extends JFrame
 	}
 
 	@Override
+	public void mousePressed(MouseEvent e) {
+		camera.handleMousePressed(e);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		camera.handleMouseRelease(e);
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		camera.handleMouseDragged(e);
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		camera.handleMouseWheelMoved(e);
+	}
+
+@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
@@ -280,36 +347,6 @@ public class SpaceScene extends JFrame
 
 	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		camera_x = (mouseX - e.getX());
-		center_x = camera_x;
-
-		camera_y = (mouseY - e.getY());
-		center_y = camera_y;
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		camera_z += e.getWheelRotation() * 100;
-
-		System.out.println("camera_z " + camera_z);
-	}
-
 	private void testFly(GLAutoDrawable drawable) {
 		if (sample_rate >=10) {
 			gl = drawable.getGL();
@@ -321,10 +358,18 @@ public class SpaceScene extends JFrame
 		else {
 			sample_rate++;
 		}
+		state.setxPosition(test_fly_x);
+		state.setyPosition(test_fly_y);
+		state.setzPosition(test_fly_z);
 		gl.glPushMatrix();
-		gl.glTranslated(test_fly_x, test_fly_y, test_fly_z);
-		flyer.display(drawable);
+		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+		gl.glRotated(state.getxRotation(), 1, 0, 0);
+		gl.glRotated(state.getyRotation(), 0, 1, 0);
+		gl.glRotated(state.getzRotation(), 0, 0, 1);
+		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
+		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
+
 		if (0 == test_fly_z) {
 			test_fly = false;
 			test_fly_displayed = true;
@@ -367,13 +412,15 @@ public class SpaceScene extends JFrame
 		gl.glLoadIdentity();
 
 		// Perspective.
-		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		glu.gluPerspective(45, widthHeightRatio, 1, 15000);
+		//float widthHeightRatio = (float) getWidth() / (float) getHeight();
+		//glu.gluPerspective(45, widthHeightRatio, 1, 15000);
 
-		gl.glRotatef(0, 0, 1, 0);
-		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+		camera.updateCamera(gl, glu, state);
 
-		gl.glRotatef(0, 0, 1, 0); // Panning
+		//gl.glRotatef(0, 0, 1, 0);
+		//glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+
+		//gl.glRotatef(0, 0, 1, 0); // Panning
 
 	}
 

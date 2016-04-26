@@ -27,7 +27,8 @@ public class Earth {
 		gl.glNewList(objectList.get("EarthSphere"), GL.GL_COMPILE);
 
 		float inner_color[] = {0.0f, 0.0f, 1.0f, 1.0f};
-		float outer_color[] = {0.57f, 0.89f, 0.93f, 0.3f};
+		//float outer_color[] = {0.57f, 0.89f, 0.98f, 0.5f};
+		float outer_color[] = {0.0f, 0.1f, 1.0f, 0.2f};
 		gl.glPushMatrix();
 		gl.glEnable(GL.GL_BLEND);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );

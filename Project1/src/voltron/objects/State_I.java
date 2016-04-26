@@ -5,6 +5,21 @@ import java.awt.event.KeyEvent;
 public interface State_I {
 
 	/**
+	 * @set the xPosition
+	 */
+	void setxPosition(double x);
+
+	/**
+	 * @set the yPosition
+	 */
+	void setyPosition(double y);
+
+	/**
+	 * @set the zPosition
+	 */
+	void setzPosition(double z);
+
+	/**
 	 * @return the xPosition
 	 */
 	double getxPosition();
