@@ -34,10 +34,10 @@ public class Earth {
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
 //		gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		Shapes.sphere(drawable,EARTH_RADIUS,60.0);
+		Shapes.sphere(drawable,EARTH_RADIUS,50.0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
 //		gl.glColor4d(0.57, 0.89, 0.93, 0.3);
-		Shapes.sphere(drawable,EARTH_RADIUS*1.05,60.0);
+		Shapes.sphere(drawable,EARTH_RADIUS*1.05,50.0);
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
