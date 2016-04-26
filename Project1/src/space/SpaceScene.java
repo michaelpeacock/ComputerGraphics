@@ -59,7 +59,10 @@ public class SpaceScene extends JFrame
 	
 	private Moon moon;
 	private Earth earth;
+	private Sun sun;
 	private TestFlyer flyer;
+	private ISS iss;
+	private Stars stars;
 
 	public SpaceScene() {
 		reset();
@@ -110,13 +113,47 @@ public class SpaceScene extends JFrame
 		gl.glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		// createCube(drawable, 1, 1, 1);
 
+		setupLight(drawable);
+		
 		moon = new Moon();
 		earth = new Earth();
+		iss = new ISS();
 		flyer = new TestFlyer();
+		sun = new Sun();
+		stars = new Stars();
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
+		iss.initializeISS(drawable);
 		flyer.initializeFlyer(drawable);
+		sun.initializeSun(drawable);
+		stars.initializeStars(drawable);
+	}
+	
+	private void setupLight(GLAutoDrawable drawable){
+		gl = drawable.getGL();
+		glu = new GLU();
+		
+		float light_position[] = { -1, 1, -1, 0 };  // directional light source
+		//float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = {.8f, .8f, .8f, 0.0f};
+        float ambient[] = {.7f, .7f, .7f, 0.0f};
+        float specular[] = {.8f, .8f, .8f, 0.0f};
+        
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position,0 );
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+		
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
 
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GL.GL_LIGHT0);
+		gl.glEnable(GL.GL_DEPTH_TEST);
 	}
 
 	@Override
@@ -135,13 +172,27 @@ public class SpaceScene extends JFrame
 		gl.glRotatef(rot_z, 0, 0, 1);
 		
 		gl.glPushMatrix();
-		gl.glTranslated(-3000.0, -11.0, -5000.0);
+		gl.glTranslated(2000.0, -2900.0, -5500.0);
 		moon.display(drawable);		
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-1000.0, 0.0, 0.0);
+		iss.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(-5500.0, 2500.0, -10000.0);
+		sun.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		stars.display(drawable);
 		gl.glPopMatrix();
 
 		if (test_fly)

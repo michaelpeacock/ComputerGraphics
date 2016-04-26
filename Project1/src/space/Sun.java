@@ -9,34 +9,36 @@ import javax.media.opengl.GLAutoDrawable;
 import voltron.Shapes;
 import java.util.Random;
 
-public class Earth {
+public class Sun {
 	Map<String, Integer> objectList = new HashMap<String, Integer>();
 
-	private static final float EARTH_RADIUS = 600;
+	private static final float SUN_RADIUS = 400;
 	
-	public void initializeEarth(GLAutoDrawable drawable) {
+	public void initializeSun(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
-		createEarthSphere(drawable);
+		createSunSphere(drawable);
 		gl.glPopMatrix();
 	}
 
-	public void createEarthSphere(GLAutoDrawable drawable) {
+	public void createSunSphere(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
-		objectList.put("EarthSphere", gl.glGenLists(1));
-		gl.glNewList(objectList.get("EarthSphere"), GL.GL_COMPILE);
 
-		float inner_color[] = {0.0f, 0.0f, 1.0f, 1.0f};
-		float outer_color[] = {0.57f, 0.89f, 0.93f, 0.3f};
+		objectList.put("SunSphere", gl.glGenLists(1));
+		gl.glNewList(objectList.get("SunSphere"), GL.GL_COMPILE);
+
+		float inner_color[] = {1.0f, 1.0f, 0.0f, 1.0f};
+		float outer_color[] = {0.98f, 0.95f, 0.42f, 0.5f};
+		
 		gl.glPushMatrix();
 		gl.glEnable(GL.GL_BLEND);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glColor4d(1.0, 1.0, 0.0, 1.0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
-//		gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		Shapes.sphere(drawable,EARTH_RADIUS,60.0);
+		Shapes.sphere(drawable,SUN_RADIUS,60.0);
+		gl.glColor4d(0.98, 0.95, 0.42, 0.5);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
-//		gl.glColor4d(0.57, 0.89, 0.93, 0.3);
-		Shapes.sphere(drawable,EARTH_RADIUS*1.05,60.0);
+		Shapes.sphere(drawable,SUN_RADIUS*1.15,60.0);
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
@@ -47,7 +49,7 @@ public class Earth {
 
 		gl.glPushMatrix();
 		// test - gl.glTranslated(1000.0, 2000.0, -5000.0);
-		gl.glCallList(objectList.get("EarthSphere"));
+		gl.glCallList(objectList.get("SunSphere"));
 		gl.glPopMatrix();
 	}
 

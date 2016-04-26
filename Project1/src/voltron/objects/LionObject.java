@@ -36,7 +36,7 @@ public class LionObject {
 		return zRotation;
 	}
 
-	public void setzRotation(float zRotation) {
+	public void setzRotation(double zRotation) {
 		this.zRotation = zRotation;
 	}
 
