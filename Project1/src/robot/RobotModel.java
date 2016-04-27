@@ -70,6 +70,14 @@ public class RobotModel implements RobotModel_I {
 	private float mat_diffuseRED[] ={0.50f,0.50f,0.50f,1.0f};
 	private float mat_shininessRED[] ={128.0f};
 	
+	private float[] robot_black = {0.0f, 0.0f, 0.0f, 1.0f};
+	private float[] robot_white = {1.0f, 1.0f, 1.0f, 1.0f};
+	private float[] robot_red = {1.0f, 0.0f, 0.0f, 1.0f};
+	private float[] robot_green = {0.0f, 1.0f, 0.0f, 1.0f};
+	private float[] robot_blue = {0.0f, 0.0f, 1.0f, 1.0f};
+	private float[] robot_light_grey = {0.823f, 0.835f, 0.839f, 1.0f};
+
+	
 	public RobotModel() {
 
 		this.leftArmForward = true;
@@ -115,10 +123,15 @@ public class RobotModel implements RobotModel_I {
 		LionObject lionObject = createLionObject(gl, (whichColor + mouthType));
 		gl.glPushMatrix();
 		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		float[] mouth_color = {0.627f, 0.627f, 0.627f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, mouth_color, 0);
 		rotateObject(gl, lionObject);
 		Shapes.cube(drawable, 3 * LION_HEAD_LENGTH / 4, LION_HEAD_HEIGHT / 3, LION_HEAD_LENGTH / 2);
 
 		gl.glColor3d(1, 1, 1);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_white, 0);
+		float[] mouth_white = {1.0f, 1.0f, 1.0f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, mouth_white, 0);
 		//switch (mouthType) {
 		if ("UPPER_MOUTH" == mouthType)
 		{
@@ -137,12 +150,16 @@ public class RobotModel implements RobotModel_I {
 
 	void createEye(GLAutoDrawable drawable, String whichEye, String whichColor) {
 		GL gl = drawable.getGL();
-
+		float[] eye_yellow = {0.8f, 0.8f, 0.0f, 1.0f};
+		float[] eye_black = {0.0f, 0.0f, 0.0f, 1.0f};
+		
 		LionObject lionObject = createLionObject(gl, (whichColor + whichEye));
 		if ("BLACK" == whichColor) {
 			gl.glColor3d(0.8, 0.8, 0.0); // yellow
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, eye_yellow, 0);
 		} else {
 			gl.glColor3d(0.0, 0.0, 0.0);
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, eye_black, 0);
 		}
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
@@ -153,9 +170,10 @@ public class RobotModel implements RobotModel_I {
 
 	void createEar(GLAutoDrawable drawable, String whichEar, String whichColor) {
 		GL gl = drawable.getGL();
-
+		float[] ear_gray = {0.627f, 0.627f, 0.627f, 0.627f, 1.0f};
 		LionObject lionObject = createLionObject(gl, (whichColor + whichEar));
 		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, ear_gray, 0);
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 
@@ -178,9 +196,10 @@ public class RobotModel implements RobotModel_I {
 
 	void createNose(GLAutoDrawable drawable, String whichNose, String whichColor) {
 		GL gl = drawable.getGL();
-
+		
 		createLionObject(gl, (whichColor + whichNose));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 		gl.glRotated(180, 1.0, 0.0, 0.0);
 		Shapes.triangle(drawable, 15);
@@ -191,13 +210,15 @@ public class RobotModel implements RobotModel_I {
 	/* create Head */
 	void createLionHead(GLAutoDrawable drawable, String whichHead, String whichColor, double red, double green, double blue, float lengthen) {
 		GL gl = drawable.getGL();
-
+		float[] head_rgb = {(float) red, (float)green, (float)blue, 1.0f};
 		LionObject lionObject = createLionObject(gl, (whichColor + whichHead));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.sphere(drawable, 40, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -213,6 +234,7 @@ public class RobotModel implements RobotModel_I {
 					gl.glTranslated(-60, 0, -50);
 				}
 				gl.glColor3d(red, green, blue);
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, head_rgb, 0);
 				Shapes.cube(drawable, LION_HEAD_LENGTH, LION_HEAD_LENGTH, (LION_HEAD_LENGTH+lengthen));
 				if ("BLACK" != whichColor) {
 					gl.glPushMatrix();
@@ -262,23 +284,27 @@ public class RobotModel implements RobotModel_I {
 
 	private void createLowerLeg (GLAutoDrawable drawable, String whichColor, double red, double green, double blue) {
 		GL gl = drawable.getGL();
+		float[] robot_rgb = {(float) red, (float) green, (float) blue, 1.0f};
 		LionObject lionObject = createLionObject(gl, (whichColor + "LOWERLEG"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.sphere(drawable, 40, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslated(-55, -170, -55);
-				if ("YELLOW" == whichColor) {
-					SetMaterial(gl, mat_specularYELLOW, mat_ambientYELLOW, mat_diffuseYELLOW, mat_shininessYELLOW);
-				}
-				else {
-					SetMaterial(gl, mat_specularBLUE, mat_ambientBLUE, mat_diffuseBLUE, mat_shininessBLUE);
-				}
+//				if ("YELLOW" == whichColor) {
+//					SetMaterial(gl, mat_specularYELLOW, mat_ambientYELLOW, mat_diffuseYELLOW, mat_shininessYELLOW);
+//				}
+//				else {
+//					SetMaterial(gl, mat_specularBLUE, mat_ambientBLUE, mat_diffuseBLUE, mat_shininessBLUE);
+//				}
 				gl.glColor3d(red, green, blue);
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_rgb, 0);
 				Shapes.cube(drawable, 110, 195, 110);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -294,27 +320,32 @@ public class RobotModel implements RobotModel_I {
 		GL gl = drawable.getGL();
 		LionObject lionObject = createLionObject(gl, (whichColor + "UPPERLEG"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glRotated(-90, 0, 0, 1);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cylinder(drawable, 60, 120, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(0, -60, -60);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 120, 40, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(10, -150, -50);  
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cube(drawable, 100, 100, 100);  
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(10, -170, 0);
 				gl.glRotated(-90, 0, 0, 1);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cylinder(drawable, 60, 100, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -327,52 +358,63 @@ public class RobotModel implements RobotModel_I {
 	
 	private void createWaist(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();		
+		float[] waist_yellow = {0.8f, 0.8f, 0.8f, 1.0f};
 		LionObject lionObject = createLionObject(gl, ("WAIST"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.sphere(drawable, 40, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-150, -6, -60);
 				gl.glColor3d(0, 0, 0);  //Black
-				Shapes.cube(drawable, 300, 6, 120);
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
+			Shapes.cube(drawable, 300, 6, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-160, -46, -70);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cube(drawable, 320, 40, 140);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-20, -46, 70);
 				gl.glColor3d(0,0,0);  //black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 40, 40, 10);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(50, -36, 70);
 				gl.glColor3d(0.8, 0.8, 0.0);  //yellow
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
 				Shapes.cube(drawable, 80, 20, 10);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-130, -36, 70);
 				gl.glColor3d(0.8, 0.8, 0.0);  //yellow
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
 				Shapes.cube(drawable, 80, 20, 10);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-10, -36, 70);
 				gl.glColor3d(0.8, 0.8, 0.0);  //yellow
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
 				Shapes.cube(drawable, 20, 20, 10);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-150, -106, -60);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 300, 60, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-35, -136, -60);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 70, 30, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -396,6 +438,7 @@ public class RobotModel implements RobotModel_I {
 		// back of logo
 		gl.glPushMatrix();
 		gl.glColor3d(1, 0, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_red, 0);
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glVertex3d(0.0, 0.0, 0.0);
 		gl.glVertex3d(0.0, -125.0, 0.0);
@@ -410,6 +453,7 @@ public class RobotModel implements RobotModel_I {
 		// inside of logo
 		gl.glPushMatrix();
 		gl.glColor3d(0, 0, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glVertex3d(5.0, -5.0, 0.05);
 		gl.glVertex3d(5.0, -120.0, 0.05);
@@ -425,6 +469,8 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0.753, 0.753, 0.753);
+		float[] logo_grey = {0.753f, 0.753f, 0.753f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_grey, 0);
 		gl.glVertex3d(10.0, -10.0, 0.08);
 		gl.glVertex3d(10.0, -115.0, 0.08);
 		gl.glVertex3d(35.0, -140.0, 0.08);
@@ -439,6 +485,7 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0, 0, 1);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_blue, 0);
 		gl.glVertex3d(15.0, -15.0, 0.5);
 		gl.glVertex3d(15.0, -70.0, 0.5);
 		gl.glVertex3d(75.0, -70.0, 0.5);
@@ -449,7 +496,9 @@ public class RobotModel implements RobotModel_I {
 		// yellow inside of logo
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
+		float[] logo_yellow = {1.0f, 1.0f, 0.0f, 1.0f};
 		gl.glColor3d(1, 1, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_yellow, 0);
 		gl.glVertex3d(75.0, -15.0, 0.5);
 		gl.glVertex3d(75.0, -70.0, 0.5);
 		gl.glVertex3d(135.0, -70.0, 0.5);
@@ -461,6 +510,7 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(1, 0, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_red, 0);
 		gl.glVertex3d(15.0, -70.0, 0.5);
 		gl.glVertex3d(15.0, -115.0, 0.5);
 		gl.glVertex3d(35.0, -135.0, 0.5);
@@ -473,6 +523,8 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0, 0.6, 0);
+		float[] logo_green = {0.0f, 0.6f, 0.0f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_green, 0);
 		gl.glVertex3d(75.0, -70.0, 0.5);
 		gl.glVertex3d(75.0, -135.0, 0.5);
 		gl.glVertex3d(115.0, -135.0, 0.5);
@@ -485,6 +537,7 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0, 0, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glVertex3d(70.0, -15.0, 0.8);
 		gl.glVertex3d(70.0, -135.0, 0.8);
 		gl.glVertex3d(80.0, -135.0, 0.8);
@@ -496,6 +549,8 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0.6, 0.298, 0);
+		float[] logo_cross = {0.6f, 0.298f, 0.0f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_cross, 0);
 		gl.glVertex3d(73.0, -25.0, 0.9);
 		gl.glVertex3d(73.0, -130.0, 0.9);
 		gl.glVertex3d(77.0, -130.0, 0.9);
@@ -506,6 +561,7 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
 		gl.glColor3d(0.6, 0.298, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_cross, 0);
 		gl.glVertex3d(20.0, -75.0, 0.9);
 		gl.glVertex3d(20.0, -80.0, 0.9);
 		gl.glVertex3d(130.0, -80.0, 0.9);
@@ -516,6 +572,8 @@ public class RobotModel implements RobotModel_I {
 		// crown inside of logo
 		gl.glPushMatrix();
 		gl.glBegin(GL.GL_POLYGON);
+		float[] logo_crown = {1.0f, 0.7686f, 0.0f, 1.0f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, logo_crown, 0);
 		gl.glColor3d(1.0, 0.7686, 0.0);
 		gl.glVertex3d(65.0, -40.0, 1.0);
 		gl.glVertex3d(50.0, -20.0, 1.0); // top left
@@ -532,61 +590,73 @@ public class RobotModel implements RobotModel_I {
 	}
 	
 	private void createChest(GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();		
+		GL gl = drawable.getGL();	
+		float[] chest_red = {.788f, .176f, .133f, 1.0f};
 		LionObject lionObject = createLionObject(gl, ("CHEST"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glTranslatef(-175, 0, 0);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 350, 200, 200);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(175,100,0);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 60, 100, 200);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(85, 75, 0);
 				gl.glRotated(-35, 0, 0, 1);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 110, 110, 200);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-235, 100, 0);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 60, 100, 200);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-80, 75, 0);
 				gl.glRotated(125, 0, 0, 1);
 				gl.glColor3d(0, 0, 0);  //Black
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 				Shapes.cube(drawable, 110, 110, 200);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-40, 180, 50);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cube(drawable, 80, 70, 80);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-80, 30, 180);
 				gl.glColor3d(.788, .176, .133);  //red
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				Shapes.cube(drawable, 160, 160, 50);
 			gl.glPopMatrix();
 				gl.glPushMatrix();
 				gl.glTranslatef(-210, 130, 180);
 				gl.glColor3d(.788, .176, .133);  //red
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				Shapes.cube(drawable, 130, 60, 50);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(80, 130, 180);
 				gl.glColor3d(.788, .176, .133);  //red
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				Shapes.cube(drawable, 130, 60, 50);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(110, 130, -20);
 				gl.glRotated(60, 0, 0, 1);
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				gl.glColor3d(.788, .176, .133);  //red
 				Shapes.cube(drawable, 300, 60, 20);
 			gl.glPopMatrix();
@@ -594,17 +664,20 @@ public class RobotModel implements RobotModel_I {
 				gl.glTranslatef(-70, 160, -20);
 				gl.glRotated(120, 0, 0, 1);
 				gl.glColor3d(.788, .176, .133);  //red
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				Shapes.cube(drawable, 300, 60, 20);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-70, 180, 230);
 				gl.glScaled(0.9, 0.9, 0.9);
 				gl.glColor3d(.788, .176, .133);  //red
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, chest_red, 0);
 				gl.glCallList(lionObjects.get("Logo").getListID());
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(-150, -100, 40);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cube(drawable, 300, 100, LION_HEAD_LENGTH);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -662,20 +735,25 @@ public class RobotModel implements RobotModel_I {
 		GL gl = drawable.getGL();		
 		LionObject lionObject = createLionObject(gl, (whichColor + "LOWER_ARM"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.sphere(drawable, 40, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslated(-60, -120, -55);
+				float[] arm_rgb = {(float)red, (float)green, (float)blue, 1.0f};
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, arm_rgb, 0);
 				gl.glColor3d(red, green, blue);  
 				Shapes.cube(drawable, 120, 120, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(0, -150, 0);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cylinder(drawable, 40, 40, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -692,20 +770,25 @@ public class RobotModel implements RobotModel_I {
 		GL gl = drawable.getGL();		
 		LionObject lionObject = createLionObject(gl, (whichColor + "UPPER_ARM"));
 		gl.glColor3d(0.0, 0.0, 0.0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		gl.glPushMatrix();
 			rotateObject(gl, lionObject);
 			gl.glPushMatrix();
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.sphere(drawable, 50, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(8, -100, -65);
 				gl.glColor3d(red, green, blue);  //Input Color
+				float[] arm_rgb = {(float)red, (float)green, (float)blue, 1.0f};
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, arm_rgb, 0);
 				Shapes.cube(drawable, 120, 190, 120);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
 				gl.glTranslatef(70, -160, -10);
 				gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+				gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 				Shapes.cylinder(drawable, 40, 100, INC);
 			gl.glPopMatrix();
 			gl.glPushMatrix();
@@ -718,45 +801,55 @@ public class RobotModel implements RobotModel_I {
 	
 	private void createRobotFace(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();		
+		float[] face_color = {0.0f, 0.4f, 0.8f, 1.0f};
+		float[] face_yellow = {0.8f, 0.8f, 0.0f, 1.0f};
 		createLionObject(gl, ("ROBOT_FACE"));
 		gl.glPushMatrix();
 			gl.glColor3d(0.823, 0.835, 0.839);  //light grey
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_light_grey, 0);
 			gl.glTranslated(0, 30, 0);
 			Shapes.cube(drawable, 100, 100, 100);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d(0.0, 0.4, 0.8);
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_color, 0);
 			gl.glTranslated(10, 80, 0);
 			Shapes.cube(drawable, 15 * 2, 15, -15);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d(0.0, 0.4, 0.8);
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_color, 0);
 			gl.glTranslated(60, 80, 0);
 			Shapes.cube(drawable, 15 * 2, 15, -15);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d(0,0,0);
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 			gl.glTranslated(35, 40, 0);
 			Shapes.cube(drawable, 30, 5, -15);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d( 0.8, 0.8, 0.0);  //yellow
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_yellow, 0);
 			gl.glTranslated(-30, 150, 75);
 			Shapes.cube(drawable, 35, 15, -25);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d( 0.8, 0.8, 0.0);  //yellow
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_yellow, 0);
 			gl.glTranslated(-30, 150, 75);
 			gl.glRotated(90, 0, 0, 1);
 			Shapes.cube(drawable, 35, 15, -25);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d( 0.8, 0.8, 0.0);  //yellow
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_yellow, 0);
 			gl.glTranslated(110, 150, 75);
 			Shapes.cube(drawable, 35, 15, -25);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 			gl.glColor3d( 0.8, 0.8, 0.0);  //yellow
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, face_yellow, 0);
 			gl.glTranslated(145, 150, 75);
 			gl.glRotated(90, 0, 0, 1);
 			Shapes.cube(drawable, 35, 15, -25);
