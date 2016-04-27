@@ -28,11 +28,11 @@ public class Lion {
 	private Boolean lionInitialized = false;
 	private Boolean sitting = false;
 	private Boolean standing = false;
-	private Boolean walking = false;
-	private Boolean walkIncrement = false;
+	private double walkIncrement = 0.0;
 	private LION_COLOR lionColor;
 	private LION_ACTION action;
 	private LION_POSITION position;
+	private Boolean lionMoved = false;
 	float sitIncrement = 0.0f;
 	Map<String, LionObject> lionObjects = new HashMap<String, LionObject>();
 
@@ -141,36 +141,56 @@ public class Lion {
 		}
 	}
 
-	public void walk(Boolean walking) {
-		this.walking = walking;
+	public void walk(Boolean walking, double moveSpeed) {
+		if (walking) {
+			if (action == LION_ACTION.SITTING) {
+				sit();
+			}
+
+			if (moveSpeed <= walkIncrement) {
+				if (getLionObject("RIGHT_FRONT_UPPER_LEG").getxRotation() >= 0) {
+					getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(-75);
+					getLionObject("RIGHT_FRONT_KNEE").setxRotation(450);
+					getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(375);
+					getLionObject("LEFT_BACK_KNEE").setxRotation(-450);
+
+					getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(0);
+					getLionObject("LEFT_FRONT_KNEE").setxRotation(0);
+					getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(0);
+					getLionObject("RIGHT_BACK_KNEE").setxRotation(0);
+				} else {
+					getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(0);
+					getLionObject("RIGHT_FRONT_KNEE").setxRotation(0);
+					getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(0);
+					getLionObject("LEFT_BACK_KNEE").setxRotation(0);
+
+					getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(-75);
+					getLionObject("LEFT_FRONT_KNEE").setxRotation(450);
+					getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(375);
+					getLionObject("RIGHT_BACK_KNEE").setxRotation(-450);
+				}
+
+				walkIncrement = 0.0;
+				lionMoved = true;
+			} else {
+				walkIncrement++;
+			}
+		} else if (walkIncrement > 0) {
+			resetLion();
+			walkIncrement = 0;
+			lionMoved = true;
+		}
 	}
 
-	public void doWalking(GLAutoDrawable drawable) {
-		if (walkIncrement == true) {
-			getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
-			getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
-			getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
-			getLionObject("RIGHT_BACK_KNEE").setxRotation(-90 * sitIncrement);
-			getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
-			getLionObject("LEFT_BACK_KNEE").setxRotation(-90 * sitIncrement);
-
-			walkIncrement = false;
-		} else {
-			getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(0);
-			getLionObject("RIGHT_FRONT_KNEE").setxRotation(0);
-			getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(0);
-			getLionObject("LEFT_FRONT_KNEE").setxRotation(0);
-			getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(0);
-			getLionObject("RIGHT_BACK_KNEE").setxRotation(0);
-			getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(0);
-			getLionObject("LEFT_BACK_KNEE").setxRotation(0);
-
-			walkIncrement = true;
-		}
-
-		deleteLion(drawable);
-		initializeLion(drawable);
-		glcanvas.repaint();
+	public void resetLion() {
+		getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(0);
+		getLionObject("RIGHT_FRONT_KNEE").setxRotation(0);
+		getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(0);
+		getLionObject("LEFT_FRONT_KNEE").setxRotation(0);
+		getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(0);
+		getLionObject("RIGHT_BACK_KNEE").setxRotation(0);
+		getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(0);
+		getLionObject("LEFT_BACK_KNEE").setxRotation(0);
 	}
 
 	public void rotateObject(GL gl, LionObject lionObject) {
@@ -623,6 +643,14 @@ public class Lion {
 		}
 
 		GL gl = drawable.getGL();
+
+		if (lionMoved) {
+			deleteLion(drawable);
+			initializeLion(drawable);
+			// glcanvas.repaint();
+			lionMoved = false;
+		}
+
 		gl.glPushMatrix();
 		gl.glRotatef(180, 0, 1, 0);
 
@@ -632,9 +660,9 @@ public class Lion {
 			doStanding(drawable);
 		}
 
-		if (walking == true) {
-			doWalking(drawable);
-		}
+		// if (walking == true) {
+		// doWalking(drawable);
+		// }
 
 		gl.glCallList(lionObjects.get("BODY").getListID());
 

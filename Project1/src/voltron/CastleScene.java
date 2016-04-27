@@ -38,6 +38,7 @@ import voltron.objects.Lava;
 import voltron.objects.LionFactory;
 import voltron.objects.LionFactory.LION_COLOR;
 import voltron.objects.LionHouse;
+import voltron.objects.Spaceship;
 import voltron.objects.State_I;
 import voltron.objects.Tree;
 
@@ -72,7 +73,9 @@ public class CastleScene extends JFrame
 	private Castle castle;
 	private Moon moon;
 	private Sun sun;
+	private Spaceship spaceShip;
 	private ArrayList<Tree> lavaTreeList = new ArrayList<Tree>();
+	private Tree tree;
 	private Lava lava;
 	private Lake lake;
 	private Desert desert;
@@ -131,9 +134,11 @@ public class CastleScene extends JFrame
 
 		gl.glClearColor(0.6f, 0.8f, 1.0f, 0.0f);
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 80; i++) {
 			lavaTreeList.add(new Tree());
 		}
+
+		tree = new Tree();
 
 		lava = new Lava();
 		lake = new Lake();
@@ -151,6 +156,9 @@ public class CastleScene extends JFrame
 
 		sun = new Sun();
 		sun.initializeSun(drawable);
+
+		spaceShip = new Spaceship();
+
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
 		createPath(drawable);
@@ -166,7 +174,7 @@ public class CastleScene extends JFrame
 		moveableObjectList.put("Blue",
 				lionFactory.createLion("Blue", LION_COLOR.BLUE, -4500.0, 50.0, 1600.0, 90.0, 0.5));
 		moveableObjectList.put("Green",
-				lionFactory.createLion("Green", LION_COLOR.GREEN, 4500.0, 50.0, 1300.0, -90.0, 0.5));
+				lionFactory.createLion("Green", LION_COLOR.GREEN, 4500.0, 50.0, 1900.0, -90.0, 0.5));
 		moveableObjectList.put("Red", lionFactory.createLion("Red", LION_COLOR.RED, -4500.0, 50.0, -1800.0, 90.0, 0.5));
 		activeObject = null;
 
@@ -190,7 +198,7 @@ public class CastleScene extends JFrame
 		gl.glRotatef(rot_z, 0, 0, 1);
 
 		gl.glPushMatrix();
-		gl.glTranslated(-5000.0, -15.0, -5000.0);
+		gl.glTranslated(-5000.0, -25.0, -5000.0);
 		gl.glCallList(objectList.get("Sky"));
 		gl.glCallList(objectList.get("Land"));
 		gl.glPopMatrix();
@@ -237,7 +245,7 @@ public class CastleScene extends JFrame
 		// green lion house
 		gl.glPushMatrix();
 		// gl.glScaled(5, 5, 5);
-		gl.glTranslated(4500.0, 0.10, 1500.0);
+		gl.glTranslated(4500.0, 0.10, 2100.0);
 		gl.glRotated(90, 0, 1, 0);
 		greenLionHouse.display(drawable);
 		gl.glPopMatrix();
@@ -275,56 +283,65 @@ public class CastleScene extends JFrame
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyChar()) {
-		case 'r':
-			reset();
-			break;
 
-		case 'q':
-			rot_x += 1.0f;
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_ESCAPE: // reset moveable object focus
+			activeObject = null;
 			break;
-
-		case 'w':
-			rot_y += 1.0f;
-			break;
-
-		case 'e':
-			rot_z += 1.0f;
-			break;
-
-		case 'a':
-			rot_x -= 1.0f;
-			break;
-
-		case 's':
-			rot_y -= 1.0f;
-			break;
-
-		case 'd':
-			rot_z -= 1.0f;
-			break;
-
-		case '1':
+		case KeyEvent.VK_1:
 			activeObject = "Red";
 			break;
-		case '2':
+		case KeyEvent.VK_2:
 			activeObject = "Blue";
 			break;
-		case '3':
+		case KeyEvent.VK_3:
 			activeObject = "Yellow";
 			break;
-		case '4':
+		case KeyEvent.VK_4:
 			activeObject = "Green";
 			break;
-		case '5':
+		case KeyEvent.VK_5:
 			activeObject = "Black";
-			break;
 		}
 
+		// if a moveable object is in focus, pass event to it
 		if (null != activeObject) {
 			System.out.println("forward key press");
 			moveableObjectList.get(activeObject).handleKeyPressed(e);
+		} else {
+			// camera controls
+			switch (e.getKeyChar()) {
+			case 'r':
+				reset();
+				break;
+
+			case 'q':
+				rot_x += 1.0f;
+				break;
+
+			case 'w':
+				rot_y += 1.0f;
+				break;
+
+			case 'e':
+				rot_z += 1.0f;
+				break;
+
+			case 'a':
+				rot_x -= 1.0f;
+				break;
+
+			case 's':
+				rot_y -= 1.0f;
+				break;
+
+			case 'd':
+				rot_z -= 1.0f;
+				break;
+
+			}
 		}
+
 	}
 
 	@Override
@@ -432,11 +449,13 @@ public class CastleScene extends JFrame
 		gl.glPushMatrix();
 		gl.glColor3d(0.4, 0.2, 0);
 		gl.glPushMatrix();
-		Shapes.cube(drawable, 5000, -10, 200);
+		gl.glPushMatrix();
+		Shapes.cube(drawable, 5000, -20, 200);
+		gl.glPopMatrix();
 		gl.glRotated(90, 0, 1, 0);
-		Shapes.cube(drawable, 5000, -10, 200);
+		Shapes.cube(drawable, 5000, -20, 200);
 		gl.glRotated(90, 0, 1, 0);
-		Shapes.cube(drawable, 4800, -10, 200);
+		Shapes.cube(drawable, 4800, -20, 200);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
@@ -458,8 +477,9 @@ public class CastleScene extends JFrame
 		gl.glNewList(objectList.get("Water"), GL.GL_COMPILE);
 		gl.glPushMatrix();
 		gl.glColor3d(0.4, 0.2, 0);
+		gl.glTranslated(0, -1, 0);
 		Shapes.cylinder(drawable, 2200, -10, 1);
-		gl.glTranslated(0, 10, 0);
+		gl.glTranslated(0, 12, 0);
 		gl.glColor3d(0, 0.50196, 1);
 		Shapes.cylinder(drawable, 2000, -10, 1);
 		gl.glPopMatrix();
@@ -480,7 +500,7 @@ public class CastleScene extends JFrame
 		// lava
 		gl.glPushMatrix();
 		gl.glScaled(40, 40, 40);
-		gl.glTranslated(0.0, 0.10, 65);
+		gl.glTranslated(0.0, 0.5, 65);
 		gl.glRotated(108.5, 0, 1, 0);
 		lava.display(drawable);
 		gl.glPopMatrix();
@@ -488,7 +508,7 @@ public class CastleScene extends JFrame
 		// lake
 		gl.glPushMatrix();
 		gl.glScaled(40, 40, 40);
-		gl.glTranslated(0.0, 0.10, 180);
+		gl.glTranslated(0.0, 0.5, 180);
 		gl.glRotated(180, 1, 0, 0);
 		gl.glRotated(108.5, 0, 1, 0);
 		lake.display(drawable);
@@ -497,38 +517,170 @@ public class CastleScene extends JFrame
 		// desert
 		gl.glPushMatrix();
 		gl.glScaled(40, 40, 40);
-		gl.glTranslated(250.0, 0.10, 65);
+		gl.glTranslated(250.0, 0.5, 65);
 		gl.glRotated(180, 1, 0, 0);
 		gl.glRotated(-71.5, 0, 1, 0);
 		desert.display(drawable);
 		gl.glPopMatrix();
 
+		// start "planting" trees
+		// lava quadrant
+		Random randomGenerator = new Random();
 		gl.glPushMatrix();
 		gl.glTranslated(3200, 0.0, 200.0);
-		Random randomGenerator = new Random();
 		for (int i = 0; i < 5; i++) {
 			gl.glPushMatrix();
 			int scaleFactor = randomGenerator.nextInt(5);
 			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
 			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
-			lavaTreeList.get(i).drawTree(drawable);
+			tree.drawTree(drawable);
 			gl.glPopMatrix();
 		}
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glTranslated(1500, 0.0, 1500.0);
-		for (int i = 5; i < 10; i++) {
+		gl.glTranslated(3200, 0.0, 1500.0);
+		for (int i = 0; i < 5; i++) {
 			gl.glPushMatrix();
 			int scaleFactor = randomGenerator.nextInt(5);
 			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
 			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
-			lavaTreeList.get(i).drawTree(drawable);
+			tree.drawTree(drawable);
 			gl.glPopMatrix();
 		}
 		gl.glPopMatrix();
 
+		gl.glPushMatrix();
+		gl.glTranslated(0.0, 0.0, 3800.0);
+		for (int i = 0; i < 8; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 200));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
 		gl.glPopMatrix();
+
+		// water quadrant
+		gl.glPushMatrix();
+		gl.glTranslated(0.0, 0.0, 5400.0);
+		for (int i = 0; i < 8; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 200));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(1200, 0.0, 8500.0);
+		for (int i = 0; i < 8; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		// forest quadrant
+		gl.glPushMatrix();
+		gl.glTranslated(7000.0, 0.0, 5600.0);
+		for (int i = 0; i < 8; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 200));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(7000, 0.0, 7200.0);
+		for (int i = 0; i < 9; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(6000, 0.0, 8200.0);
+		for (int i = 0; i < 9; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(6000, 0.0, 8500.0);
+		for (int i = 0; i < 9; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		// sand quadrant
+		gl.glPushMatrix();
+		gl.glTranslated(5500, 0.0, 200.0);
+		for (int i = 0; i < 5; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(5500, 0.0, 1500.0);
+		for (int i = 0; i < 5; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 300));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(7200.0, 0.0, 4400.0);
+		for (int i = 0; i < 8; i++) {
+			gl.glPushMatrix();
+			int scaleFactor = randomGenerator.nextInt(5);
+			gl.glTranslated(250.0 + (i * 300), 0.10, 65 + (scaleFactor * 200));
+			gl.glScaled(5 + scaleFactor, 5 + scaleFactor, 5 + scaleFactor);
+			tree.drawTree(drawable);
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(2200, 0.0, 1200.0);
+		gl.glScaled(5, 5, 5);
+		tree.drawDeadTree(drawable);
+		gl.glPopMatrix();
+
+		// end "planting" trees
 
 		gl.glEndList();
 
@@ -540,8 +692,10 @@ public class CastleScene extends JFrame
 		objectList.put("Sky", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Sky"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glTranslated(5000, 2500, -500);
-		sun.display(drawable);
+		// gl.glTranslated(5000, 2500, -500);
+		// sun.display(drawable);
+		gl.glTranslated(5000, 1000, 8000);
+		spaceShip.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glEndList();

@@ -271,17 +271,18 @@ public class LionState implements State_I {
 		if ((true == do_walking) || (true == left) || (true == right)) {
 
 			// For Macs
-			float speedMult = 4f;
-			float moveSpeed = 8.0f;
-			if (do_running) {
-				speedMult = 4f;
-			}
-			// For Windows
-			// float speedMult = 1.0f;
-			// float moveSpeed = 5.0f;
+			// float speedMult = 4f;
+			// float moveSpeed = 8.0f;
 			// if (do_running) {
-			// speedMult = 2.5f;
+			// speedMult = 4f;
 			// }
+
+			// For Windows
+			float speedMult = 1.0f;
+			float moveSpeed = 50.0f;
+			if (do_running) {
+				speedMult = 2.5f;
+			}
 
 			double rotate = 0.0;
 			if (true == left) {
@@ -326,11 +327,11 @@ public class LionState implements State_I {
 				// work_was_done = voltron.doRobotModelWalk(moveSpeed /
 				// speedMult, do_turn, do_jump);
 				System.out.println("lion walk");
-				lion.walk(true);
+				lion.walk(true, moveSpeed / speedMult);
 			}
 		} else {
 			// work_was_done = voltron.doRobotModelWalk(0.0, do_turn, do_jump);
-			lion.walk(true);
+			lion.walk(false, 0.0);
 		}
 		return work_was_done;
 	}
@@ -354,7 +355,7 @@ public class LionState implements State_I {
 			} else {
 				if (default_yPosition >= yPosition) {
 					do_jump = false;
-					// voltron.resetRobot();
+					lion.resetLion();
 				} else {
 					yPosition -= 5;
 				}
@@ -445,6 +446,9 @@ public class LionState implements State_I {
 			break;
 		case KeyEvent.VK_R:
 			do_reset = true;
+			break;
+		case KeyEvent.VK_S:
+			lion.sit();
 			break;
 		case KeyEvent.VK_B:
 			do_block = true;
