@@ -126,15 +126,16 @@ public class SpaceScene extends JFrame
 
 		setupLight(drawable);
 		
-		voltron = new RobotModel();
-		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
-
 		moon = new Moon();
 		earth = new Earth();
 		iss = new ISS();
 		flyer = new TestFlyer();
 		sun = new Sun();
 		stars = new Stars();
+		voltron = new RobotModel();
+		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
+
+
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
 		iss.initializeISS(drawable);
@@ -223,8 +224,9 @@ public class SpaceScene extends JFrame
 
 		
 
-		if (test_fly)
+		if (test_fly) {
 			testFly(drawable);
+		}
 		else if (test_fly_displayed) {
 
 			gl.glPushMatrix();
