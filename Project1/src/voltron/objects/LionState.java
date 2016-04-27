@@ -1,12 +1,10 @@
-package robot;
+package voltron.objects;
 
 import java.awt.event.KeyEvent;
 
 import javax.media.opengl.GLAutoDrawable;
 
-import voltron.objects.State_I;
-
-public class RobotState implements State_I {
+public class LionState implements State_I {
 
 	private double xPosition;
 	private double default_xPosition;
@@ -21,8 +19,7 @@ public class RobotState implements State_I {
 	private double scale;
 	private double default_scale;
 
-	private RobotModel_I voltron;
-
+	private Lion lion;
 	private boolean left;
 	private boolean right;
 	private boolean back;
@@ -40,14 +37,18 @@ public class RobotState implements State_I {
 	private boolean fly_up;
 	private boolean fly_down;
 
-	public RobotState(double x, double y, double z, double rot, double s, RobotModel_I v) {
+	public LionState(double x, double y, double z, double rot, double s, Lion lion) {
 		this.default_xPosition = x;
 		this.default_yPosition = y;
 		this.default_zPosition = z;
 		this.default_rotation = rot;
 		this.default_scale = s;
-		this.voltron = v;
+		this.lion = lion;
 		this.setDefaults();
+	}
+
+	public Lion getLion() {
+		return lion;
 	}
 
 	/*
@@ -172,7 +173,7 @@ public class RobotState implements State_I {
 			if (true == currently_flying) {
 				if (default_yPosition >= yPosition) {
 					currently_flying = false;
-					voltron.resetRobot();
+					// voltron.resetRobot();
 				} else {
 					yPosition -= 20;
 					work_was_done = true;
@@ -186,7 +187,7 @@ public class RobotState implements State_I {
 			work_was_done = true;
 		} else if (true == fly_down) {
 			if (default_yPosition >= yPosition) {
-				voltron.resetRobot();
+				// voltron.resetRobot();
 			} else {
 				yPosition -= 15;
 			}
@@ -252,11 +253,11 @@ public class RobotState implements State_I {
 
 			this.setXRotation(x_rotate);
 			this.setZRotation(z_rotate);
-			voltron.doRobotModelFly(moveSpeed / speedMult, back);
+			// voltron.doRobotModelFly(moveSpeed / speedMult, back);
 		} else {
 			this.setXRotation(0);
 			this.setZRotation(0);
-			voltron.doRobotModelFly(0, false);
+			// voltron.doRobotModelFly(0, false);
 		}
 		return work_was_done;
 	}
@@ -322,10 +323,14 @@ public class RobotState implements State_I {
 			// System.out.printf("xPosition is %f and zPosition is %f\n",
 			// xPosition, zPosition);
 			if (true == do_walking || true == do_turn) {
-				work_was_done = voltron.doRobotModelWalk(moveSpeed / speedMult, do_turn, do_jump);
+				// work_was_done = voltron.doRobotModelWalk(moveSpeed /
+				// speedMult, do_turn, do_jump);
+				System.out.println("lion walk");
+				lion.walk(true);
 			}
 		} else {
-			work_was_done = voltron.doRobotModelWalk(0.0, do_turn, do_jump);
+			// work_was_done = voltron.doRobotModelWalk(0.0, do_turn, do_jump);
+			lion.walk(true);
 		}
 		return work_was_done;
 	}
@@ -349,7 +354,7 @@ public class RobotState implements State_I {
 			} else {
 				if (default_yPosition >= yPosition) {
 					do_jump = false;
-					voltron.resetRobot();
+					// voltron.resetRobot();
 				} else {
 					yPosition -= 5;
 				}
@@ -362,7 +367,7 @@ public class RobotState implements State_I {
 	private boolean doBlock() {
 		boolean work_done = false;
 
-		work_done = voltron.doRobotModelBlock(do_block, currently_blocking);
+		// work_done = voltron.doRobotModelBlock(do_block, currently_blocking);
 
 		if (false == work_done) {
 			currently_blocking = false;
@@ -418,25 +423,21 @@ public class RobotState implements State_I {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			left = true;
-			// System.out.printf("keyPressed, VK_LEFT\n");
 			break;
 		case KeyEvent.VK_RIGHT:
 			right = true;
-			// System.out.printf("keyPressed, VK_RIGHT\n");
 			break;
 		case KeyEvent.VK_DOWN:
+			System.out.println("setting do_walking");
 			back = true;
 			do_walking = true;
-			// System.out.printf("keyPressed, VK_DOWN\n");
 			break;
 		case KeyEvent.VK_UP:
 			forw = true;
 			do_walking = true;
-			// System.out.printf("keyPressed, VK_UP\n");
 			break;
 		case KeyEvent.VK_SHIFT:
 			do_running = true;
-			System.out.printf("keyPressed, VK_SHIFT\n");
 			break;
 		case KeyEvent.VK_J:
 			do_jump = true;
@@ -470,27 +471,22 @@ public class RobotState implements State_I {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			left = false;
-			// System.out.printf("keyReleased, VK_LEFT\n");
 			break;
 		case KeyEvent.VK_RIGHT:
 			right = false;
-			// System.out.printf("keyReleased, VK_RIGHT\n");
 			break;
 		case KeyEvent.VK_DOWN:
 			back = false;
 			do_walking = false;
 			do_running = false;
-			// System.out.printf("keyReleased, VK_DOWN\n");
 			break;
 		case KeyEvent.VK_UP:
 			forw = false;
 			do_walking = false;
 			do_running = false;
-			// System.out.printf("keyReleased, VK_UP\n");
 			break;
 		case KeyEvent.VK_SHIFT:
 			do_running = false;
-			System.out.printf("keyReleased, VK_SHIFT\n");
 			break;
 		case KeyEvent.VK_B:
 			do_block = false;
@@ -578,8 +574,7 @@ public class RobotState implements State_I {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		voltron.drawRobot(drawable);
-
+		lion.display(drawable);
 	}
 
 }

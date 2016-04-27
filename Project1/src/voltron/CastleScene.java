@@ -13,6 +13,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import javax.media.opengl.GL;
@@ -28,6 +29,8 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
+import space.Moon;
+import space.Sun;
 import voltron.objects.Castle;
 import voltron.objects.Desert;
 import voltron.objects.Lake;
@@ -41,35 +44,9 @@ import voltron.objects.Tree;
 public class CastleScene extends JFrame
 		implements GLEventListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
-	public class State {
-		double xPosition;
-		double yPosition;
-
-		public double getxPosition() {
-			return xPosition;
-		}
-
-		public void setxPosition(double xPosition) {
-			this.xPosition = xPosition;
-		}
-
-		public double getyPosition() {
-			return yPosition;
-		}
-
-		public void setyPosition(double yPosition) {
-			this.yPosition = yPosition;
-		}
-
-		public State(double xPosition, double yPosition) {
-			this.xPosition = xPosition;
-			this.yPosition = yPosition;
-		}
-
-	};
-
 	private Map<String, Integer> objectList = new HashMap<String, Integer>();
-	private Map<String, State> moveableObjectList = new HashMap<String, State>();
+	private Map<String, State_I> moveableObjectList = new HashMap<String, State_I>();
+	private String activeObject;
 	private GLCanvas canvas;
 	private GL gl;
 	private GLU glu;
@@ -93,6 +70,8 @@ public class CastleScene extends JFrame
 	private float rot_z;
 
 	private Castle castle;
+	private Moon moon;
+	private Sun sun;
 	private ArrayList<Tree> lavaTreeList = new ArrayList<Tree>();
 	private Lava lava;
 	private Lake lake;
@@ -155,6 +134,7 @@ public class CastleScene extends JFrame
 		for (int i = 0; i < 20; i++) {
 			lavaTreeList.add(new Tree());
 		}
+
 		lava = new Lava();
 		lake = new Lake();
 		desert = new Desert();
@@ -166,6 +146,11 @@ public class CastleScene extends JFrame
 		voltron = new RobotModel();
 		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
 
+		moon = new Moon();
+		moon.initializeMoon(drawable);
+
+		sun = new Sun();
+		sun.initializeSun(drawable);
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
 		createPath(drawable);
@@ -174,12 +159,16 @@ public class CastleScene extends JFrame
 		createSky(drawable);
 
 		lionFactory = new LionFactory(canvas);
-		lionFactory.createLion("Black", LION_COLOR.BLACK);
-		lionFactory.createLion("Yellow", LION_COLOR.YELLOW);
-		lionFactory.createLion("Blue", LION_COLOR.BLUE);
-		lionFactory.createLion("Green", LION_COLOR.GREEN);
-		lionFactory.createLion("Red", LION_COLOR.RED);
-		moveableObjectList.put("Red", new State(0.0, 0.0));
+		moveableObjectList.put("Black",
+				lionFactory.createLion("Black", LION_COLOR.BLACK, 50.0, 250.0, 4600.0, 0.0, 0.5));
+		moveableObjectList.put("Yellow",
+				lionFactory.createLion("Yellow", LION_COLOR.YELLOW, 4500.0, 50.0, -1700.0, -90.0, 0.5));
+		moveableObjectList.put("Blue",
+				lionFactory.createLion("Blue", LION_COLOR.BLUE, -4500.0, 50.0, 1600.0, 90.0, 0.5));
+		moveableObjectList.put("Green",
+				lionFactory.createLion("Green", LION_COLOR.GREEN, 4500.0, 50.0, 1300.0, -90.0, 0.5));
+		moveableObjectList.put("Red", lionFactory.createLion("Red", LION_COLOR.RED, -4500.0, 50.0, -1800.0, 90.0, 0.5));
+		activeObject = null;
 
 		voltron.initializeRobot(drawable);
 
@@ -221,27 +210,12 @@ public class CastleScene extends JFrame
 		gl.glCallList(objectList.get("Water"));
 		gl.glPopMatrix();
 
-		// lions
-		gl.glPushMatrix();
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glTranslated(100.0, 480.0, 9200.0);
-		lionFactory.getLion("Black").display(drawable);
-		gl.glPopMatrix();
-
 		// red lion house
 		gl.glPushMatrix();
 		// gl.glScaled(5, 5, 5);
 		gl.glTranslated(-4500.0, 0.10, -2000.0);
 		gl.glRotated(-90, 0, 1, 0);
 		redLionHouse.display(drawable);
-		gl.glPopMatrix();
-
-		// red lion
-		gl.glPushMatrix();
-		gl.glTranslated(-4500.0, 50.0, -1800.0);
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glRotated(90, 0, 1, 0);
-		lionFactory.getLion("Red").display(drawable);
 		gl.glPopMatrix();
 
 		// blue lion house
@@ -252,28 +226,12 @@ public class CastleScene extends JFrame
 		blueLionHouse.display(drawable);
 		gl.glPopMatrix();
 
-		// blue lion
-		gl.glPushMatrix();
-		gl.glTranslated(-4500.0, 50.0, 1600.0);
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glRotated(90, 0, 1, 0);
-		lionFactory.getLion("Blue").display(drawable);
-		gl.glPopMatrix();
-
 		// yellow lion house
 		gl.glPushMatrix();
 		// gl.glScaled(5, 5, 5);
 		gl.glTranslated(4500.0, 0.10, -1500.0);
 		gl.glRotated(90, 0, 1, 0);
 		yellowLionHouse.display(drawable);
-		gl.glPopMatrix();
-
-		// yellow lion
-		gl.glPushMatrix();
-		gl.glTranslated(4500.0, 50.0, -1700.0);
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glRotated(-90, 0, 1, 0);
-		lionFactory.getLion("Yellow").display(drawable);
 		gl.glPopMatrix();
 
 		// green lion house
@@ -284,26 +242,19 @@ public class CastleScene extends JFrame
 		greenLionHouse.display(drawable);
 		gl.glPopMatrix();
 
-		// green lion
-		gl.glPushMatrix();
-		gl.glTranslated(4500.0, 50.0, 1300.0);
-		gl.glScaled(0.5, 0.5, 0.5);
-		gl.glRotated(-90, 0, 1, 0);
-		lionFactory.getLion("Green").display(drawable);
-		gl.glPopMatrix();
-
-		// voltron
-		if (true == state.update()) {
-			voltron.deleteRobot(drawable);
-			voltron.initializeRobot(drawable);
+		// draw all moveable objects
+		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
+			gl.glPushMatrix();
+			State_I state = objects.getValue();
+			state.update();
+			gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+			gl.glScaled(state.getScale(), state.getScale(), state.getScale());
+			gl.glRotated(state.getxRotation(), 1, 0, 0);
+			gl.glRotated(state.getyRotation(), 0, 1, 0);
+			gl.glRotated(state.getzRotation(), 0, 0, 1);
+			state.display(drawable);
+			gl.glPopMatrix();
 		}
-
-		gl.glPushMatrix();
-		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
-		gl.glRotated(state.getyRotation(), 0, 1, 0);
-		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
-		voltron.drawRobot(drawable);
-		gl.glPopMatrix();
 
 		gl.glPopMatrix();
 
@@ -352,11 +303,36 @@ public class CastleScene extends JFrame
 		case 'd':
 			rot_z -= 1.0f;
 			break;
+
+		case '1':
+			activeObject = "Red";
+			break;
+		case '2':
+			activeObject = "Blue";
+			break;
+		case '3':
+			activeObject = "Yellow";
+			break;
+		case '4':
+			activeObject = "Green";
+			break;
+		case '5':
+			activeObject = "Black";
+			break;
+		}
+
+		if (null != activeObject) {
+			System.out.println("forward key press");
+			moveableObjectList.get(activeObject).handleKeyPressed(e);
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent e) {
+		if (null != activeObject) {
+			moveableObjectList.get(activeObject).handleKeyReleased(e);
+		}
+
 	}
 
 	@Override
@@ -425,6 +401,11 @@ public class CastleScene extends JFrame
 		rot_x = 10;
 		rot_y = 0;
 		rot_z = 0;
+
+		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
+			objects.getValue().stateReset();
+		}
+
 	}
 
 	private void setCamera(GL gl, GLU glu) {
@@ -559,7 +540,8 @@ public class CastleScene extends JFrame
 		objectList.put("Sky", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Sky"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-
+		gl.glTranslated(5000, 2500, -500);
+		sun.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glEndList();

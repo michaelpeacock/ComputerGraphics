@@ -2,6 +2,8 @@ package voltron.objects;
 
 import java.awt.event.KeyEvent;
 
+import javax.media.opengl.GLAutoDrawable;
+
 public interface State_I {
 
 	/**
@@ -38,12 +40,12 @@ public interface State_I {
 	 * @return the x rotation
 	 */
 	double getxRotation();
-	
+
 	/**
 	 * @return the y rotation
 	 */
 	double getyRotation();
-	
+
 	/**
 	 * @return the z rotation
 	 */
@@ -53,18 +55,24 @@ public interface State_I {
 	 * @return the scale
 	 */
 	double getScale();
-	
-	
+
 	double getCameraXOffset(boolean first_person);
+
 	double getCameraYOffset(boolean first_person);
+
 	double getCameraZOffset(boolean first_person);
-	
+
 	void handleKeyPressed(KeyEvent e);
+
 	void handleKeyReleased(KeyEvent e);
-	
+
+	void display(GLAutoDrawable drawable);
+
+	void stateReset();
+
 	/**
 	 * @return boolean
 	 */
 	public boolean update();
-	
+
 }

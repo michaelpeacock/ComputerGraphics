@@ -33,10 +33,6 @@ public class Lion {
 	private LION_COLOR lionColor;
 	private LION_ACTION action;
 	private LION_POSITION position;
-	double xPosition;
-	double yPosition;
-	double zPosition;
-	double scale;
 	float sitIncrement = 0.0f;
 	Map<String, LionObject> lionObjects = new HashMap<String, LionObject>();
 
@@ -78,38 +74,6 @@ public class Lion {
 		}
 
 		return lionObjects.get(objectName);
-	}
-
-	public double getxPosition() {
-		return xPosition;
-	}
-
-	public void setxPosition(double d) {
-		this.xPosition = d;
-	}
-
-	public double getyPosition() {
-		return yPosition;
-	}
-
-	public void setyPosition(double d) {
-		this.yPosition = d;
-	}
-
-	public double getzPosition() {
-		return zPosition;
-	}
-
-	public void setzPosition(double zPosition) {
-		this.zPosition = zPosition;
-	}
-
-	public double getScale() {
-		return scale;
-	}
-
-	public void setScale(double scale) {
-		this.scale = scale;
 	}
 
 	public void setPosition(LION_POSITION position) {
@@ -177,64 +141,36 @@ public class Lion {
 		}
 	}
 
-	public void walk(LION_POSITION position, Boolean walking) {
+	public void walk(Boolean walking) {
 		this.walking = walking;
-		setPosition(position);
 	}
 
 	public void doWalking(GLAutoDrawable drawable) {
-		switch (position) {
-		case BACK:
-			setScale(getScale() - 0.00010);
-			System.out.println("dowalking back z " + getzPosition());
-			setzPosition(getzPosition() + 0.001);
-			if (getzPosition() < 1000) {
-				setyPosition(getyPosition() + 0.5);
-			}
-			break;
-		case FRONT:
-			setScale(getScale() + 0.00010);
-			System.out.println("dowalking front z " + getzPosition());
-			setzPosition(getzPosition() - 0.001);
-			if (getzPosition() < 1000) {
-				setyPosition(getyPosition() - 0.5);
-			}
-			break;
-		case LEFT:
-			setxPosition(getxPosition() - 0.5);
-			if (walkIncrement == true) {
-				getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
-				getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
-				getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
-				getLionObject("RIGHT_BACK_KNEE").setxRotation(-90 * sitIncrement);
-				getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
-				getLionObject("LEFT_BACK_KNEE").setxRotation(-90 * sitIncrement);
+		if (walkIncrement == true) {
+			getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
+			getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(-15 * sitIncrement);
+			getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
+			getLionObject("RIGHT_BACK_KNEE").setxRotation(-90 * sitIncrement);
+			getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(75 * sitIncrement);
+			getLionObject("LEFT_BACK_KNEE").setxRotation(-90 * sitIncrement);
 
-				walkIncrement = false;
-			} else {
-				getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(0);
-				getLionObject("RIGHT_FRONT_KNEE").setxRotation(0);
-				getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(0);
-				getLionObject("LEFT_FRONT_KNEE").setxRotation(0);
-				getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(0);
-				getLionObject("RIGHT_BACK_KNEE").setxRotation(0);
-				getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(0);
-				getLionObject("LEFT_BACK_KNEE").setxRotation(0);
+			walkIncrement = false;
+		} else {
+			getLionObject("RIGHT_FRONT_UPPER_LEG").setxRotation(0);
+			getLionObject("RIGHT_FRONT_KNEE").setxRotation(0);
+			getLionObject("LEFT_FRONT_UPPER_LEG").setxRotation(0);
+			getLionObject("LEFT_FRONT_KNEE").setxRotation(0);
+			getLionObject("RIGHT_BACK_UPPER_LEG").setxRotation(0);
+			getLionObject("RIGHT_BACK_KNEE").setxRotation(0);
+			getLionObject("LEFT_BACK_UPPER_LEG").setxRotation(0);
+			getLionObject("LEFT_BACK_KNEE").setxRotation(0);
 
-				walkIncrement = true;
-			}
-
-			deleteLion(drawable);
-			initializeLion(drawable);
-			glcanvas.repaint();
-			break;
-		case RIGHT:
-			setxPosition(getxPosition() + 0.5);
-			break;
-		default:
-			break;
-
+			walkIncrement = true;
 		}
+
+		deleteLion(drawable);
+		initializeLion(drawable);
+		glcanvas.repaint();
 	}
 
 	public void rotateObject(GL gl, LionObject lionObject) {
@@ -689,24 +625,6 @@ public class Lion {
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
 		gl.glRotatef(180, 0, 1, 0);
-
-		switch (position) {
-		case BACK:
-			gl.glRotatef(180, 0, 1, 0);
-			break;
-		case FRONT:
-			gl.glRotatef(0, 0, 1, 0);
-			break;
-		case LEFT:
-			gl.glRotatef(-90, 0, 1, 0);
-			break;
-		case RIGHT:
-			gl.glRotatef(90, 0, 1, 0);
-			break;
-		default:
-			break;
-
-		}
 
 		if (sitting == true) {
 			doSitting(drawable);

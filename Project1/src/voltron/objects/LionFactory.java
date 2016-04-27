@@ -2,9 +2,7 @@ package voltron.objects;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 
 public class LionFactory {
@@ -12,29 +10,30 @@ public class LionFactory {
 		RED, BLUE, BLACK, GREEN, YELLOW
 	};
 
-	Map<String, Lion> lions = new HashMap<String, Lion>();
+	Map<String, LionState> lions = new HashMap<String, LionState>();
 	GLCanvas glcanvas;
 
 	public LionFactory(GLCanvas glcanvas) {
 		this.glcanvas = glcanvas;
 	}
 
-	public Lion createLion(String lionName, LION_COLOR lionColor) {
+	public State_I createLion(String lionName, LION_COLOR lionColor, double x, double y, double z, double rot,
+			double s) {
 		if (!lions.containsKey(lionName)) {
 			Lion newLion = new Lion(glcanvas, lionColor);
-			lions.put(lionName, newLion);
+			LionState newLionState = new LionState(x, y, z, rot, s, newLion);
+			lions.put(lionName, newLionState);
 		}
 
-		return getLion(lionName);
+		return getLionState(lionName);
 	}
 
 	public Lion getLion(String lionName) {
+		return lions.get(lionName).getLion();
+	}
+
+	public State_I getLionState(String lionName) {
 		return lions.get(lionName);
 	}
 
-	public void displayAll(GLAutoDrawable drawable) {
-		for (Entry<String, Lion> lion : lions.entrySet()) {
-			lion.getValue().display(drawable);
-		}
-	}
 }

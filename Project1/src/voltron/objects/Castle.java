@@ -8,13 +8,11 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 
 import voltron.Shapes;
-import voltron.objects.LionFactory.LION_COLOR;
 
 public class Castle {
 	private Map<String, Integer> objectList = new HashMap<String, Integer>();
 	private GLCanvas glcanvas;
 	private Logo logo;
-	private LionFactory lionFactory;
 
 	public void initializeCastle(GLCanvas glcanvas, GLAutoDrawable drawable) {
 		this.glcanvas = glcanvas;
@@ -29,11 +27,6 @@ public class Castle {
 		createRight(drawable);
 		createCenter(drawable);
 
-		lionFactory = new LionFactory(glcanvas);
-		lionFactory.createLion("Red", LION_COLOR.RED);
-		lionFactory.createLion("Green", LION_COLOR.GREEN);
-		lionFactory.createLion("Blue", LION_COLOR.BLUE);
-		lionFactory.createLion("Yellow", LION_COLOR.YELLOW);
 		gl.glPopMatrix();
 
 	}
@@ -303,7 +296,6 @@ public class Castle {
 		gl.glPushMatrix();
 		gl.glCallList(objectList.get("Center"));
 		gl.glPopMatrix();
-
 
 	}
 
