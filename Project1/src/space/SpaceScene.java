@@ -24,6 +24,7 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
+import voltron.Shapes;
 import voltron.camera.CameraController;
 import voltron.camera.CameraController_I;
 import voltron.camera.CameraMode;
@@ -62,7 +63,12 @@ public class SpaceScene extends JFrame
 	private float test_fly_x_inc;
 	private float test_fly_y_inc;
 	private float test_fly_z_inc;
+	private float moonXOffset;
+	private float moonYOffset;
+	private float moonZOffset;
+	private float moonRotation;
 	private static final float NUM_FLY_INC = 100;
+	private static final float MOON_ROTATE_DIAMETER = 1200;
 	private float sample_rate;
 
 	private CameraController_I camera;
@@ -79,7 +85,8 @@ public class SpaceScene extends JFrame
 		reset();
 		
 		GLCapabilities caps = new GLCapabilities();
-		canvas = new GLCanvas();
+		caps.setDoubleBuffered(true);
+		canvas = new GLCanvas(caps);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
 		canvas.addMouseListener(this);
@@ -178,6 +185,7 @@ public class SpaceScene extends JFrame
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
+		drawable.swapBuffers();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -193,13 +201,17 @@ public class SpaceScene extends JFrame
 		}
 		
 		gl.glPushMatrix();
-		gl.glTranslated(2000.0, -2900.0, -5500.0);
-		moon.display(drawable);		
-		gl.glPopMatrix();
-
-		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
+
+			gl.glPushMatrix();
+			calculateMoonCoords();
+			//gl.glRotated(90.0, 1, 0, 0);
+			gl.glTranslated(moonXOffset, moonYOffset, moonZOffset);
+			moon.display(drawable);		
+		
+		gl.glPopMatrix();
+
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
@@ -247,6 +259,20 @@ public class SpaceScene extends JFrame
 
 	}
 
+	private void calculateMoonCoords() {
+		double s = moonRotation * Shapes.PI / 180;
+		double t = 90.0 * Shapes.PI / 180; // this is here so we can change the inclination
+		moonZOffset = (float) (MOON_ROTATE_DIAMETER * Math.cos(s) * Math.sin(t));
+		moonXOffset = (float) (MOON_ROTATE_DIAMETER * Math.sin(s) * Math.sin(t));
+		moonYOffset = (float) (MOON_ROTATE_DIAMETER * Math.cos(t));
+		
+		moonRotation+= 0.1;
+		if (moonRotation > 359) {
+			moonRotation = 0.0f;
+		}
+
+	}
+	
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		// TODO Auto-generated method stub
@@ -351,7 +377,7 @@ public class SpaceScene extends JFrame
 	}
 
 	private void testFly(GLAutoDrawable drawable) {
-		if (sample_rate >=10) {
+		if (sample_rate >=4) {
 			gl = drawable.getGL();
 			test_fly_x -= test_fly_x_inc;
 			test_fly_y -= test_fly_y_inc;
@@ -406,7 +432,8 @@ public class SpaceScene extends JFrame
 		test_fly_y_inc = test_fly_y / NUM_FLY_INC;
 		test_fly_z_inc = test_fly_z / NUM_FLY_INC;
 		sample_rate = 0;
-
+		moonRotation = 0.0f;
+		calculateMoonCoords();
 	}
 
 	private void setCamera(GL gl, GLU glu) {

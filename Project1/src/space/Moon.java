@@ -34,7 +34,7 @@ public class Moon {
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
 
 		float inner_color[] = {0.7f, 0.7f, 0.7f, 1.0f};
-		float outer_color[] = {0.8f, 0.8f, 0.8f, .6f};
+		float outer_color[] = {0.8f, 0.8f, 0.8f, .4f};
 //		gl.glColor4d(0.7, 0.7, 0.7, 1.0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
 		Shapes.sphere(drawable,MOON_RADIUS,10.0);
@@ -51,7 +51,7 @@ public class Moon {
 		objectList.put("MoonCraters", gl.glGenLists(1));
 		gl.glNewList(objectList.get("MoonCraters"), GL.GL_COMPILE);
 
-		float inner_color[] = {0.5f, 0.5f, 0.5f, 1.0f};
+		float inner_color[] = {0.4f, 0.4f, 0.4f, 1.0f};
 
 		gl.glPushMatrix();
 //		gl.glColor3d(0.5, 0.5, 0.5);

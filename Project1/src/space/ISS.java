@@ -235,7 +235,7 @@ public class ISS {
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
-		if (current_x_count >=10) {
+		if (current_x_count >=6) {
 			current_x_rot+=1.0;
 			if (current_x_rot>=359.0){
 				current_x_rot = 0;
