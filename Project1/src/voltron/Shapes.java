@@ -6,50 +6,51 @@ import javax.media.opengl.GLAutoDrawable;
 public class Shapes {
 	public static final double PI = 3.14159265358979323846;
 
-//    public static void Cylinder(GLAutoDrawable drawable, double radius, double height, int theta) {
-//        GL gl = drawable.getGL();
-//        
-//        double degrees = 360.0 / theta;
-//        double top = height / 2.0;
-//        double bottom = -1 * top;
-//        // handle
-//        gl.glBegin(GL.GL_QUAD_STRIP);
-//            for (int i = 0; i <= theta; i++) {
-//                double x = radius * Math.cos(Math.toRadians(degrees * i));
-//                double y = radius * Math.sin(Math.toRadians(degrees * i));
-//                gl.glNormal3d(x, top, y);
-//                gl.glVertex3d(x, top, y);
-//                gl.glNormal3d(x, bottom, y);
-//                gl.glVertex3d(x, bottom, y);
-//            }
-//        gl.glEnd();
-//        
-//        // bottom part
-//        gl.glBegin(GL.GL_TRIANGLE_FAN);
-//            gl.glNormal3d(0.0, -1.0, 0.0);
-//            gl.glVertex3d(0.0, bottom, 0.0);
-//            for (int i = 0; i <= theta; i++) {
-//                double x = radius * Math.cos(Math.toRadians(degrees * i));
-//                double y = radius * Math.sin(Math.toRadians(degrees * i));
-//                gl.glNormal3d(x, bottom, y);
-//                gl.glVertex3d(x, bottom, y);
-//            }
-//        gl.glEnd();
-//        
-//        // top part
-//        gl.glBegin(GL.GL_TRIANGLE_FAN);
-//            gl.glNormal3d(0.0, 1.0, 0.0);
-//            gl.glVertex3d(0.0, top, 0.0);
-//            for (int i = 0; i <= theta; i++) {
-//                double x = radius * Math.cos(Math.toRadians(degrees * i));
-//                double y = radius * Math.sin(Math.toRadians(degrees * i));
-//                gl.glNormal3d(x, top, y);
-//                gl.glVertex3d(x, top, y);
-//            }
-//        gl.glEnd();
-//    }
-//    
-    public static void cylinder(GLAutoDrawable drawable, double radius, double height, double theta) {
+	// public static void Cylinder(GLAutoDrawable drawable, double radius,
+	// double height, int theta) {
+	// GL gl = drawable.getGL();
+	//
+	// double degrees = 360.0 / theta;
+	// double top = height / 2.0;
+	// double bottom = -1 * top;
+	// // handle
+	// gl.glBegin(GL.GL_QUAD_STRIP);
+	// for (int i = 0; i <= theta; i++) {
+	// double x = radius * Math.cos(Math.toRadians(degrees * i));
+	// double y = radius * Math.sin(Math.toRadians(degrees * i));
+	// gl.glNormal3d(x, top, y);
+	// gl.glVertex3d(x, top, y);
+	// gl.glNormal3d(x, bottom, y);
+	// gl.glVertex3d(x, bottom, y);
+	// }
+	// gl.glEnd();
+	//
+	// // bottom part
+	// gl.glBegin(GL.GL_TRIANGLE_FAN);
+	// gl.glNormal3d(0.0, -1.0, 0.0);
+	// gl.glVertex3d(0.0, bottom, 0.0);
+	// for (int i = 0; i <= theta; i++) {
+	// double x = radius * Math.cos(Math.toRadians(degrees * i));
+	// double y = radius * Math.sin(Math.toRadians(degrees * i));
+	// gl.glNormal3d(x, bottom, y);
+	// gl.glVertex3d(x, bottom, y);
+	// }
+	// gl.glEnd();
+	//
+	// // top part
+	// gl.glBegin(GL.GL_TRIANGLE_FAN);
+	// gl.glNormal3d(0.0, 1.0, 0.0);
+	// gl.glVertex3d(0.0, top, 0.0);
+	// for (int i = 0; i <= theta; i++) {
+	// double x = radius * Math.cos(Math.toRadians(degrees * i));
+	// double y = radius * Math.sin(Math.toRadians(degrees * i));
+	// gl.glNormal3d(x, top, y);
+	// gl.glVertex3d(x, top, y);
+	// }
+	// gl.glEnd();
+	// }
+	//
+	public static void cylinder(GLAutoDrawable drawable, double radius, double height, double theta) {
 		GL gl = drawable.getGL();
 		float radian, r, h, t;
 

@@ -30,9 +30,8 @@ public class CameraController implements CameraController_I {
 	private double up_x;
 	private double up_y;
 	private double up_z;
-	
 
-	public CameraController (double window_height, double window_width, double scene_depth, 
+	public CameraController(double window_height, double window_width, double scene_depth,
 			double initialXCameraLocation, double initialYCameraLocation, double initialZCameraLocation) {
 		this.height = window_height;
 		this.width = window_width;
@@ -42,22 +41,22 @@ public class CameraController implements CameraController_I {
 		this.initial_camera_z = initialZCameraLocation;
 		reset();
 	}
-	
+
 	@Override
 	public void handleKeyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		switch (e.getKeyCode()) {		
+		switch (e.getKeyCode()) {
 		case KeyEvent.VK_R:
 			reset();
 			break;
-			
-		case KeyEvent.VK_C: 
-			chaseCam++; 
-			if(chaseCam > 3) { 
+
+		case KeyEvent.VK_C:
+			chaseCam++;
+			if (chaseCam > 3) {
 				chaseCam = 0;
-			} 
+			}
 			updateCurrentMode(chaseCam);
-			break;	
+			break;
 		}
 	}
 
@@ -81,74 +80,71 @@ public class CameraController implements CameraController_I {
 		gl.glLoadIdentity();
 
 		// Perspective.
-		float widthHeightRatio = (float) width/(float) height;
+		float widthHeightRatio = (float) width / (float) height;
 		glu.gluPerspective(45, widthHeightRatio, 1, scene_depth);
-		
+
 		if (CameraMode.CAM_DEFAULT == mode) {
 			glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
-		}
-		else if (CameraMode.CAM_THIRD_PERSON == mode) {
+		} else if (CameraMode.CAM_THIRD_PERSON == mode) {
 			double rotate = state.getyRotation() + 270;
 			double pos_rotate = rotate - 180;
 
-			double position_x = state.getxPosition() + (state.getCameraXOffset(false) * Math.cos(Math.toRadians(pos_rotate)));
-			double position_z = state.getzPosition() - (state.getCameraZOffset(false) * Math.sin(Math.toRadians(pos_rotate)));
+			double position_x = state.getxPosition()
+					+ (state.getCameraXOffset(false) * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition()
+					- (state.getCameraZOffset(false) * Math.sin(Math.toRadians(pos_rotate)));
 			double position_y = state.getyPosition() + state.getCameraYOffset(false);
-			double look_x = state.getxPosition() + ((scene_depth/10) * Math.cos(Math.toRadians(rotate)));
-			double look_z = state.getzPosition() - ((scene_depth/10) * Math.sin(Math.toRadians(rotate)));
+			double look_x = state.getxPosition() + ((scene_depth / 10) * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - ((scene_depth / 10) * Math.sin(Math.toRadians(rotate)));
 			double look_y = state.getyPosition();
 
 			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-		}
-		else if (CameraMode.CAM_FIRST_PERSON == mode) {
+		} else if (CameraMode.CAM_FIRST_PERSON == mode) {
 			double rotate = state.getyRotation() + 270;
 			double pos_rotate = rotate;
 
-			double position_x = state.getxPosition() + (state.getCameraXOffset(true) * Math.cos(Math.toRadians(pos_rotate)));
-			double position_z = state.getzPosition() - (state.getCameraZOffset(true) * Math.sin(Math.toRadians(pos_rotate)));
+			double position_x = state.getxPosition()
+					+ (state.getCameraXOffset(true) * Math.cos(Math.toRadians(pos_rotate)));
+			double position_z = state.getzPosition()
+					- (state.getCameraZOffset(true) * Math.sin(Math.toRadians(pos_rotate)));
 			double position_y = state.getyPosition() + state.getCameraYOffset(true);
-			double look_x = state.getxPosition() + ((scene_depth/10) * Math.cos(Math.toRadians(rotate)));
-			double look_z = state.getzPosition() - ((scene_depth/10) * Math.sin(Math.toRadians(rotate)));
+			double look_x = state.getxPosition() + ((scene_depth / 10) * Math.cos(Math.toRadians(rotate)));
+			double look_z = state.getzPosition() - ((scene_depth / 10) * Math.sin(Math.toRadians(rotate)));
 			double look_y = state.getyPosition();
 
 			glu.gluLookAt(position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z);
-		}
-		else if (CameraMode.CAM_CENTER_FOLLOW == mode) {
-			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(), state.getzPosition(), up_x, up_y, up_z);
+		} else if (CameraMode.CAM_CENTER_FOLLOW == mode) {
+			glu.gluLookAt(camera_x, camera_y, camera_z, state.getxPosition(), state.getyPosition(),
+					state.getzPosition(), up_x, up_y, up_z);
 		}
 	}
-	
+
 	private void updateCurrentMode(int chase) {
-		
+
 		switch (chase) {
-		case (0):
-		{
+		case (0): {
 			mode = CameraMode.CAM_DEFAULT;
 			break;
 		}
-		case (1):
-		{
+		case (1): {
 			mode = CameraMode.CAM_THIRD_PERSON;
 			break;
 		}
-		case (2):
-		{
+		case (2): {
 			mode = CameraMode.CAM_FIRST_PERSON;
 			break;
 		}
-		case (3):
-		{
+		case (3): {
 			mode = CameraMode.CAM_CENTER_FOLLOW;
 			break;
 		}
-		default: 
-		{
+		default: {
 			mode = CameraMode.CAM_DEFAULT;
 			break;
 		}
 		}
 	}
-	
+
 	private void reset() {
 		this.chaseCam = 0;
 		mode = CameraMode.CAM_DEFAULT;
@@ -176,23 +172,22 @@ public class CameraController implements CameraController_I {
 	@Override
 	public void handleMouseRelease(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleMouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		camera_x = (mouseX - e.getX());
+		camera_x += (float) ((e.getX() - 500) * .03);
 		center_x = camera_x;
 
-		camera_y = (mouseY - e.getY());
+		camera_y -= (float) ((e.getY() - 500) * .03);
 		center_y = camera_y;
 	}
 
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

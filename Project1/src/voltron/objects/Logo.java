@@ -6,13 +6,14 @@ import javax.media.opengl.GLAutoDrawable;
 import voltron.VoltronColor;
 
 public class Logo {
+	private int Logo;
 
 	public void createLogo(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		gl.glGenLists(1);
-		gl.glNewList(1, GL.GL_COMPILE);
+		Logo = gl.glGenLists(1);
+		gl.glNewList(Logo, GL.GL_COMPILE);
 
 		// back of logo
 		gl.glPushMatrix();
@@ -154,7 +155,7 @@ public class Logo {
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 		gl.glPushMatrix();
-		gl.glCallList(1);
+		gl.glCallList(Logo);
 		gl.glPopMatrix();
 	}
 

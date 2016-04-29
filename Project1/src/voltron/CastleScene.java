@@ -86,7 +86,7 @@ public class CastleScene extends JFrame
 	private LionHouse greenLionHouse;
 	private RobotModel_I voltron;
 	private State_I state;
-	
+
 	public CastleScene() {
 		reset();
 
@@ -139,7 +139,7 @@ public class CastleScene extends JFrame
 		}
 
 		setupLight(drawable);
-		
+
 		tree = new Tree();
 
 		lava = new Lava();
@@ -318,27 +318,27 @@ public class CastleScene extends JFrame
 				break;
 
 			case 'q':
-				rot_x += 1.0f;
+				camera_x += 50.0f;
 				break;
 
 			case 'w':
-				rot_y += 1.0f;
+				camera_y += 50.0f;
 				break;
 
 			case 'e':
-				rot_z += 1.0f;
+				camera_z += 50.0f;
 				break;
 
 			case 'a':
-				rot_x -= 1.0f;
+				camera_x -= 500.0f;
 				break;
 
 			case 's':
-				rot_y -= 1.0f;
+				camera_y -= 50.0f;
 				break;
 
 			case 'd':
-				rot_z -= 1.0f;
+				camera_z -= 50.0f;
 				break;
 
 			}
@@ -389,10 +389,10 @@ public class CastleScene extends JFrame
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		camera_x += (float) ((e.getX() - 500) * .03);
-		center_x = camera_x;
+		// center_x = camera_x;
 
 		camera_y -= (float) ((e.getY() - 500) * .03);
-		center_y = camera_y;
+		// center_y = camera_y;
 	}
 
 	@Override
@@ -694,8 +694,16 @@ public class CastleScene extends JFrame
 		objectList.put("Sky", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Sky"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		// gl.glTranslated(5000, 2500, -500);
+		gl.glTranslated(5000, 2500, -500);
 		// sun.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
+		gl.glTranslated(1000, 1000, 8000);
+		moon.display(drawable);
+		gl.glPopMatrix();
+
+		gl.glPushMatrix();
 		gl.glTranslated(5000, 1000, 8000);
 		spaceShip.display(drawable);
 		gl.glPopMatrix();
@@ -717,34 +725,33 @@ public class CastleScene extends JFrame
 		gl.glEndList();
 
 	}
-	
-	private void setupLight(GLAutoDrawable drawable){
+
+	private void setupLight(GLAutoDrawable drawable) {
 		gl = drawable.getGL();
 		glu = new GLU();
-		
-		float light_position[] = { 0.2f, 1, 0, 0 };  // directional light source
-		//float light_position[] = { -100, 1000, -10000, 1 };
-		float diffuse[] = {.8f, .8f, .8f, 0.0f};
-        float ambient[] = {.7f, .7f, .7f, 0.0f};
-        float specular[] = {.8f, .8f, .8f, 0.0f};
-        
-        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
-        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0 );
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
-		
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
 
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glEnable(GL.GL_LIGHT0);
+		float light_position[] = { 0.2f, 1, 0, 0 }; // directional light source
+		// float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = { .8f, .8f, .8f, 0.0f };
+		float ambient[] = { .7f, .7f, .7f, 0.0f };
+		float specular[] = { .8f, .8f, .8f, 0.0f };
+
+		// gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
+		// gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+
+		gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL.GL_LIGHT0);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 	}
-
 
 	public static void main(String[] args) {
 		CastleScene castle = new CastleScene();

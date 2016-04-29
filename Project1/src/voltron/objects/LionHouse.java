@@ -38,14 +38,16 @@ public class LionHouse {
 		gl.glPushMatrix();
 		// VoltronColor.setColor(drawable, 0, 0, 0);
 		gl.glTranslated(0.0, 500.0, 0.0);
-		gl.glPushMatrix();
 		gl.glRotated(-90, 0, 0, 1);
 		Shapes.cube(drawable, 75, 400, 400);
 		gl.glPopMatrix();
+
+		gl.glPushMatrix();
 		gl.glRotated(-90, 1, 0, 0);
 		gl.glTranslated(150.0, -150.0, 1.0);
 		logo.display(drawable);
 		gl.glPopMatrix();
+
 		gl.glPopMatrix();
 	}
 
