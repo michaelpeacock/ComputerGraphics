@@ -86,7 +86,7 @@ public class CastleScene extends JFrame
 	private LionHouse greenLionHouse;
 	private RobotModel_I voltron;
 	private State_I state;
-
+	
 	public CastleScene() {
 		reset();
 
@@ -138,6 +138,8 @@ public class CastleScene extends JFrame
 			lavaTreeList.add(new Tree());
 		}
 
+		setupLight(drawable);
+		
 		tree = new Tree();
 
 		lava = new Lava();
@@ -447,7 +449,7 @@ public class CastleScene extends JFrame
 		objectList.put("Path", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Path"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glColor3d(0.4, 0.2, 0);
+		VoltronColor.setColor(drawable, 0.4, 0.2, 0);
 		gl.glPushMatrix();
 		gl.glPushMatrix();
 		Shapes.cube(drawable, 5000, -20, 200);
@@ -476,11 +478,11 @@ public class CastleScene extends JFrame
 		objectList.put("Water", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Water"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glColor3d(0.4, 0.2, 0);
+		VoltronColor.setColor(drawable, 0.4, 0.2, 0);
 		gl.glTranslated(0, -1, 0);
 		Shapes.cylinder(drawable, 2200, -10, 1);
 		gl.glTranslated(0, 12, 0);
-		gl.glColor3d(0, 0.50196, 1);
+		VoltronColor.setColor(drawable, 0, 0.50196, 1);
 		Shapes.cylinder(drawable, 2000, -10, 1);
 		gl.glPopMatrix();
 
@@ -494,7 +496,7 @@ public class CastleScene extends JFrame
 		objectList.put("Land", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Land"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glColor3d(0, 0.4, 0);
+		VoltronColor.setColor(drawable, 0, 0.4, 0);
 		Shapes.cube(drawable, 10000, -100, 10000);
 
 		// lava
@@ -708,13 +710,41 @@ public class CastleScene extends JFrame
 		objectList.put("Post", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Post"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glColor3d(0.753, 0.753, 0.753);
+		VoltronColor.setColor(drawable, 0.753, 0.753, 0.753);
 		Shapes.cube(drawable, 400, 200, 400);
 		gl.glPopMatrix();
 
 		gl.glEndList();
 
 	}
+	
+	private void setupLight(GLAutoDrawable drawable){
+		gl = drawable.getGL();
+		glu = new GLU();
+		
+		float light_position[] = { 0.2f, 1, 0, 0 };  // directional light source
+		//float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = {.8f, .8f, .8f, 0.0f};
+        float ambient[] = {.7f, .7f, .7f, 0.0f};
+        float specular[] = {.8f, .8f, .8f, 0.0f};
+        
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
+        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0 );
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+        //gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+		
+        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GL.GL_LIGHT0);
+		gl.glEnable(GL.GL_DEPTH_TEST);
+	}
+
 
 	public static void main(String[] args) {
 		CastleScene castle = new CastleScene();

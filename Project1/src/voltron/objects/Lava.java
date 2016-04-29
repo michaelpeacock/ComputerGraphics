@@ -3,13 +3,15 @@ package voltron.objects;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
+import voltron.VoltronColor;
+
 public class Lava {
 
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.898, 0.282, 0.059);
+		VoltronColor.setColor(drawable, 0.898, 0.282, 0.059);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
 		gl.glPushMatrix();

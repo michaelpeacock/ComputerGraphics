@@ -3,13 +3,15 @@ package voltron.objects;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
+import voltron.VoltronColor;
+
 public class Desert {
 
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glColor3d(1.0, 0.698, 0.4);
+		VoltronColor.setColor(drawable, 1.0, 0.698, 0.4);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
 		gl.glPushMatrix();

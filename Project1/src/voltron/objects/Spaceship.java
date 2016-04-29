@@ -4,6 +4,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
 import voltron.Shapes;
+import voltron.VoltronColor;
 
 public class Spaceship {
 	Boolean dead = false;
@@ -19,40 +20,40 @@ public class Spaceship {
 
 		gl.glPushMatrix();
 		gl.glPushMatrix();
-		gl.glColor3d(1, 0, 0);
+		VoltronColor.setColor(drawable, 1, 0, 0);
 		drawBody(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glColor3d(1, 0, 0);
+		VoltronColor.setColor(drawable, 1, 0, 0);
 		gl.glRotated(-90, 1, 0, 0);
 		gl.glTranslated(100, 0, 100);
 		drawFront(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.502, 0.502, 0.502);
+		VoltronColor.setColor(drawable, 0.502, 0.502, 0.502);
 		gl.glRotated(-90, 0, 0, 1);
 		gl.glTranslated(-100, 200, 350);
 		drawRightWing(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.502, 0.502, 0.502);
+		VoltronColor.setColor(drawable, 0.502, 0.502, 0.502);
 		gl.glRotated(-90, 0, 0, 1);
 		gl.glTranslated(-100, 200, 50);
 		drawSmallRightWing(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.502, 0.502, 0.502);
+		VoltronColor.setColor(drawable, 0.502, 0.502, 0.502);
 		gl.glRotated(90, 0, 0, 1);
 		gl.glTranslated(100, 0, 350);
 		drawLeftWing(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.502, 0.502, 0.502);
+		VoltronColor.setColor(drawable, 0.502, 0.502, 0.502);
 		gl.glRotated(90, 0, 0, 1);
 		gl.glTranslated(100, 0, 50);
 		drawSmallLeftWing(drawable);
@@ -72,7 +73,7 @@ public class Spaceship {
 		Shapes.halfPyramid(drawable, 200, 200, 100, 100, 400);
 		gl.glRotated(-90, 1, 0, 0);
 		gl.glTranslated(-25, -25, 400);
-		gl.glColor3d(0.502, 0.502, 0.502);
+		VoltronColor.setColor(drawable, 0.502, 0.502, 0.502);
 		Shapes.cube(drawable, 50, 50, 200);
 	}
 

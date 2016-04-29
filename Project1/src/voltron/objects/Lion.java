@@ -10,6 +10,7 @@ import javax.media.opengl.GLCanvas;
 
 import voltron.Shapes;
 import voltron.objects.LionFactory.LION_COLOR;
+import voltron.VoltronColor;
 
 public class Lion {
 
@@ -202,19 +203,19 @@ public class Lion {
 	public void setObjectColor(GL gl) {
 		switch (lionColor) {
 		case BLACK:
-			gl.glColor3d(0.0, 0.0, 0.0);
+			VoltronColor.setColor(drawable, 0.0, 0.0, 0.0);
 			break;
 		case BLUE:
-			gl.glColor3d(0.0, 0.4, 0.8);
+			VoltronColor.setColor(drawable, 0.0, 0.4, 0.8);
 			break;
 		case GREEN:
-			gl.glColor3d(0.0, 1.0, 0.0);
+			VoltronColor.setColor(drawable, 0.0, 1.0, 0.0);
 			break;
 		case RED:
-			gl.glColor3d(1.0, 0.0, 0.0);
+			VoltronColor.setColor(drawable, 1.0, 0.0, 0.0);
 			break;
 		case YELLOW:
-			gl.glColor3d(0.8, 0.8, 0.0);
+			VoltronColor.setColor(drawable, 0.8, 0.8, 0.0);
 			break;
 		default:
 			break;
@@ -225,7 +226,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichPaw);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		gl.glRotatef(-90, 1.0f, 0.0f, 0.0f);
 		rotateObject(gl, lionObject);
@@ -233,7 +234,7 @@ public class Lion {
 		Shapes.cube(drawable, 100, 140, 40);
 
 		// create claws
-		gl.glColor3d(1, 1, 1);
+		VoltronColor.setColor(drawable, 1, 1, 1);
 		gl.glTranslatef(90, 140, 10);
 		gl.glRotatef(90, 0.0f, 0.0f, 1.0f);
 		Shapes.cube(drawable, 40, 20, 20);
@@ -252,15 +253,15 @@ public class Lion {
 
 		LionObject lionObject = createLionObject(gl, mouthType);
 		gl.glPushMatrix();
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		rotateObject(gl, lionObject);
 		Shapes.cube(drawable, 3 * LION_HEAD_LENGTH / 4, LION_HEAD_HEIGHT / 3, LION_HEAD_LENGTH / 2);
 
-		gl.glColor3d(1, 1, 1);
+		VoltronColor.setColor(drawable, 1, 1, 1);
 		switch (mouthType) {
 		case "UPPER_MOUTH":
 			// create teeth
-			gl.glColor3d(1, 1, 1);
+			VoltronColor.setColor(drawable, 1, 1, 1);
 			gl.glRotatef(180, 1, 0, 0);
 			gl.glTranslatef(10, 10, -10);
 			Shapes.triangle(drawable, 10);
@@ -278,9 +279,9 @@ public class Lion {
 
 		LionObject lionObject = createLionObject(gl, whichEye);
 		if (lionColor == LION_COLOR.BLACK) {
-			gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+			VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		} else {
-			gl.glColor3d(0.0, 0.0, 0.0);
+			VoltronColor.setColor(drawable, 0.0, 0.0, 0.0);
 		}
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
@@ -293,7 +294,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichEar);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 
@@ -314,7 +315,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichAnkle);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		gl.glTranslatef(0.0f, 100, 0.0f);
@@ -343,7 +344,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichLeg);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		Shapes.cylinder(drawable, 40, 100, INC);
@@ -372,7 +373,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichKnee);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		Shapes.sphere(drawable, 40, INC);
@@ -401,7 +402,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, whichLeg);
-		gl.glColor3d(0.627, 0.627, 0.627); // dark grey
+		VoltronColor.setColor(drawable, 0.627, 0.627, 0.627); // dark grey
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		Shapes.sphere(drawable, 40, INC);
@@ -432,7 +433,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, "NOSE");
-		gl.glColor3d(0.0, 0.0, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.0, 0.0);
 		gl.glPushMatrix();
 		gl.glRotated(180, 1.0, 0.0, 0.0);
 		Shapes.triangle(drawable, 15);
@@ -444,7 +445,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, "HEAD");
-		gl.glColor3d(0.0, 0.0, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.0, 0.0);
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		gl.glPushMatrix();
@@ -505,7 +506,7 @@ public class Lion {
 		GL gl = drawable.getGL();
 
 		LionObject lionObject = createLionObject(gl, "TAIL");
-		gl.glColor3d(0.8, 0.8, 0.0);
+		VoltronColor.setColor(drawable, 0.8, 0.8, 0.0);
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
 		Shapes.cube(drawable, 20, 20, 100);
@@ -547,7 +548,7 @@ public class Lion {
 
 		gl.glPushMatrix();
 		gl.glTranslatef(LION_BODY_LENGTH / 8, LION_BODY_HEIGHT / 8, -5.0f);
-		gl.glColor3d(0.0, 0.0, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.0, 0.0);
 		Shapes.cube(drawable, 3 * LION_BODY_LENGTH / 4, 3 * LION_BODY_HEIGHT / 4, 5.0f);
 		gl.glPopMatrix();
 		gl.glPushMatrix();

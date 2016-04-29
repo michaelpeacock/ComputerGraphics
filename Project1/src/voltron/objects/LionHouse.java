@@ -4,6 +4,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
 import voltron.Shapes;
+import voltron.VoltronColor;
 
 public class LionHouse {
 	Logo logo = new Logo();
@@ -12,7 +13,7 @@ public class LionHouse {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.878, 0.878, 0.878);
+		VoltronColor.setColor(drawable, 0.878, 0.878, 0.878);
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
 		// left side
@@ -35,7 +36,7 @@ public class LionHouse {
 
 		// top side
 		gl.glPushMatrix();
-		// gl.glColor3f(0, 0, 0);
+		// VoltronColor.setColor(drawable, 0, 0, 0);
 		gl.glTranslated(0.0, 500.0, 0.0);
 		gl.glPushMatrix();
 		gl.glRotated(-90, 0, 0, 1);

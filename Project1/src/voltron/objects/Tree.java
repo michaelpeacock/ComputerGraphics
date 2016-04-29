@@ -4,6 +4,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
 import voltron.Shapes;
+import voltron.VoltronColor;
 
 public class Tree {
 	Boolean dead = false;
@@ -40,11 +41,11 @@ public class Tree {
 	private void drawTrunk(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
 
-		gl.glColor3d(0.56, 0.35, 0.0);
+		VoltronColor.setColor(drawable, 0.56, 0.35, 0.0);
 		gl.glPushMatrix();
 		shape.cylinder(drawable, 5, 50, 15);
 		gl.glTranslated(0.0, 75.0, 0.0);
-		gl.glColor3d(0.0, 0.5, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.5, 0.0);
 		if (false == dead)
 			shape.sphere(drawable, 30, 15);
 		gl.glPopMatrix();
@@ -54,10 +55,10 @@ public class Tree {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.86, 0.55, 0.0);
+		VoltronColor.setColor(drawable, 0.86, 0.55, 0.0);
 		shape.cylinder(drawable, 4, 30, 15);
 		gl.glTranslated(0.0, 35, 0.0);
-		gl.glColor3d(0.0, 0.5, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.5, 0.0);
 		if (false == dead)
 			shape.sphere(drawable, 17, 15);
 		gl.glPopMatrix();
@@ -67,10 +68,10 @@ public class Tree {
 		GL gl = drawable.getGL();
 
 		gl.glPushMatrix();
-		gl.glColor3d(0.86, 0.55, 0.0);
+		VoltronColor.setColor(drawable, 0.86, 0.55, 0.0);
 		shape.cylinder(drawable, 4, 30, 15);
 		gl.glTranslated(0.0, 35, 0.0);
-		gl.glColor3d(0.0, 0.5, 0.0);
+		VoltronColor.setColor(drawable, 0.0, 0.5, 0.0);
 		if (false == dead)
 			shape.sphere(drawable, 17, 15);
 		gl.glPopMatrix();
