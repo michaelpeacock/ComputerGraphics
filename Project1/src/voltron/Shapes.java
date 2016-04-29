@@ -62,12 +62,13 @@ public class Shapes {
 		h = (float) height;
 		t = (float) theta;
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
+		gl.glNormal3d(0.0f, 1, 0.0f);
 		gl.glVertex3d(0.0f, h, 0.0f);
-		gl.glNormal3d(r, h, 0.0f);
+		gl.glNormal3d(0, 1, 0.0f);
 		gl.glVertex3d(r, h, 0.0f);
 		while (t <= 360) {
 			radian = (float) (PI * t / 180.0);
-			gl.glNormal3d((float) (r * Math.cos(radian)), h, (float) (r * Math.sin(radian)));
+			gl.glNormal3d(0,1,0);
 			gl.glVertex3d((float) (r * Math.cos(radian)), h, (float) (r * Math.sin(radian)));
 			t = (float) (t + theta);
 		}
@@ -79,10 +80,10 @@ public class Shapes {
 		t = (float) theta;
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
 		gl.glVertex3d(0.0f, 0.0f, 0.0f);
-		gl.glNormal3d(r, 0.0f, 0.0f);
+		gl.glNormal3d(0, 1.0f, 0.0f);
 		while (t <= 360) {
 			radian = (float) (PI * t / 180.0);
-			gl.glNormal3d((float) (r * Math.cos(radian)), 0.0f, (float) (r * Math.sin(radian)));
+			gl.glNormal3d(0,1,0);
 			gl.glVertex3d((float) (r * Math.cos(radian)), 0.0f, (float) (r * Math.sin(radian)));
 			t = (float) (t + theta);
 		}
@@ -94,12 +95,13 @@ public class Shapes {
 		t = (float) theta;
 		gl.glBegin(GL.GL_QUAD_STRIP);
 		gl.glVertex3d(r, 0.0f, 0.0f);
+		gl.glNormal3d(0,1,0);
 		gl.glVertex3d(r, h, 0.0f);
-		gl.glNormal3d(r, h, 0.0f);
+		gl.glNormal3d(0,1,0);
 		while (t <= 360) {
 			radian = (float) (PI * t / 180.0);
-			gl.glNormal3d((float) (r * Math.cos(radian)), 0.0f, (float) (r * Math.sin(radian)));
-			gl.glNormal3d((float) (r * Math.cos(radian)), h, (float) (r * Math.sin(radian)));
+			gl.glNormal3d(0,1,0);
+			gl.glNormal3d(0,1,0);
 			gl.glVertex3d((float) (r * Math.cos(radian)), 0.0f, (float) (r * Math.sin(radian)));
 			gl.glVertex3d((float) (r * Math.cos(radian)), h, (float) (r * Math.sin(radian)));
 			t = (float) (t + theta);
