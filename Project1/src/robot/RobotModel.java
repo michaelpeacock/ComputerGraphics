@@ -33,6 +33,7 @@ public class RobotModel implements RobotModel_I {
 	private int display_smoothing_counter;
 
 	private boolean currentlyBlocking;
+	private boolean currentlyFlying;
 
 	// material definitions
 	private float mat_specularWHITE[] = { 255.0f, 255.0f, 255.0f, 1.0f };
@@ -85,6 +86,7 @@ public class RobotModel implements RobotModel_I {
 		this.display_smoothing_counter = 0;
 
 		this.currentlyBlocking = false;
+		this.currentlyFlying = false;
 	}
 
 	/* create an instance of each base component */
@@ -265,6 +267,12 @@ public class RobotModel implements RobotModel_I {
 		gl.glTranslatef(LION_HEAD_LENGTH / 3, LION_HEAD_LENGTH, LION_HEAD_LENGTH / 4);
 		gl.glCallList(lionObjects.get((whichColor + "RIGHT_EAR")).getListID());
 		gl.glPopMatrix();
+		if ("FOOT" == whichHead && true == currentlyFlying) {
+			gl.glPushMatrix();
+				gl.glTranslatef(0, 0, LION_HEAD_LENGTH-25);
+				gl.glCallList(lionObjects.get(whichColor + "LEGJET").getListID());
+			gl.glPopMatrix();
+		}
 		gl.glPopMatrix();
 		gl.glPopMatrix();
 		gl.glEndList();
@@ -695,6 +703,7 @@ public class RobotModel implements RobotModel_I {
 	}
 
 	private void createFoot(GLAutoDrawable drawable, String whichColor, double red, double green, double blue) {
+		createLegJet(drawable, whichColor);
 		createNose(drawable, "NOSE", whichColor);
 		createMouth(drawable, "LOWER_MOUTH", whichColor);
 		createMouth(drawable, "UPPER_MOUTH", whichColor);
@@ -877,6 +886,35 @@ public class RobotModel implements RobotModel_I {
 		createRobotHead(drawable, "BLACK", 0, 0, 0);
 		createLogo(drawable);
 		createChest(drawable);
+	}
+
+	private void createLegJet(GLAutoDrawable drawable, String string) {
+		// TODO Auto-generated method stub
+		//float inner_inner_color
+		float inner_inner_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		//float inner_color
+		float inner_color[] = {1.0f, 0.0f, 0.0f, 0.5f};
+		//float outer_color
+		float outer_color[] = {0.98f, 0.70f, 0.06f, 0.6f};
+		
+		
+		GL gl = drawable.getGL();
+		createLionObject(gl, (string + "LEGJET"));
+		gl.glPushMatrix();
+		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glColor3f(0f, 0f, 0f);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_inner_color, 0);
+		gl.glRotated(180, 1, 0, 0);
+		Shapes.cone(drawable, 20, 100, 0, 20, 75);
+		gl.glColor3f(1.0f, 0.0f, 0.0f);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
+		Shapes.cone(drawable, 20, 200, 0, 20, 75);
+		gl.glColor3f(.98f, .70f, .06f); // orange
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
+		Shapes.cone(drawable, 20, 400, 0, 20, 75);
+		gl.glPopMatrix();	
+		gl.glEndList();
 	}
 
 	private void displayChest(GLAutoDrawable drawable) {
@@ -1134,6 +1172,8 @@ public class RobotModel implements RobotModel_I {
 		getLionObject("RED" + "UPPER_ARM").setxRotation(0);
 		getLionObject("RED" + "UPPER_ARM").setyRotation(0);
 		getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+		
+		this.currentlyFlying = false;
 
 	}
 
@@ -1206,15 +1246,21 @@ public class RobotModel implements RobotModel_I {
 	}
 
 	@Override
-	public boolean doRobotModelFly(double speed, boolean backward) {
+	public boolean doRobotModelFly(double speed) {
 		// TODO Auto-generated method stub
 		boolean work_done = false;
-		if (false == backward) {
+		currentlyFlying = true;
+		if (0 != speed) {
 			getLionObject("GREEN" + "UPPER_ARM").setzRotation(180);
+			getLionObject("GREEN" + "UPPER_ARM").setyRotation(180);
 			getLionObject("RED" + "UPPER_ARM").setzRotation(180);
-		} else {
+			getLionObject("RED" + "UPPER_ARM").setyRotation(180);
+		}
+		else {
 			getLionObject("GREEN" + "UPPER_ARM").setzRotation(0);
+			getLionObject("GREEN" + "UPPER_ARM").setyRotation(0);
 			getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+			getLionObject("RED" + "UPPER_ARM").setyRotation(0);
 		}
 		return work_done;
 	}

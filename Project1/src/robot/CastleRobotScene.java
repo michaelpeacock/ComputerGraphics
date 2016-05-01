@@ -1,7 +1,9 @@
 package robot;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -10,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +25,7 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 import voltron.Shapes;
 import voltron.camera.CameraController;
@@ -43,7 +47,9 @@ public class CastleRobotScene extends JFrame
 	private GLU glu;
 
 	private int winWidth = 1200, winHeight = 1000; // Initial display-window
-													// size.
+	
+    private TextRenderer text;
+    private DecimalFormat form;// size.
 
 	private float rot_x;
 	private float rot_y;
@@ -56,6 +62,7 @@ public class CastleRobotScene extends JFrame
 	private RobotModel_I voltron;
 	private State_I state;
 	private CameraController_I camera;
+	private Sword sword;
 
 	public CastleRobotScene() {
 		reset();
@@ -75,6 +82,9 @@ public class CastleRobotScene extends JFrame
 		setLocation(0, 0);
 		setVisible(true);
 
+		text = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
+        form = new DecimalFormat("####0.00");
+        
 		Animator animator = new Animator(canvas);
 		animator.start();
 
@@ -108,6 +118,7 @@ public class CastleRobotScene extends JFrame
 		lionHouse = new LionHouse();
 		voltron = new RobotModel();
 		state = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
+		sword = new Sword();
 
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
@@ -121,6 +132,8 @@ public class CastleRobotScene extends JFrame
 
 		voltron.initializeRobot(drawable);
 
+		sword.createSword(drawable);
+		
 		camera = new CameraController(getHeight(), getWidth(), 10000, 0, 1, 6000);
 
 	}
@@ -186,17 +199,30 @@ public class CastleRobotScene extends JFrame
 
 		gl.glPushMatrix();
 		gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+		gl.glRotated(state.getzRotation(), 0, 0, 1);
 		gl.glRotated(state.getxRotation(), 1, 0, 0);
 		gl.glRotated(state.getyRotation(), 0, 1, 0);
-		gl.glRotated(state.getzRotation(), 0, 0, 1);
 		gl.glScaled(state.getScale(), state.getScale(), state.getScale());
 		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
 
+		gl.glPushMatrix();
+		gl.glTranslated(0, 500, 4000);
+		sword.display(drawable);
+		gl.glPopMatrix();
+		
 		gl.glPopMatrix();
 
 		camera.updateCamera(gl, glu, state);
 
+        text.beginRendering(drawable.getWidth(), drawable.getHeight());
+        text.setColor(new Color(255, 255, 255)); // White
+
+        text.draw("Robot X Rotation: " + form.format(state.getxRotation()) + " Robot Y Rotation: "
+                + form.format(state.getyRotation()) + " Robot Z Rotation: " + form.format(state.getzRotation()), 10, 10);
+        text.endRendering();
+        text.flush();
+		
 		gl.glFlush();
 	}
 
