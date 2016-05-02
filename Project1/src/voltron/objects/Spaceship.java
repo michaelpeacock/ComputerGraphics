@@ -9,7 +9,8 @@ import voltron.Shapes;
 import voltron.VoltronColor;
 
 public class Spaceship implements State_I {
-	int objectID;
+	private int objectID;
+	private boolean hide = false;
 	private double xPosition;
 	private double default_xPosition;
 	private double yPosition;
@@ -236,8 +237,9 @@ public class Spaceship implements State_I {
 
 	@Override
 	public void reinitializeObject(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
-
+		GL gl = drawable.getGL();
+		gl.glDeleteLists(objectID, 1);
+		createSpaceShip(drawable);
 	}
 
 	@Override
@@ -246,11 +248,25 @@ public class Spaceship implements State_I {
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();
-		gl.glPushMatrix();
-		gl.glCallList(objectID);
-		gl.glPopMatrix();
+	public void display(GLAutoDrawable drawable, boolean update_done) {
+		if (false == hide) {
+			GL gl = drawable.getGL();
+			gl.glPushMatrix();
+			gl.glCallList(objectID);
+			gl.glPopMatrix();
+		}
+	}
+
+	@Override
+	public void hide(boolean hide, GLAutoDrawable drawable) {
+		if (true == hide) {
+			GL gl = drawable.getGL();
+			gl.glDeleteLists(objectID, 1);
+		} else {
+			reinitializeObject(drawable);
+		}
+
+		this.hide = hide;
 	}
 
 }

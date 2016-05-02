@@ -31,6 +31,7 @@ import com.sun.opengl.util.j2d.TextRenderer;
 
 import robot.RobotModel;
 import robot.RobotModel_I;
+import robot.RobotState;
 import space.Moon;
 import space.Sun;
 import voltron.camera.CameraController;
@@ -80,6 +81,7 @@ public class CastleScene extends JFrame
 	private LionHouse blueLionHouse;
 	private LionHouse greenLionHouse;
 	private RobotModel_I voltron;
+	private State_I voltronState;
 
 	public CastleScene() {
 		reset();
@@ -148,11 +150,8 @@ public class CastleScene extends JFrame
 		blueLionHouse = new LionHouse();
 		greenLionHouse = new LionHouse();
 		voltron = new RobotModel();
-<<<<<<< HEAD
-		// state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
-=======
-		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron, false);
->>>>>>> refs/remotes/origin/master
+		voltron.initializeRobot(drawable);
+		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron, false);
 
 		moon = new Moon();
 		moon.initializeMoon(drawable);
@@ -183,10 +182,24 @@ public class CastleScene extends JFrame
 		moveableObjectList.put("Red", lionFactory.createLion("Red", LION_COLOR.RED, -4500.0, 50.0, -1800.0, 90.0, 0.5));
 		activeObject = null;
 
-		// voltron.initializeRobot(drawable);
-
 		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 1500, 8600);
 
+	}
+
+	private void hideLions(GLAutoDrawable drawable) {
+		moveableObjectList.get("Black").hide(true, drawable);
+		moveableObjectList.get("Yellow").hide(true, drawable);
+		moveableObjectList.get("Blue").hide(true, drawable);
+		moveableObjectList.get("Green").hide(true, drawable);
+		moveableObjectList.get("Red").hide(true, drawable);
+	}
+
+	private void showLions(GLAutoDrawable drawable) {
+		moveableObjectList.get("Black").hide(false, drawable);
+		moveableObjectList.get("Yellow").hide(false, drawable);
+		moveableObjectList.get("Blue").hide(false, drawable);
+		moveableObjectList.get("Green").hide(false, drawable);
+		moveableObjectList.get("Red").hide(false, drawable);
 	}
 
 	@Override
@@ -268,28 +281,15 @@ public class CastleScene extends JFrame
 		// draw all moveable objects
 		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
 			gl.glPushMatrix();
-<<<<<<< HEAD
 			State_I objectState = objects.getValue();
-			if (true == objectState.update()) {
-				objectState.reinitializeObject(drawable);
-			}
+			boolean updated = objectState.update();
 
 			gl.glTranslated(objectState.getxPosition(), objectState.getyPosition(), objectState.getzPosition());
 			gl.glScaled(objectState.getScale(), objectState.getScale(), objectState.getScale());
 			gl.glRotated(objectState.getxRotation(), 1, 0, 0);
 			gl.glRotated(objectState.getyRotation(), 0, 1, 0);
 			gl.glRotated(objectState.getzRotation(), 0, 0, 1);
-			objectState.display(drawable);
-=======
-			State_I state = objects.getValue();
-			state.update();
-			gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
-			gl.glScaled(state.getScale(), state.getScale(), state.getScale());
-			gl.glRotated(state.getxRotation(), 1, 0, 0);
-			gl.glRotated(state.getyRotation(), 0, 1, 0);
-			gl.glRotated(state.getzRotation(), 0, 0, 1);
-			state.display(drawable, true);
->>>>>>> refs/remotes/origin/master
+			objectState.display(drawable, updated);
 			gl.glPopMatrix();
 		}
 

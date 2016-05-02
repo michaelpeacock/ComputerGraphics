@@ -77,4 +77,6 @@ public interface State_I {
 	 */
 	public boolean update();
 
+	public void hide(boolean hide, GLAutoDrawable drawable);
+
 }

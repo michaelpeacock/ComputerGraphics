@@ -8,6 +8,7 @@ import voltron.objects.State_I;
 
 public class RobotState implements State_I {
 
+	private boolean hide = false;
 	private double xPosition;
 	private double default_xPosition;
 	private double yPosition;
@@ -40,13 +41,13 @@ public class RobotState implements State_I {
 	private boolean fly_up;
 	private boolean fly_down;
 	private boolean fly_back;
-	
+
 	private boolean create_sword;
 	private boolean sword_created;
 	private boolean sword_creation_in_progress;
 	private boolean do_sword_attack;
 	private boolean sword_attack_in_progress;
-	
+
 	private boolean fly_only;
 
 	public RobotState(double x, double y, double z, double rot, double s, RobotModel_I v, boolean only_fly) {
@@ -58,7 +59,7 @@ public class RobotState implements State_I {
 		this.voltron = v;
 		this.fly_only = only_fly;
 		this.setDefaults();
-	
+
 	}
 
 	/*
@@ -150,38 +151,35 @@ public class RobotState implements State_I {
 			}
 		}
 
-		if (true == doBlock())
-		{
+		if (true == doBlock()) {
 			stateWasChanged = true;
 		}
-		
+
 		if (true == do_flying || true == currently_flying) {
 			if (true == doFly()) {
 				stateWasChanged = true;
 			}
 		}
-		
+
 		if (true == create_sword) {
 			if (true == sword_creation_in_progress) {
 				if (true == doSwordCreation()) {
 					stateWasChanged = true;
 				}
 			}
-		}
-		else {
+		} else {
 			if (true == sword_created) {
 				if (true == putSwordAway()) {
 					stateWasChanged = true;
 				}
 			}
 		}
-		
+
 		if (true == do_sword_attack) {
 			if (false == sword_created) {
 				create_sword = true;
 				sword_creation_in_progress = true;
-			}
-			else if (true == sword_attack_in_progress) {
+			} else if (true == sword_attack_in_progress) {
 				if (true == doSwordAttack()) {
 					stateWasChanged = true;
 				}
@@ -195,19 +193,16 @@ public class RobotState implements State_I {
 		// TODO Auto-generated method stub
 		boolean done_attacking = false;
 
-		if (false == currently_flying ||
-				(true == currently_flying && (false == forw) && (false == back)))
-		{
+		if (false == currently_flying || (true == currently_flying && (false == forw) && (false == back))) {
 			done_attacking = voltron.doSwordAttack();
 
 			if (true == done_attacking) {
 				sword_attack_in_progress = false;
 				do_sword_attack = false;
 			}
-		}
-		else {
+		} else {
 			sword_attack_in_progress = false;
-			do_sword_attack = false;	
+			do_sword_attack = false;
 		}
 		return true;
 	}
@@ -216,7 +211,7 @@ public class RobotState implements State_I {
 		// TODO Auto-generated method stub
 		boolean done_putting_away = false;
 
-		done_putting_away= voltron.doRobotModelPutAwaySword();
+		done_putting_away = voltron.doRobotModelPutAwaySword();
 
 		if (true == done_putting_away) {
 			sword_creation_in_progress = false;
@@ -244,25 +239,27 @@ public class RobotState implements State_I {
 		boolean do_turn = false;
 
 		// For Macs
-		 float speedMult = 4f;
-		 float moveSpeed = 8.0f;
-		 if (do_running) {
-		 speedMult = 8f;
-		 }
+		float speedMult = 4f;
+		float moveSpeed = 8.0f;
+		if (do_running) {
+			speedMult = 8f;
+		}
 		// //For Windows
-//		float speedMult = 1.0f;
-//		float moveSpeed = 5.0f;
-//		if (do_running) {
-//			speedMult = 2.5f;
-//		}
+		// float speedMult = 1.0f;
+		// float moveSpeed = 5.0f;
+		// if (do_running) {
+		// speedMult = 2.5f;
+		// }
 		// System.out.printf("doFly: do_flying is %b, currently_flying is %b,
 		// default_yPosition is %f, yPosition is %f\n", do_flying,
 		// currently_flying, default_yPosition, yPosition);
 		if (false == do_flying) {
 			if (true == currently_flying) {
-				//System.out.printf("default_yPosition is %f, yPosition is %f\n", default_yPosition, yPosition);
+				// System.out.printf("default_yPosition is %f, yPosition is
+				// %f\n", default_yPosition, yPosition);
 				if (default_yPosition >= yPosition) {
-					//System.out.printf("done flying and hit default y position, reseting rotations and robot\n");
+					// System.out.printf("done flying and hit default y
+					// position, reseting rotations and robot\n");
 					currently_flying = false;
 					this.setZRotation(0);
 					this.setXRotation(0);
@@ -273,8 +270,7 @@ public class RobotState implements State_I {
 					work_was_done = true;
 				}
 			}
-		}
-		else {
+		} else {
 			if (false == currently_flying) {
 				currently_flying = true;
 				yPosition += 200;
@@ -294,8 +290,7 @@ public class RobotState implements State_I {
 				yPosition -= 15;
 			}
 			work_was_done = true;
-		}
-		else {
+		} else {
 			work_was_done = true;
 		}
 
@@ -328,8 +323,8 @@ public class RobotState implements State_I {
 				} else if (0 > calc_rotate) {
 					calc_rotate += 360;
 				}
-				
-				//System.out.printf("forw, calc_rotate is %f \n", calc_rotate);
+
+				// System.out.printf("forw, calc_rotate is %f \n", calc_rotate);
 				double x = 1.75 * speedMult * Math.cos(Math.toRadians(calc_rotate));
 				double y = 1.75 * speedMult * Math.sin(Math.toRadians(calc_rotate));
 				this.xPosition += x;
@@ -342,23 +337,22 @@ public class RobotState implements State_I {
 
 		if (true == fly_up) {
 			voltron.doRobotModelFly(moveSpeed / speedMult);
-		}
-		else if (true == forw || true == back) {
-			if (true == back && false == fly_back) {   //Turn around first
+		} else if (true == forw || true == back) {
+			if (true == back && false == fly_back) { // Turn around first
 				this.setYRotation(this.getyRotation() + 180);
 				fly_back = true;
-			}
-			else if (true == forw && true == fly_back) {  //Turn around first
+			} else if (true == forw && true == fly_back) { // Turn around first
 				this.setYRotation(this.getyRotation() - 180);
 				fly_back = false;
 			}
-			
+
 			double x_rotate = 90 * Math.cos(Math.toRadians(this.getyRotation()));
 			double z_rotate = 90 * Math.sin(Math.toRadians(this.getyRotation()));
 
 			this.setXRotation(x_rotate);
 			this.setZRotation(-z_rotate);
-			//System.out.printf("x_rotate is %f, z_rotate is %f, y_rotate is %f\n", x_rotate, z_rotate, this.getyRotation());
+			// System.out.printf("x_rotate is %f, z_rotate is %f, y_rotate is
+			// %f\n", x_rotate, z_rotate, this.getyRotation());
 			voltron.doRobotModelFly(moveSpeed / speedMult);
 		} else {
 			this.setXRotation(0);
@@ -515,27 +509,26 @@ public class RobotState implements State_I {
 		this.do_reset = false;
 		this.do_block = false;
 		this.currently_blocking = false;
-		
+
 		if (true == fly_only) {
 			if (false == do_flying) {
 				do_flying = true;
 			}
-		}
-		else {
+		} else {
 			this.do_flying = false;
 			this.currently_flying = false;
 		}
-		
+
 		this.fly_up = false;
 		this.fly_down = false;
 		this.fly_back = false;
-		
+
 		this.sword_created = false;
 		this.do_sword_attack = false;
 		this.sword_attack_in_progress = false;
 		this.create_sword = false;
 		this.sword_creation_in_progress = false;
-		
+
 	}
 
 	@Override
@@ -593,8 +586,7 @@ public class RobotState implements State_I {
 			if (false == create_sword) {
 				create_sword = true;
 				sword_creation_in_progress = true;
-			}
-			else {
+			} else {
 				create_sword = false;
 				sword_creation_in_progress = false;
 			}
@@ -725,15 +717,26 @@ public class RobotState implements State_I {
 			voltron.deleteRobot(drawable);
 			voltron.initializeRobot(drawable);
 		}
-		
+
 		voltron.drawRobot(drawable);
 
 	}
 
 	@Override
 	public void reinitializeObject(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
+		voltron.deleteRobot(drawable);
+		voltron.initializeRobot(drawable);
+	}
 
+	@Override
+	public void hide(boolean hide, GLAutoDrawable drawable) {
+		if (true == hide) {
+			voltron.deleteRobot(drawable);
+		} else {
+			reinitializeObject(drawable);
+		}
+
+		this.hide = hide;
 	}
 
 }

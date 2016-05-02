@@ -6,6 +6,7 @@ import javax.media.opengl.GLAutoDrawable;
 
 public class LionState implements State_I {
 
+	private boolean hide = false;
 	private double xPosition;
 	private double default_xPosition;
 	private double yPosition;
@@ -577,13 +578,30 @@ public class LionState implements State_I {
 
 	@Override
 	public void display(GLAutoDrawable drawable, boolean update_done) {
-		lion.display(drawable);
+		if (update_done) {
+			reinitializeObject(drawable);
+		}
+
+		if (false == hide) {
+			lion.display(drawable);
+		}
 	}
 
 	@Override
 	public void reinitializeObject(GLAutoDrawable drawable) {
 		lion.deleteLion(drawable);
 		lion.initializeLion(drawable);
+	}
+
+	@Override
+	public void hide(boolean hide, GLAutoDrawable drawable) {
+		if (true == hide) {
+			lion.deleteLion(drawable);
+		} else {
+			reinitializeObject(drawable);
+		}
+
+		this.hide = hide;
 	}
 
 }
