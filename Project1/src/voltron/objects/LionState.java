@@ -576,7 +576,7 @@ public class LionState implements State_I {
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
+	public void display(GLAutoDrawable drawable, boolean update_done) {
 		lion.display(drawable);
 	}
 

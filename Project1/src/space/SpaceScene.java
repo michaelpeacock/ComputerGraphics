@@ -140,7 +140,7 @@ public class SpaceScene extends JFrame
 		sun = new Sun();
 		stars = new Stars();
 		voltron = new RobotModel();
-		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
+		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron, true);
 
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
@@ -184,7 +184,7 @@ public class SpaceScene extends JFrame
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
-		drawable.swapBuffers();
+		//drawable.swapBuffers();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -238,9 +238,9 @@ public class SpaceScene extends JFrame
 
 			gl.glPushMatrix();
 			gl.glTranslated(voltronState.getxPosition(), voltronState.getyPosition(), voltronState.getzPosition());
+			gl.glRotated(voltronState.getzRotation(), 0, 0, 1);
 			gl.glRotated(voltronState.getxRotation(), 1, 0, 0);
 			gl.glRotated(voltronState.getyRotation(), 0, 1, 0);
-			gl.glRotated(voltronState.getzRotation(), 0, 0, 1);
 			gl.glScaled(voltronState.getScale(), voltronState.getScale(), voltronState.getScale());
 			voltron.drawRobot(drawable);
 			gl.glPopMatrix();

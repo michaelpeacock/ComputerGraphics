@@ -148,7 +148,11 @@ public class CastleScene extends JFrame
 		blueLionHouse = new LionHouse();
 		greenLionHouse = new LionHouse();
 		voltron = new RobotModel();
+<<<<<<< HEAD
 		// state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
+=======
+		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron, false);
+>>>>>>> refs/remotes/origin/master
 
 		moon = new Moon();
 		moon.initializeMoon(drawable);
@@ -264,6 +268,7 @@ public class CastleScene extends JFrame
 		// draw all moveable objects
 		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
 			gl.glPushMatrix();
+<<<<<<< HEAD
 			State_I objectState = objects.getValue();
 			if (true == objectState.update()) {
 				objectState.reinitializeObject(drawable);
@@ -275,6 +280,16 @@ public class CastleScene extends JFrame
 			gl.glRotated(objectState.getyRotation(), 0, 1, 0);
 			gl.glRotated(objectState.getzRotation(), 0, 0, 1);
 			objectState.display(drawable);
+=======
+			State_I state = objects.getValue();
+			state.update();
+			gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
+			gl.glScaled(state.getScale(), state.getScale(), state.getScale());
+			gl.glRotated(state.getxRotation(), 1, 0, 0);
+			gl.glRotated(state.getyRotation(), 0, 1, 0);
+			gl.glRotated(state.getzRotation(), 0, 0, 1);
+			state.display(drawable, true);
+>>>>>>> refs/remotes/origin/master
 			gl.glPopMatrix();
 		}
 

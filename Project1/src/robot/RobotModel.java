@@ -33,42 +33,24 @@ public class RobotModel implements RobotModel_I {
 	private int display_smoothing_counter;
 
 	private boolean currentlyBlocking;
+	private boolean currentlyFlying;
+	private boolean show_sword;
+	private boolean hands_together_sword;
+	private double hold_counter;
+	
+	private boolean strike_one_done;
+	private boolean strike_one_setup_done;
+	private boolean strike_two_setup_done;
 
+	private Sword sword;
+	
 	// material definitions
-	private float mat_specularWHITE[] = { 255.0f, 255.0f, 255.0f, 1.0f };
-	private float mat_diffuseWHITE[] = { 255.0f, 255.0f, 255.0f, 1.0f };
-	private float mat_shininessWHITE[] = { 128.0f * 0.4f };
-
-	private float mat_specularGRAY[] = { 0.75f, 0.75f, 0.75f, 1.0f };
-	private float mat_ambientGRAY[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	private float mat_diffuseGRAY[] = { 0.50f, 0.50f, 0.50f, 1.0f };
-	private float mat_shininessGRAY[] = { 128.0f * 0.6f };
-
-	private float mat_specularBLUE[] = { 0.75f, 0.75f, 0.75f, 1.0f };
-	private float mat_ambientBLUE[] = { 0, 0f, 1f, 1.0f };
-	private float mat_diffuseBLUE[] = { 0.50f, 0.50f, 0.50f, 1.0f };
-	private float mat_shininessBLUE[] = { 128.0f };
-
-	private float mat_specularGREEN[] = { 0.633f, 0.727811f, 0.633f, 1.0f };
-	private float mat_ambientGREEN[] = { 0.0215f, 0.1745f, 0.0215f, 1.0f };
-	private float mat_diffuseGREEN[] = { 0.07568f, 0.61424f, 0.07568f, 1.0f };
-	private float mat_shininessGREEN[] = { 128.0f };
-
-	private float mat_specularYELLOW[] = { 0.75f, 0.75f, 0.75f, 1.0f };
-	private float mat_ambientYELLOW[] = { 1f, 1f, 0f, 1.0f };
-	private float mat_diffuseYELLOW[] = { 0.50f, 0.50f, 0.50f, 1.0f };
-	private float mat_shininessYELLOW[] = { 128.0f };
-
-	private float mat_specularRED[] = { 0.75f, 0.75f, 0.75f, 1.0f };
-	private float mat_ambientRED[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	private float mat_diffuseRED[] = { 0.50f, 0.50f, 0.50f, 1.0f };
-	private float mat_shininessRED[] = { 128.0f };
-
 	private float[] robot_black = { 0.0f, 0.0f, 0.0f, 1.0f };
 	private float[] robot_white = { 1.0f, 1.0f, 1.0f, 1.0f };
 	private float[] robot_red = { 1.0f, 0.0f, 0.0f, 1.0f };
 	private float[] robot_green = { 0.0f, 1.0f, 0.0f, 1.0f };
 	private float[] robot_blue = { 0.0f, 0.0f, 1.0f, 1.0f };
+	private float[] robot_yellow = { 0.8f, 0.8f, 0.8f, 1.0f };
 	private float[] robot_light_grey = { 0.823f, 0.835f, 0.839f, 1.0f };
 
 	public RobotModel() {
@@ -85,6 +67,15 @@ public class RobotModel implements RobotModel_I {
 		this.display_smoothing_counter = 0;
 
 		this.currentlyBlocking = false;
+		this.currentlyFlying = false;
+		this.show_sword = false;
+		this.hands_together_sword = false;
+		this.strike_one_done = false;
+		this.strike_one_setup_done = false;
+		this.strike_two_setup_done = false;
+		this.hold_counter = 0;
+		
+		sword = new Sword();
 	}
 
 	/* create an instance of each base component */
@@ -143,7 +134,6 @@ public class RobotModel implements RobotModel_I {
 	void createEye(GLAutoDrawable drawable, String whichEye, String whichColor) {
 		GL gl = drawable.getGL();
 		float[] eye_yellow = { 0.8f, 0.8f, 0.0f, 1.0f };
-		float[] eye_black = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		LionObject lionObject = createLionObject(gl, (whichColor + whichEye));
 		if ("BLACK" == whichColor) {
@@ -151,7 +141,7 @@ public class RobotModel implements RobotModel_I {
 			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, eye_yellow, 0);
 		} else {
 			gl.glColor3d(0.0, 0.0, 0.0);
-			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, eye_black, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_black, 0);
 		}
 		gl.glPushMatrix();
 		rotateObject(gl, lionObject);
@@ -265,6 +255,21 @@ public class RobotModel implements RobotModel_I {
 		gl.glTranslatef(LION_HEAD_LENGTH / 3, LION_HEAD_LENGTH, LION_HEAD_LENGTH / 4);
 		gl.glCallList(lionObjects.get((whichColor + "RIGHT_EAR")).getListID());
 		gl.glPopMatrix();
+		if ("FOOT" == whichHead && true == currentlyFlying) {
+			gl.glPushMatrix();
+				gl.glTranslatef(0, 0, LION_HEAD_LENGTH-25);
+				gl.glCallList(lionObjects.get(whichColor + "LEGJET").getListID());
+			gl.glPopMatrix();
+		}
+		else if ("HAND" == whichHead && "RED" == whichColor && true == show_sword) {
+			gl.glPushMatrix();
+				gl.glTranslated(-100, 50, 0);
+				gl.glRotated(90, 0, 1, 0);
+				gl.glRotated(-90, 1, 0, 0);
+				gl.glScaled(2, 2, 2);
+				sword.display(drawable);
+			gl.glPopMatrix();
+		}
 		gl.glPopMatrix();
 		gl.glPopMatrix();
 		gl.glEndList();
@@ -381,19 +386,19 @@ public class RobotModel implements RobotModel_I {
 		gl.glPushMatrix();
 		gl.glTranslatef(50, -36, 70);
 		gl.glColor3d(0.8, 0.8, 0.0); // yellow
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_yellow, 0);
 		Shapes.cube(drawable, 80, 20, 10);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 		gl.glTranslatef(-130, -36, 70);
 		gl.glColor3d(0.8, 0.8, 0.0); // yellow
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_yellow, 0);
 		Shapes.cube(drawable, 80, 20, 10);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
 		gl.glTranslatef(-10, -36, 70);
 		gl.glColor3d(0.8, 0.8, 0.0); // yellow
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, waist_yellow, 0);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, robot_yellow, 0);
 		Shapes.cube(drawable, 20, 20, 10);
 		gl.glPopMatrix();
 		gl.glPushMatrix();
@@ -695,6 +700,7 @@ public class RobotModel implements RobotModel_I {
 	}
 
 	private void createFoot(GLAutoDrawable drawable, String whichColor, double red, double green, double blue) {
+		createLegJet(drawable, whichColor);
 		createNose(drawable, "NOSE", whichColor);
 		createMouth(drawable, "LOWER_MOUTH", whichColor);
 		createMouth(drawable, "UPPER_MOUTH", whichColor);
@@ -871,12 +877,42 @@ public class RobotModel implements RobotModel_I {
 	public void initializeRobot(GLAutoDrawable drawable) {
 		createLeg(drawable, "BLUE", 0.0, 0.4, 0.8);
 		createLeg(drawable, "YELLOW", 0.8, 0.8, 0.0);
+		sword.createSword(drawable);
 		createArm(drawable, "GREEN", 0.031, .6, 0.165);
 		createArm(drawable, "RED", .788, .176, .133);
 		createWaist(drawable);
 		createRobotHead(drawable, "BLACK", 0, 0, 0);
 		createLogo(drawable);
 		createChest(drawable);
+	}
+
+	private void createLegJet(GLAutoDrawable drawable, String string) {
+		// TODO Auto-generated method stub
+		//float inner_inner_color
+		float inner_inner_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		//float inner_color
+		float inner_color[] = {1.0f, 0.0f, 0.0f, 0.5f};
+		//float outer_color
+		float outer_color[] = {0.98f, 0.70f, 0.06f, 0.6f};
+		
+		
+		GL gl = drawable.getGL();
+		createLionObject(gl, (string + "LEGJET"));
+		gl.glPushMatrix();
+		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glColor3f(0f, 0f, 0f);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_inner_color, 0);
+		gl.glRotated(180, 1, 0, 0);
+		Shapes.cone(drawable, 20, 100, 0, 20, 75);
+		gl.glColor3f(1.0f, 0.0f, 0.0f);
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, inner_color, 0);
+		Shapes.cone(drawable, 20, 200, 0, 20, 75);
+		gl.glColor3f(.98f, .70f, .06f); // orange
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
+		Shapes.cone(drawable, 20, 400, 0, 20, 75);
+		gl.glPopMatrix();	
+		gl.glEndList();
 	}
 
 	private void displayChest(GLAutoDrawable drawable) {
@@ -1134,6 +1170,21 @@ public class RobotModel implements RobotModel_I {
 		getLionObject("RED" + "UPPER_ARM").setxRotation(0);
 		getLionObject("RED" + "UPPER_ARM").setyRotation(0);
 		getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+		
+		getLionObject("RED" + "HAND").setxRotation(0);
+		getLionObject("RED" + "HAND").setyRotation(0);
+		getLionObject("RED" + "HAND").setzRotation(0);
+		
+		getLionObject("GREEN" + "HAND").setxRotation(0);
+		getLionObject("GREEN" + "HAND").setyRotation(0);
+		getLionObject("GREEN" + "HAND").setzRotation(0);
+		
+		this.currentlyFlying = false;
+		this.hands_together_sword = false;
+		this.strike_one_done = false;
+		this.strike_one_setup_done = false;
+		this.strike_two_setup_done = false;
+		this.hold_counter = 0;
 
 	}
 
@@ -1206,17 +1257,200 @@ public class RobotModel implements RobotModel_I {
 	}
 
 	@Override
-	public boolean doRobotModelFly(double speed, boolean backward) {
+	public boolean doRobotModelFly(double speed) {
 		// TODO Auto-generated method stub
 		boolean work_done = false;
-		if (false == backward) {
+		currentlyFlying = true;
+		if (0 != speed) {
 			getLionObject("GREEN" + "UPPER_ARM").setzRotation(180);
+			getLionObject("GREEN" + "UPPER_ARM").setyRotation(180);
 			getLionObject("RED" + "UPPER_ARM").setzRotation(180);
-		} else {
+			getLionObject("RED" + "UPPER_ARM").setyRotation(180);
+		}
+		else {
 			getLionObject("GREEN" + "UPPER_ARM").setzRotation(0);
+			getLionObject("GREEN" + "UPPER_ARM").setyRotation(0);
 			getLionObject("RED" + "UPPER_ARM").setzRotation(0);
+			getLionObject("RED" + "UPPER_ARM").setyRotation(0);
 		}
 		return work_done;
+	}
+
+	@Override
+	public boolean doRobotModelSwordCreation() {
+		// TODO Auto-generated method stub
+		boolean done_creating = false;
+		double upperArmAngle = 45;
+		double currentArmAngle = getLionObject("RED" + "UPPER_ARM").getxRotation();
+		
+		if (false == hands_together_sword && upperArmAngle >= currentArmAngle) {   //Bring hands together
+			getLionObject("GREEN" + "HAND").setzRotation(-90);
+			getLionObject("RED" + "HAND").setzRotation(90);
+
+			getLionObject("GREEN" + "UPPER_ARM")
+			.setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
+			getLionObject("GREEN" + "UPPER_ARM")
+			.setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() - 2);
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() - 2);
+
+			getLionObject("GREEN" + "LOWER_ARM")
+			.setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+			getLionObject("GREEN" + "LOWER_ARM")
+			.setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() - 5);
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+			getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() - 5);
+
+		}
+		else if (false == hands_together_sword && currentArmAngle >= upperArmAngle) {
+			if (hold_counter == 15) {
+				hands_together_sword = true;
+				hold_counter = 0;
+			}
+			else {
+				hold_counter++;
+			}
+		}
+		else {  //take them apart and show sword
+			if (0 < currentArmAngle) {
+				getLionObject("GREEN" + "UPPER_ARM")
+				.setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "UPPER_ARM")
+				.setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() + 2);
+				getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() + 2);
+
+				getLionObject("GREEN" + "LOWER_ARM")
+				.setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "LOWER_ARM")
+				.setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() + 5);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() + 5);
+				show_sword = true;
+			}
+			else {
+				resetRobot();
+				done_creating = true;
+				hands_together_sword = false;
+			}
+		} 
+
+		return done_creating;
+	}
+
+	@Override
+	public boolean doRobotModelPutAwaySword() {
+		// TODO Auto-generated method stub
+		boolean done_putting_away = false;
+		double upperArmAngle = 45;
+		double currentArmAngle = getLionObject("RED" + "UPPER_ARM").getxRotation();
+	
+		if (false == hands_together_sword && upperArmAngle >= currentArmAngle) {   //Bring hands together
+			getLionObject("GREEN" + "HAND").setzRotation(-90);
+			getLionObject("RED" + "HAND").setzRotation(90);
+
+			getLionObject("GREEN" + "UPPER_ARM")
+			.setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() - 5);
+			getLionObject("GREEN" + "UPPER_ARM")
+			.setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() - 2);
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() - 2);
+
+			getLionObject("GREEN" + "LOWER_ARM")
+			.setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() - 5);
+			getLionObject("GREEN" + "LOWER_ARM")
+			.setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() - 5);
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 5);
+			getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() - 5);
+
+		}
+		else if (false == hands_together_sword && currentArmAngle >= upperArmAngle) {
+			if (hold_counter == 10) {
+				hands_together_sword = true;
+				show_sword = false;
+				hold_counter = 0;
+			}
+			else {
+				hold_counter++;
+			}
+		}
+		else {  //take them apart
+			if (0 < currentArmAngle) {
+				getLionObject("GREEN" + "UPPER_ARM")
+				.setxRotation(getLionObject("GREEN" + "UPPER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "UPPER_ARM")
+				.setzRotation(getLionObject("GREEN" + "UPPER_ARM").getzRotation() + 2);
+				getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() + 2);
+
+				getLionObject("GREEN" + "LOWER_ARM")
+				.setxRotation(getLionObject("GREEN" + "LOWER_ARM").getxRotation() + 5);
+				getLionObject("GREEN" + "LOWER_ARM")
+				.setzRotation(getLionObject("GREEN" + "LOWER_ARM").getzRotation() + 5);
+				getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 5);
+				getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() + 5);
+			}
+			else {
+				getLionObject("GREEN" + "HAND").setzRotation(0);
+				getLionObject("RED" + "HAND").setzRotation(0);
+				done_putting_away = true;
+				hands_together_sword = false;
+			}
+		} 
+
+		return done_putting_away;
+	}
+
+	@Override
+	public boolean doSwordAttack() {
+		// TODO Auto-generated method stub
+		boolean done_attacking = false;
+		double upperArmAngle2 = 0;
+		double upperArmAngle1 = 150;
+		double upperArmAngle3 = 90;
+		double upperArmAngle4 = 0;
+		double currentArmAngle = getLionObject("RED" + "UPPER_ARM").getxRotation();
+		
+		if (false == strike_one_setup_done && upperArmAngle1 >= currentArmAngle) {   //Raise Arm
+
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+			
+			if (currentArmAngle >= upperArmAngle1) {
+				strike_one_setup_done = true;
+			}
+		}
+		else if (true == strike_one_setup_done && false == strike_one_done && upperArmAngle2 <= currentArmAngle) {
+			//getLionObject("RED" + "HAND").setxRotation(-45);
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() - 1);
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() - 0.1);
+
+			if (currentArmAngle <= upperArmAngle2) {
+				strike_one_done = true;
+			}
+		}
+		else if (true == strike_one_done && false == strike_two_setup_done && upperArmAngle3 >= currentArmAngle) {
+			getLionObject("RED" + "HAND").setzRotation(45);
+			getLionObject("RED" + "HAND").setxRotation(0);
+			
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() + 5);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() - 1);
+			getLionObject("RED" + "LOWER_ARM").setzRotation(getLionObject("RED" + "LOWER_ARM").getzRotation() - 0.5);
+			
+			if (currentArmAngle >= upperArmAngle3) {
+				strike_two_setup_done = true;
+			}
+		}
+		else if (true == strike_two_setup_done && upperArmAngle4 <= currentArmAngle) {
+			getLionObject("RED" + "UPPER_ARM").setxRotation(getLionObject("RED" + "UPPER_ARM").getxRotation() - 5);
+			getLionObject("RED" + "UPPER_ARM").setzRotation(getLionObject("RED" + "UPPER_ARM").getzRotation() + 5);
+			getLionObject("RED" + "LOWER_ARM").setxRotation(getLionObject("RED" + "LOWER_ARM").getxRotation() + 1);
+		}
+		else {
+			resetRobot();
+			done_attacking = true;
+		}
+		return done_attacking;
 	}
 
 }

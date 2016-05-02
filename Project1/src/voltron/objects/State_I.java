@@ -66,7 +66,7 @@ public interface State_I {
 
 	void handleKeyReleased(KeyEvent e);
 
-	void display(GLAutoDrawable drawable);
+	void display(GLAutoDrawable drawable, boolean update_done);
 
 	void stateReset();
 
