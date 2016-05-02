@@ -13,4 +13,7 @@ public interface RobotModel_I {
 	public boolean doRobotModelPunch(String whichArm);
 	public boolean doRobotModelKick(String whichLeg);
 	public boolean doRobotModelFly(double speed);
+	public boolean doRobotModelSwordCreation();
+	public boolean doRobotModelPutAwaySword();
+	public boolean doSwordAttack();
 }

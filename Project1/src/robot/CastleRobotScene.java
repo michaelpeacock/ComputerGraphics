@@ -64,6 +64,10 @@ public class CastleRobotScene extends JFrame
 	private CameraController_I camera;
 	private Sword sword;
 
+	private double swordXRotation;
+	private double swordYRotation;
+	private double swordZRotation;
+	
 	public CastleRobotScene() {
 		reset();
 
@@ -82,6 +86,10 @@ public class CastleRobotScene extends JFrame
 		setLocation(0, 0);
 		setVisible(true);
 
+		swordXRotation = 0;
+		swordYRotation = 0;
+		swordZRotation = 0;
+		
 		text = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
         form = new DecimalFormat("####0.00");
         
@@ -117,8 +125,8 @@ public class CastleRobotScene extends JFrame
 		castle = new Castle();
 		lionHouse = new LionHouse();
 		voltron = new RobotModel();
-		state = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
-		sword = new Sword();
+		state = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron, false);
+		//sword = new Sword();
 
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
@@ -132,7 +140,7 @@ public class CastleRobotScene extends JFrame
 
 		voltron.initializeRobot(drawable);
 
-		sword.createSword(drawable);
+		//sword.createSword(drawable);
 		
 		camera = new CameraController(getHeight(), getWidth(), 10000, 0, 1, 6000);
 
@@ -206,10 +214,13 @@ public class CastleRobotScene extends JFrame
 		voltron.drawRobot(drawable);
 		gl.glPopMatrix();
 
-		gl.glPushMatrix();
-		gl.glTranslated(0, 500, 4000);
-		sword.display(drawable);
-		gl.glPopMatrix();
+//		gl.glPushMatrix();
+//		gl.glTranslated(0, 500, 4000);
+//		gl.glRotated(swordXRotation, 0, 0, 1);
+//		gl.glRotated(swordYRotation, 1, 0, 0);
+//		gl.glRotated(swordZRotation, 0, 1, 0);
+//		sword.display(drawable);
+//		gl.glPopMatrix();
 		
 		gl.glPopMatrix();
 
@@ -268,6 +279,25 @@ public class CastleRobotScene extends JFrame
 		case 'd':
 			rot_z -= 1.0f;
 			break;
+			
+//		case 'v':
+//			swordXRotation += 15;
+//			break;
+//		case 'g':
+//			swordXRotation -= 15;
+//			break;
+//		case 'm':
+//			swordZRotation += 15;
+//			break;
+//		case 'k':
+//			swordZRotation -= 15;
+//			break;	
+//		case 'n':
+//			swordYRotation += 15;
+//			break;
+//		case 'h':
+//			swordYRotation -= 15;
+//			break;
 
 		}
 		state.handleKeyPressed(e);

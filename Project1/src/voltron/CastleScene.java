@@ -151,7 +151,7 @@ public class CastleScene extends JFrame
 		blueLionHouse = new LionHouse();
 		greenLionHouse = new LionHouse();
 		voltron = new RobotModel();
-		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
+		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron, false);
 
 		moon = new Moon();
 		moon.initializeMoon(drawable);
