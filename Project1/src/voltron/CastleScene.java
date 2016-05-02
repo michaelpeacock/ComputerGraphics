@@ -1,7 +1,9 @@
 package voltron;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -25,12 +27,15 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 import robot.RobotModel;
 import robot.RobotModel_I;
-import robot.RobotState;
 import space.Moon;
 import space.Sun;
+import voltron.camera.CameraController;
+import voltron.camera.CameraController_I;
+import voltron.camera.CameraMode;
 import voltron.objects.Castle;
 import voltron.objects.Desert;
 import voltron.objects.Lake;
@@ -54,18 +59,8 @@ public class CastleScene extends JFrame
 
 	int winWidth = 1200, winHeight = 1000; // Initial display-window size.
 
-	private float mouseX;
-	private float mouseY;
-	private float camera_x;
-	private float camera_y;
-	private float camera_z;
-	private float center_x;
-	private float center_y;
-	private float center_z;
-	private float up_x;
-	private float up_y;
-	private float up_z;
-
+	private TextRenderer text;
+	private CameraController_I camera;
 	private float rot_x;
 	private float rot_y;
 	private float rot_z;
@@ -85,12 +80,12 @@ public class CastleScene extends JFrame
 	private LionHouse blueLionHouse;
 	private LionHouse greenLionHouse;
 	private RobotModel_I voltron;
-	private State_I state;
 
 	public CastleScene() {
 		reset();
 
 		GLCapabilities caps = new GLCapabilities();
+		caps.setDoubleBuffered(true);
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
@@ -108,6 +103,8 @@ public class CastleScene extends JFrame
 
 		Animator animator = new Animator(canvas);
 		animator.start();
+
+		text = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
 
 		centerWindow(this);
 	}
@@ -151,7 +148,7 @@ public class CastleScene extends JFrame
 		blueLionHouse = new LionHouse();
 		greenLionHouse = new LionHouse();
 		voltron = new RobotModel();
-		state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
+		// state = new RobotState(1200.0, 750.0, 2200.0, 0.0, 0.5, voltron);
 
 		moon = new Moon();
 		moon.initializeMoon(drawable);
@@ -159,7 +156,9 @@ public class CastleScene extends JFrame
 		sun = new Sun();
 		sun.initializeSun(drawable);
 
-		spaceShip = new Spaceship();
+		spaceShip = new Spaceship(-4000.0, 3000.0, 0.0, -90.0, 1);
+		spaceShip.createSpaceShip(drawable);
+		moveableObjectList.put("Space Ship", spaceShip);
 
 		castle.initializeCastle(canvas, drawable);
 		createPost(drawable);
@@ -180,25 +179,35 @@ public class CastleScene extends JFrame
 		moveableObjectList.put("Red", lionFactory.createLion("Red", LION_COLOR.RED, -4500.0, 50.0, -1800.0, 90.0, 0.5));
 		activeObject = null;
 
-		voltron.initializeRobot(drawable);
+		// voltron.initializeRobot(drawable);
+
+		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 1500, 8600);
 
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
+		drawable.swapBuffers();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		setCamera(gl, glu);
+		State_I cameraState = null;
+		if (activeObject != null) {
+			cameraState = moveableObjectList.get(activeObject);
+		}
+		camera.updateCamera(gl, glu, cameraState);
 
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		if (CameraMode.CAM_DEFAULT == camera.getCurrentCameraMode()
+				|| CameraMode.CAM_CENTER_FOLLOW == camera.getCurrentCameraMode()) {
+			gl.glRotatef(rot_x, 1, 0, 0);
+			gl.glRotatef(rot_y, 0, 1, 0);
+			gl.glRotatef(rot_z, 0, 0, 1);
+		}
 
 		gl.glPushMatrix();
-		gl.glRotatef(rot_x, 1, 0, 0);
-		gl.glRotatef(rot_y, 0, 1, 0);
-		gl.glRotatef(rot_z, 0, 0, 1);
-
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glTranslated(-5000.0, -25.0, -5000.0);
 		gl.glCallList(objectList.get("Sky"));
@@ -255,18 +264,23 @@ public class CastleScene extends JFrame
 		// draw all moveable objects
 		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
 			gl.glPushMatrix();
-			State_I state = objects.getValue();
-			state.update();
-			gl.glTranslated(state.getxPosition(), state.getyPosition(), state.getzPosition());
-			gl.glScaled(state.getScale(), state.getScale(), state.getScale());
-			gl.glRotated(state.getxRotation(), 1, 0, 0);
-			gl.glRotated(state.getyRotation(), 0, 1, 0);
-			gl.glRotated(state.getzRotation(), 0, 0, 1);
-			state.display(drawable);
+			State_I objectState = objects.getValue();
+			if (true == objectState.update()) {
+				objectState.reinitializeObject(drawable);
+			}
+
+			gl.glTranslated(objectState.getxPosition(), objectState.getyPosition(), objectState.getzPosition());
+			gl.glScaled(objectState.getScale(), objectState.getScale(), objectState.getScale());
+			gl.glRotated(objectState.getxRotation(), 1, 0, 0);
+			gl.glRotated(objectState.getyRotation(), 0, 1, 0);
+			gl.glRotated(objectState.getzRotation(), 0, 0, 1);
+			objectState.display(drawable);
 			gl.glPopMatrix();
 		}
 
 		gl.glPopMatrix();
+
+		displayCameraPositionInfo(drawable);
 
 		gl.glFlush();
 	}
@@ -304,6 +318,8 @@ public class CastleScene extends JFrame
 			break;
 		case KeyEvent.VK_5:
 			activeObject = "Black";
+		case KeyEvent.VK_6:
+			activeObject = "Space Ship";
 		}
 
 		// if a moveable object is in focus, pass event to it
@@ -318,31 +334,33 @@ public class CastleScene extends JFrame
 				break;
 
 			case 'q':
-				camera_x += 50.0f;
+				rot_x += 1.0f;
 				break;
 
 			case 'w':
-				camera_y += 50.0f;
+				rot_y += 1.0f;
 				break;
 
 			case 'e':
-				camera_z += 50.0f;
+				rot_z += 1.0f;
 				break;
 
 			case 'a':
-				camera_x -= 500.0f;
+				rot_x -= 1.0f;
 				break;
 
 			case 's':
-				camera_y -= 50.0f;
+				rot_y -= 1.0f;
 				break;
 
 			case 'd':
-				camera_z -= 50.0f;
+				rot_z -= 1.0f;
 				break;
 
 			}
 		}
+
+		camera.handleKeyPressed(e);
 
 	}
 
@@ -351,6 +369,8 @@ public class CastleScene extends JFrame
 		if (null != activeObject) {
 			moveableObjectList.get(activeObject).handleKeyReleased(e);
 		}
+
+		camera.handleKeyRelease(e);
 
 	}
 
@@ -378,21 +398,21 @@ public class CastleScene extends JFrame
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		mouseX += e.getX();
-		mouseY += e.getY();
+		// mouseX += e.getX();
+		// mouseY += e.getY();
+
+		camera.handleMousePressed(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		camera.handleMouseRelease(e);
+
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		camera_x += (float) ((e.getX() - 500) * .03);
-		// center_x = camera_x;
-
-		camera_y -= (float) ((e.getY() - 500) * .03);
-		// center_y = camera_y;
+		camera.handleMouseDragged(e);
 	}
 
 	@Override
@@ -401,23 +421,11 @@ public class CastleScene extends JFrame
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		camera_z += e.getWheelRotation() * 100;
+		camera.handleMouseWheelMoved(e);
 	}
 
 	private void reset() {
-		camera_x = 0;
-		camera_y = 1;
-		camera_z = 6000f;
-
-		center_x = 0;
-		center_y = 0;
-		center_z = 0;
-
-		up_x = 0;
-		up_y = 1;
-		up_z = 0;
-
-		rot_x = 10;
+		rot_x = 0;
 		rot_y = 0;
 		rot_z = 0;
 
@@ -427,20 +435,21 @@ public class CastleScene extends JFrame
 
 	}
 
-	private void setCamera(GL gl, GLU glu) {
-		// Change to projection matrix.
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		gl.glLoadIdentity();
+	private void displayCameraPositionInfo(GLAutoDrawable drawable) {
+		text.beginRendering(drawable.getWidth(), drawable.getHeight());
+		text.setColor(Color.BLACK);
 
-		// Perspective.
-		float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		glu.gluPerspective(45, widthHeightRatio, 1, 15000);
+		String moveableObjectText = "None";
 
-		gl.glRotatef(0, 0, 1, 0);
-		glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+		if (null != activeObject) {
+			moveableObjectText = activeObject;
+		}
 
-		gl.glRotatef(0, 0, 1, 0); // Panning
+		text.draw(camera.getCameraPositionString(), 10, 10);
+		text.draw("Selected Object: " + moveableObjectText, 10, 30);
 
+		text.endRendering();
+		text.flush();
 	}
 
 	public void createPath(GLAutoDrawable drawable) {
@@ -497,7 +506,7 @@ public class CastleScene extends JFrame
 		gl.glNewList(objectList.get("Land"), GL.GL_COMPILE);
 		gl.glPushMatrix();
 		VoltronColor.setColor(drawable, 0, 0.4, 0);
-		Shapes.cube(drawable, 10000, -100, 10000);
+		Shapes.cube(drawable, 10000, -100, 15000);
 
 		// lava
 		gl.glPushMatrix();
@@ -704,8 +713,8 @@ public class CastleScene extends JFrame
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
-		gl.glTranslated(5000, 1000, 8000);
-		spaceShip.display(drawable);
+		gl.glTranslated(5000, 3000, 8000);
+		// spaceShip.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glEndList();

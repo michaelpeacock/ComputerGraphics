@@ -7,7 +7,12 @@ import voltron.Shapes;
 import voltron.VoltronColor;
 
 public class LionHouse {
-	Logo logo = new Logo();
+	Logo logo;
+
+	public LionHouse() {
+		logo = new Logo();
+		// logo.createLogo(drawable);
+	}
 
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();

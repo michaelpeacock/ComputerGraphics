@@ -54,7 +54,7 @@ public class SpaceScene extends JFrame
 	private float rot_x;
 	private float rot_y;
 	private float rot_z;
-	
+
 	private boolean test_fly;
 	private boolean test_fly_displayed;
 	private float test_fly_x;
@@ -83,7 +83,7 @@ public class SpaceScene extends JFrame
 
 	public SpaceScene() {
 		reset();
-		
+
 		GLCapabilities caps = new GLCapabilities();
 		caps.setDoubleBuffered(true);
 		canvas = new GLCanvas(caps);
@@ -132,7 +132,7 @@ public class SpaceScene extends JFrame
 		// createCube(drawable, 1, 1, 1);
 
 		setupLight(drawable);
-		
+
 		moon = new Moon();
 		earth = new Earth();
 		iss = new ISS();
@@ -142,7 +142,6 @@ public class SpaceScene extends JFrame
 		voltron = new RobotModel();
 		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron);
 
-
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
 		iss.initializeISS(drawable);
@@ -151,34 +150,34 @@ public class SpaceScene extends JFrame
 		stars.initializeStars(drawable);
 		voltron.initializeRobot(drawable);
 
-		camera = new CameraController(getHeight(), getWidth(),  15000, 0, 0, 2000);
+		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 0, 2000);
 
 	}
-	
-	private void setupLight(GLAutoDrawable drawable){
+
+	private void setupLight(GLAutoDrawable drawable) {
 		gl = drawable.getGL();
 		glu = new GLU();
-		
-		float light_position[] = { -1, 1, -1, 0 };  // directional light source
-		//float light_position[] = { -100, 1000, -10000, 1 };
-		float diffuse[] = {.8f, .8f, .8f, 0.0f};
-        float ambient[] = {.7f, .7f, .7f, 0.0f};
-        float specular[] = {.8f, .8f, .8f, 0.0f};
-        
-        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
-        //gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position,0 );
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
-		
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
 
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glEnable(GL.GL_LIGHT0);
+		float light_position[] = { -1, 1, -1, 0 }; // directional light source
+		// float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = { .8f, .8f, .8f, 0.0f };
+		float ambient[] = { .7f, .7f, .7f, 0.0f };
+		float specular[] = { .8f, .8f, .8f, 0.0f };
+
+		// gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
+		// gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess, 0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, light_position, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_CONSTANT_ATTENUATION, 1.0f);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_LINEAR_ATTENUATION, 0.005f);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_QUADRATIC_ATTENUATION, 0.0001f);
+
+		gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL.GL_LIGHT0);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 	}
 
@@ -189,27 +188,26 @@ public class SpaceScene extends JFrame
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glPushMatrix();
+		if (CameraMode.CAM_DEFAULT == camera.getCurrentCameraMode()
+				|| CameraMode.CAM_CENTER_FOLLOW == camera.getCurrentCameraMode()) {
+			gl.glRotatef(rot_x, 1, 0, 0);
+			gl.glRotatef(rot_y, 0, 1, 0);
+			gl.glRotatef(rot_z, 0, 0, 1);
+		}
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
-
-		gl.glPushMatrix();
-		if (CameraMode.CAM_DEFAULT == camera.getCurrentCameraMode() ||
-				CameraMode.CAM_CENTER_FOLLOW == camera.getCurrentCameraMode()) {	
-				gl.glRotatef(rot_x, 1, 0, 0);
-				gl.glRotatef(rot_y, 0, 1, 0);
-				gl.glRotatef(rot_z, 0, 0, 1);
-		}
-		
 		gl.glPushMatrix();
 		gl.glTranslated(3000.0, -3000.0, -5000.0);
 		earth.display(drawable);
 
-			gl.glPushMatrix();
-			calculateMoonCoords();
-			//gl.glRotated(90.0, 1, 0, 0);
-			gl.glTranslated(moonXOffset, moonYOffset, moonZOffset);
-			moon.display(drawable);		
-		
+		gl.glPushMatrix();
+		calculateMoonCoords();
+		// gl.glRotated(90.0, 1, 0, 0);
+		gl.glTranslated(moonXOffset, moonYOffset, moonZOffset);
+		moon.display(drawable);
+
 		gl.glPopMatrix();
 
 		gl.glPopMatrix();
@@ -234,12 +232,9 @@ public class SpaceScene extends JFrame
 			voltron.initializeRobot(drawable);
 		}
 
-		
-
 		if (test_fly) {
 			testFly(drawable);
-		}
-		else if (test_fly_displayed) {
+		} else if (test_fly_displayed) {
 
 			gl.glPushMatrix();
 			gl.glTranslated(voltronState.getxPosition(), voltronState.getyPosition(), voltronState.getzPosition());
@@ -261,18 +256,19 @@ public class SpaceScene extends JFrame
 
 	private void calculateMoonCoords() {
 		double s = moonRotation * Shapes.PI / 180;
-		double t = 90.0 * Shapes.PI / 180; // this is here so we can change the inclination
+		double t = 90.0 * Shapes.PI / 180; // this is here so we can change the
+											// inclination
 		moonZOffset = (float) (MOON_ROTATE_DIAMETER * Math.cos(s) * Math.sin(t));
 		moonXOffset = (float) (MOON_ROTATE_DIAMETER * Math.sin(s) * Math.sin(t));
 		moonYOffset = (float) (MOON_ROTATE_DIAMETER * Math.cos(t));
-		
-		moonRotation+= 0.1;
+
+		moonRotation += 0.1;
 		if (moonRotation > 359) {
 			moonRotation = 0.0f;
 		}
 
 	}
-	
+
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		// TODO Auto-generated method stub
@@ -360,7 +356,7 @@ public class SpaceScene extends JFrame
 		camera.handleMouseWheelMoved(e);
 	}
 
-@Override
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
@@ -377,14 +373,13 @@ public class SpaceScene extends JFrame
 	}
 
 	private void testFly(GLAutoDrawable drawable) {
-		if (sample_rate >=4) {
+		if (sample_rate >= 4) {
 			gl = drawable.getGL();
 			test_fly_x -= test_fly_x_inc;
 			test_fly_y -= test_fly_y_inc;
 			test_fly_z -= test_fly_z_inc;
 			sample_rate = 0;
-		} 
-		else {
+		} else {
 			sample_rate++;
 		}
 		voltronState.setxPosition(test_fly_x);
@@ -404,7 +399,7 @@ public class SpaceScene extends JFrame
 			test_fly_displayed = true;
 		}
 	}
-	
+
 	private void reset() {
 		camera_x = 0;
 		camera_y = 1;
@@ -416,15 +411,15 @@ public class SpaceScene extends JFrame
 
 		up_x = 0;
 		up_y = 1;
-		//up_y = 0;
+		// up_y = 0;
 		up_z = 0;
 
 		rot_x = 10;
 		rot_y = 0;
 		rot_z = 0;
-		
-		test_fly=false;
-		test_fly_displayed=false;
+
+		test_fly = false;
+		test_fly_displayed = false;
 		test_fly_x = 3000;
 		test_fly_y = -3000;
 		test_fly_z = -5000;
@@ -442,15 +437,16 @@ public class SpaceScene extends JFrame
 		gl.glLoadIdentity();
 
 		// Perspective.
-		//float widthHeightRatio = (float) getWidth() / (float) getHeight();
-		//glu.gluPerspective(45, widthHeightRatio, 1, 15000);
+		// float widthHeightRatio = (float) getWidth() / (float) getHeight();
+		// glu.gluPerspective(45, widthHeightRatio, 1, 15000);
 
 		camera.updateCamera(gl, glu, voltronState);
 
-		//gl.glRotatef(0, 0, 1, 0);
-		//glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y, center_z, up_x, up_y, up_z);
+		// gl.glRotatef(0, 0, 1, 0);
+		// glu.gluLookAt(camera_x, camera_y, camera_z, center_x, center_y,
+		// center_z, up_x, up_y, up_z);
 
-		//gl.glRotatef(0, 0, 1, 0); // Panning
+		// gl.glRotatef(0, 0, 1, 0); // Panning
 
 	}
 

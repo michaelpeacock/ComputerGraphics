@@ -70,6 +70,8 @@ public interface State_I {
 
 	void stateReset();
 
+	void reinitializeObject(GLAutoDrawable drawable);
+
 	/**
 	 * @return boolean
 	 */

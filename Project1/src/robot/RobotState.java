@@ -582,4 +582,10 @@ public class RobotState implements State_I {
 
 	}
 
+	@Override
+	public void reinitializeObject(GLAutoDrawable drawable) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

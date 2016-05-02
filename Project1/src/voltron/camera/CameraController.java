@@ -1,11 +1,15 @@
 package voltron.camera;
 
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.text.DecimalFormat;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
+
+import com.sun.opengl.util.j2d.TextRenderer;
 
 import voltron.objects.State_I;
 
@@ -30,6 +34,8 @@ public class CameraController implements CameraController_I {
 	private double up_x;
 	private double up_y;
 	private double up_z;
+	private TextRenderer text;
+	private DecimalFormat form;
 
 	public CameraController(double window_height, double window_width, double scene_depth,
 			double initialXCameraLocation, double initialYCameraLocation, double initialZCameraLocation) {
@@ -39,6 +45,10 @@ public class CameraController implements CameraController_I {
 		this.initial_camera_x = initialXCameraLocation;
 		this.initial_camera_y = initialYCameraLocation;
 		this.initial_camera_z = initialZCameraLocation;
+
+		text = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
+		form = new DecimalFormat("####0.00");
+
 		reset();
 	}
 
@@ -120,7 +130,6 @@ public class CameraController implements CameraController_I {
 	}
 
 	private void updateCurrentMode(int chase) {
-
 		switch (chase) {
 		case (0): {
 			mode = CameraMode.CAM_DEFAULT;
@@ -196,4 +205,14 @@ public class CameraController implements CameraController_I {
 		camera_z += e.getWheelRotation() * 100;
 	}
 
+	@Override
+	public String getCameraPositionString() {
+		if (CameraMode.CAM_DEFAULT == mode) {
+			return ("Camera x:" + form.format(camera_x) + " y: " + form.format(camera_y) + " z: "
+					+ form.format(camera_z));
+		} else {
+			return ("Camera mode: " + mode.toString());
+		}
+
+	}
 }
