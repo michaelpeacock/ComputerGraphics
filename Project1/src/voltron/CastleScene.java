@@ -33,6 +33,7 @@ import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
 import space.Moon;
+import space.SpaceScene;
 import space.Sun;
 import voltron.camera.CameraController;
 import voltron.camera.CameraController_I;
@@ -82,6 +83,8 @@ public class CastleScene extends JFrame
 	private LionHouse greenLionHouse;
 	private RobotModel_I voltron;
 	private State_I voltronState;
+	private SpaceScene otherScene;
+
 
 	public CastleScene() {
 		reset();
@@ -186,6 +189,21 @@ public class CastleScene extends JFrame
 
 	}
 
+	public void makeVisible(boolean visibility){
+		this.setVisible(visibility);
+		if (visibility == true){
+			System.out.println("CastleScene - resetting due to makeVisible");
+			reset();
+		}
+	}
+
+	public void setOtherScene(SpaceScene spaceScene){
+		otherScene = spaceScene;
+		System.out.println("CastleScene - setting other scene");
+
+	}
+
+	
 	private void hideLions(GLAutoDrawable drawable) {
 		moveableObjectList.get("Black").hide(true, drawable);
 		moveableObjectList.get("Yellow").hide(true, drawable);
@@ -372,6 +390,10 @@ public class CastleScene extends JFrame
 				rot_z -= 1.0f;
 				break;
 
+			case '=':
+				this.setVisible(false);
+				otherScene.makeVisible(true);
+				break;
 			}
 		}
 

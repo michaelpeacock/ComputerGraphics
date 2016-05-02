@@ -24,6 +24,7 @@ import com.sun.opengl.util.Animator;
 import robot.RobotModel;
 import robot.RobotModel_I;
 import robot.RobotState;
+import voltron.CastleScene;
 import voltron.Shapes;
 import voltron.camera.CameraController;
 import voltron.camera.CameraController_I;
@@ -80,6 +81,7 @@ public class SpaceScene extends JFrame
 	private TestFlyer flyer;
 	private ISS iss;
 	private Stars stars;
+	private CastleScene otherScene;
 
 	public SpaceScene() {
 		reset();
@@ -106,6 +108,19 @@ public class SpaceScene extends JFrame
 
 		centerWindow(this);
 	}
+	
+	public void makeVisible(boolean visibility){
+		this.setVisible(visibility);
+		if (visibility == true){
+			reset();
+		}
+	}
+	public void setOtherScene(CastleScene castleScene){
+		otherScene = castleScene;
+		System.out.println("SpaceScene - setting other scene");
+
+	}
+
 
 	public void centerWindow(Component frame) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -314,6 +329,10 @@ public class SpaceScene extends JFrame
 		case 'f':
 			test_fly = true;
 			break;
+		case '=':
+			this.setVisible(false);
+			otherScene.makeVisible(true);
+			break;
 		}
 		camera.handleKeyPressed(e);
 		voltronState.handleKeyPressed(e);
@@ -518,8 +537,8 @@ public class SpaceScene extends JFrame
 
 	}
 
-	public static void main(String[] args) {
-		SpaceScene poly = new SpaceScene();
-	}
+//	public static void main(String[] args) {
+//		SpaceScene scene1 = new SpaceScene();
+//	}
 
 }
