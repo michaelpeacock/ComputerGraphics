@@ -140,7 +140,7 @@ public class SpaceScene extends JFrame
 		sun = new Sun();
 		stars = new Stars();
 		voltron = new RobotModel();
-		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron, true);
+		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.25, voltron, true);
 
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
