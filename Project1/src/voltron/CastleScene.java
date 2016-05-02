@@ -40,11 +40,11 @@ import voltron.objects.Desert;
 import voltron.objects.Lake;
 import voltron.objects.Lava;
 import voltron.objects.LionFactory;
+import voltron.objects.LionFactory.LION_COLOR;
+import voltron.objects.LionHouse;
 import voltron.objects.RobotModel;
 import voltron.objects.RobotModel_I;
 import voltron.objects.RobotState;
-import voltron.objects.LionFactory.LION_COLOR;
-import voltron.objects.LionHouse;
 import voltron.objects.Spaceship;
 import voltron.objects.State_I;
 import voltron.objects.Tree;
@@ -84,7 +84,6 @@ public class CastleScene extends JFrame
 	private RobotModel_I voltron;
 	private State_I voltronState;
 	private SpaceScene otherScene;
-
 
 	public CastleScene() {
 		reset();
@@ -189,21 +188,24 @@ public class CastleScene extends JFrame
 
 	}
 
-	public void makeVisible(boolean visibility){
+	public GLU getGLU() {
+		return glu;
+	}
+
+	public void makeVisible(boolean visibility) {
 		this.setVisible(visibility);
-		if (visibility == true){
+		if (visibility == true) {
 			System.out.println("CastleScene - resetting due to makeVisible");
 			reset();
 		}
 	}
 
-	public void setOtherScene(SpaceScene spaceScene){
+	public void setOtherScene(SpaceScene spaceScene) {
 		otherScene = spaceScene;
 		System.out.println("CastleScene - setting other scene");
 
 	}
 
-	
 	private void hideLions(GLAutoDrawable drawable) {
 		moveableObjectList.get("Black").hide(true, drawable);
 		moveableObjectList.get("Yellow").hide(true, drawable);
@@ -241,8 +243,8 @@ public class CastleScene extends JFrame
 			gl.glRotatef(rot_z, 0, 0, 1);
 		}
 
-		gl.glPushMatrix();
 		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glPushMatrix();
 		gl.glPushMatrix();
 		gl.glTranslated(-5000.0, -25.0, -5000.0);
 		gl.glCallList(objectList.get("Sky"));
@@ -351,8 +353,13 @@ public class CastleScene extends JFrame
 			break;
 		case KeyEvent.VK_5:
 			activeObject = "Black";
+			break;
 		case KeyEvent.VK_6:
 			activeObject = "Space Ship";
+			break;
+		case KeyEvent.VK_7:
+			activeObject = "Voltron";
+			break;
 		}
 
 		// if a moveable object is in focus, pass event to it
@@ -774,7 +781,7 @@ public class CastleScene extends JFrame
 
 	private void setupLight(GLAutoDrawable drawable) {
 		gl = drawable.getGL();
-		glu = new GLU();
+		// glu = new GLU();
 
 		float light_position[] = { 0.2f, 1, 0, 0 }; // directional light source
 		// float light_position[] = { -100, 1000, -10000, 1 };

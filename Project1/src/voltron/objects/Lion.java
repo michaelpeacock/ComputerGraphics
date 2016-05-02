@@ -9,8 +9,8 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 
 import voltron.Shapes;
-import voltron.objects.LionFactory.LION_COLOR;
 import voltron.VoltronColor;
+import voltron.objects.LionFactory.LION_COLOR;
 
 public class Lion {
 
@@ -533,7 +533,6 @@ public class Lion {
 		setObjectColor(gl);
 		gl.glPushMatrix();
 
-		System.out.println("body y rotation " + lionObjects.get("BODY").getyRotation());
 		rotateObject(gl, lionObject);
 
 		Shapes.cube(drawable, LION_BODY_LENGTH, LION_BODY_HEIGHT, LION_BODY_LENGTH * 2);

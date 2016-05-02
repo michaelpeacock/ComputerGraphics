@@ -1,7 +1,9 @@
 package space;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -20,6 +22,7 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 import voltron.CastleScene;
 import voltron.Shapes;
@@ -82,6 +85,7 @@ public class SpaceScene extends JFrame
 	private ISS iss;
 	private Stars stars;
 	private CastleScene otherScene;
+	private TextRenderer text;
 
 	public SpaceScene() {
 		reset();
@@ -106,21 +110,23 @@ public class SpaceScene extends JFrame
 		Animator animator = new Animator(canvas);
 		animator.start();
 
+		text = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
+
 		centerWindow(this);
 	}
-	
-	public void makeVisible(boolean visibility){
+
+	public void makeVisible(boolean visibility) {
 		this.setVisible(visibility);
-		if (visibility == true){
+		if (visibility == true) {
 			reset();
 		}
 	}
-	public void setOtherScene(CastleScene castleScene){
+
+	public void setOtherScene(CastleScene castleScene) {
 		otherScene = castleScene;
 		System.out.println("SpaceScene - setting other scene");
 
 	}
-
 
 	public void centerWindow(Component frame) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -155,6 +161,7 @@ public class SpaceScene extends JFrame
 		sun = new Sun();
 		stars = new Stars();
 		voltron = new RobotModel();
+		voltron.initializeRobot(drawable);
 		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.25, voltron, true);
 
 		moon.initializeMoon(drawable);
@@ -163,7 +170,6 @@ public class SpaceScene extends JFrame
 		flyer.initializeFlyer(drawable);
 		sun.initializeSun(drawable);
 		stars.initializeStars(drawable);
-		voltron.initializeRobot(drawable);
 
 		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 0, 2000);
 
@@ -171,7 +177,7 @@ public class SpaceScene extends JFrame
 
 	private void setupLight(GLAutoDrawable drawable) {
 		gl = drawable.getGL();
-		glu = new GLU();
+		// glu = new GLU();
 
 		float light_position[] = { -1, 1, -1, 0 }; // directional light source
 		// float light_position[] = { -100, 1000, -10000, 1 };
@@ -199,9 +205,11 @@ public class SpaceScene extends JFrame
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
-		//drawable.swapBuffers();
+		// drawable.swapBuffers();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+		camera.updateCamera(gl, glu, voltronState);
 
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPushMatrix();
@@ -263,10 +271,21 @@ public class SpaceScene extends JFrame
 
 		gl.glPopMatrix();
 
-		setCamera(gl, glu);
+		// setCamera(gl, glu);
+		displayCameraPositionInfo(drawable);
 
 		gl.glFlush();
 
+	}
+
+	private void displayCameraPositionInfo(GLAutoDrawable drawable) {
+		text.beginRendering(drawable.getWidth(), drawable.getHeight());
+		text.setColor(Color.BLACK);
+
+		text.draw(camera.getCameraPositionString(), 10, 10);
+
+		text.endRendering();
+		text.flush();
 	}
 
 	private void calculateMoonCoords() {
@@ -537,8 +556,8 @@ public class SpaceScene extends JFrame
 
 	}
 
-//	public static void main(String[] args) {
-//		SpaceScene scene1 = new SpaceScene();
-//	}
+	// public static void main(String[] args) {
+	// SpaceScene scene1 = new SpaceScene();
+	// }
 
 }
