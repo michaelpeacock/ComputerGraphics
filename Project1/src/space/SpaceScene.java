@@ -21,14 +21,14 @@ import javax.swing.JFrame;
 
 import com.sun.opengl.util.Animator;
 
-import robot.RobotModel;
-import robot.RobotModel_I;
-import robot.RobotState;
 import voltron.CastleScene;
 import voltron.Shapes;
 import voltron.camera.CameraController;
 import voltron.camera.CameraController_I;
 import voltron.camera.CameraMode;
+import voltron.objects.RobotModel;
+import voltron.objects.RobotModel_I;
+import voltron.objects.RobotState;
 import voltron.objects.State_I;
 
 public class SpaceScene extends JFrame

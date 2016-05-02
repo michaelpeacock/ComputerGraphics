@@ -1,10 +1,8 @@
-package robot;
+package voltron.objects;
 
 import java.awt.event.KeyEvent;
 
 import javax.media.opengl.GLAutoDrawable;
-
-import voltron.objects.State_I;
 
 public class RobotState implements State_I {
 

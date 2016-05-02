@@ -1,4 +1,4 @@
-package robot;
+package voltron.objects;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
 import voltron.Shapes;
-import voltron.objects.LionObject;
 
 public class RobotModel implements RobotModel_I {
 

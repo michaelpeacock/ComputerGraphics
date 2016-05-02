@@ -1,4 +1,4 @@
-package robot;
+package voltron.objects;
 
 import javax.media.opengl.GLAutoDrawable;
 
