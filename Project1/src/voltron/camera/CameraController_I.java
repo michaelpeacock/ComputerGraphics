@@ -27,6 +27,8 @@ public interface CameraController_I {
 
 	public CameraMode getCurrentCameraMode();
 
+	public void setCurrentCameraMode(CameraMode mode);
+
 	public void updateCamera(GL gl, GLU glu, State_I state);
 
 	public String getCameraPositionString();

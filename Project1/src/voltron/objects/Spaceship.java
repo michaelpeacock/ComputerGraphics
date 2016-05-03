@@ -269,4 +269,9 @@ public class Spaceship implements State_I {
 		this.hide = hide;
 	}
 
+	@Override
+	public void setyRotation(double yRototation) {
+		// TODO Auto-generated method stub
+	}
+
 }

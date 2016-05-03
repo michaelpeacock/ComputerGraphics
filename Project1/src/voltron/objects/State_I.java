@@ -47,6 +47,11 @@ public interface State_I {
 	double getyRotation();
 
 	/**
+	 * set the y rotation
+	 */
+	void setyRotation(double yRotation);
+
+	/**
 	 * @return the z rotation
 	 */
 	double getzRotation();

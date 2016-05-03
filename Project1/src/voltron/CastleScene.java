@@ -42,6 +42,7 @@ import voltron.objects.Lava;
 import voltron.objects.LionFactory;
 import voltron.objects.LionFactory.LION_COLOR;
 import voltron.objects.LionHouse;
+import voltron.objects.LionState;
 import voltron.objects.RobotModel;
 import voltron.objects.RobotModel_I;
 import voltron.objects.RobotState;
@@ -84,6 +85,10 @@ public class CastleScene extends JFrame
 	private RobotModel_I voltron;
 	private State_I voltronState;
 	private SpaceScene otherScene;
+	private Boolean lineUpLions = false;
+	private Boolean formVoltron = false;
+	private int voltronSphere = 10;
+	private Boolean voltronSphereShrink = false;
 
 	public CastleScene() {
 		reset();
@@ -147,10 +152,10 @@ public class CastleScene extends JFrame
 		lake = new Lake();
 		desert = new Desert();
 		castle = new Castle();
-		redLionHouse = new LionHouse();
-		yellowLionHouse = new LionHouse();
-		blueLionHouse = new LionHouse();
-		greenLionHouse = new LionHouse();
+		redLionHouse = new LionHouse(drawable);
+		yellowLionHouse = new LionHouse(drawable);
+		blueLionHouse = new LionHouse(drawable);
+		greenLionHouse = new LionHouse(drawable);
 		voltron = new RobotModel();
 		voltron.initializeRobot(drawable);
 		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.5, voltron, false);
@@ -161,7 +166,7 @@ public class CastleScene extends JFrame
 		sun = new Sun();
 		sun.initializeSun(drawable);
 
-		spaceShip = new Spaceship(-4000.0, 3000.0, 0.0, -90.0, 1);
+		spaceShip = new Spaceship(-4000.0, 4000.0, 0.0, -90.0, 1);
 		spaceShip.createSpaceShip(drawable);
 		moveableObjectList.put("Space Ship", spaceShip);
 
@@ -184,7 +189,7 @@ public class CastleScene extends JFrame
 		moveableObjectList.put("Red", lionFactory.createLion("Red", LION_COLOR.RED, -4500.0, 50.0, -1800.0, 90.0, 0.5));
 		activeObject = null;
 
-		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 1500, 8600);
+		camera = new CameraController(getHeight(), getWidth(), 15000, 0, 2300, 8600);
 
 	}
 
@@ -195,14 +200,12 @@ public class CastleScene extends JFrame
 	public void makeVisible(boolean visibility) {
 		this.setVisible(visibility);
 		if (visibility == true) {
-			System.out.println("CastleScene - resetting due to makeVisible");
 			reset();
 		}
 	}
 
 	public void setOtherScene(SpaceScene spaceScene) {
 		otherScene = spaceScene;
-		System.out.println("CastleScene - setting other scene");
 
 	}
 
@@ -220,6 +223,99 @@ public class CastleScene extends JFrame
 		moveableObjectList.get("Blue").hide(false, drawable);
 		moveableObjectList.get("Green").hide(false, drawable);
 		moveableObjectList.get("Red").hide(false, drawable);
+	}
+
+	private void lineUpLions(GLAutoDrawable drawable) {
+		Double x, y, z, yRototation;
+
+		x = 0.0;
+		y = 50.0;
+		z = 3000.0;
+		yRototation = 0.0;
+
+		State_I lion = moveableObjectList.get("Black");
+		lion.setxPosition(x);
+		lion.setyPosition(y);
+		lion.setzPosition(z);
+		lion.setyRotation(yRototation);
+		lion.reinitializeObject(drawable);
+
+		lion = moveableObjectList.get("Yellow");
+		x = 500.0;
+		lion.setxPosition(x);
+		lion.setyPosition(y);
+		lion.setzPosition(z);
+		lion.setyRotation(yRototation);
+		lion.reinitializeObject(drawable);
+
+		lion = moveableObjectList.get("Blue");
+		x = -500.0;
+		lion.setxPosition(x);
+		lion.setyPosition(y);
+		lion.setzPosition(z);
+		lion.setyRotation(yRototation);
+		lion.reinitializeObject(drawable);
+
+		lion = moveableObjectList.get("Green");
+		x = 1000.0;
+		lion.setxPosition(x);
+		lion.setyPosition(y);
+		lion.setzPosition(z);
+		lion.setyRotation(yRototation);
+		lion.reinitializeObject(drawable);
+
+		lion = moveableObjectList.get("Red");
+		x = -1000.0;
+		lion.setxPosition(x);
+		lion.setyPosition(y);
+		lion.setzPosition(z);
+		lion.setyRotation(yRototation);
+		lion.reinitializeObject(drawable);
+	}
+
+	private void flyLions(GLAutoDrawable drawable) {
+		((LionState) (moveableObjectList.get("Black"))).doFly(drawable);
+		((LionState) (moveableObjectList.get("Yellow"))).doFly(drawable);
+		((LionState) (moveableObjectList.get("Blue"))).doFly(drawable);
+		((LionState) (moveableObjectList.get("Green"))).doFly(drawable);
+		((LionState) (moveableObjectList.get("Red"))).doFly(drawable);
+	}
+
+	private void formVoltron(GLAutoDrawable drawable) {
+		gl.glPushMatrix();
+		gl.glTranslated(0.0, 3000, 3000.0);
+		float outer_color[] = { 1f, 1f, 1f, 0.3f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, outer_color, 0);
+		Shapes.sphere(drawable, voltronSphere, 300);
+		gl.glPopMatrix();
+
+		if (moveableObjectList.get("Black").getyPosition() >= 3000) {
+			if (false == voltronSphereShrink) {
+				voltronSphere += 50;
+
+				if (voltronSphere >= 1500) {
+					voltronSphereShrink = true;
+					voltronState.setxPosition(0);
+					voltronState.setyPosition(3000);
+					voltronState.setzPosition(3000);
+					moveableObjectList.put("Voltron", voltronState);
+					hideLions(drawable);
+				}
+			} else {
+				voltronSphere -= 50;
+
+				if (voltronSphere <= 0) {
+					voltronSphere = 0;
+					formVoltron = false;
+					RobotState robot = (RobotState) voltronState;
+					robot.setFlyingDown();
+					activeObject = "Voltron";
+				}
+
+			}
+		} else {
+			flyLions(drawable);
+		}
 	}
 
 	@Override
@@ -298,6 +394,24 @@ public class CastleScene extends JFrame
 		greenLionHouse.display(drawable);
 		gl.glPopMatrix();
 
+		// line up the lions
+		if (lineUpLions) {
+			lineUpLions(drawable);
+			lineUpLions = false;
+		}
+
+		// forming voltron
+		if (formVoltron) {
+			formVoltron(drawable);
+		}
+
+		if (moveableObjectList.containsKey("Voltron")) {
+			if (moveableObjectList.get("Voltron").getyPosition() > 5000) {
+				otherScene.makeVisible(true);
+				this.setVisible(false);
+			}
+		}
+
 		// draw all moveable objects
 		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
 			gl.glPushMatrix();
@@ -364,7 +478,6 @@ public class CastleScene extends JFrame
 
 		// if a moveable object is in focus, pass event to it
 		if (null != activeObject) {
-			System.out.println("forward key press");
 			moveableObjectList.get(activeObject).handleKeyPressed(e);
 		} else {
 			// camera controls
@@ -395,6 +508,14 @@ public class CastleScene extends JFrame
 
 			case 'd':
 				rot_z -= 1.0f;
+				break;
+
+			case 'v':
+				formVoltron = true;
+				break;
+
+			case 'l':
+				lineUpLions = true;
 				break;
 
 			case '=':
@@ -480,6 +601,10 @@ public class CastleScene extends JFrame
 	}
 
 	private void displayCameraPositionInfo(GLAutoDrawable drawable) {
+		if (this.isVisible() == false) {
+			return;
+		}
+
 		text.beginRendering(drawable.getWidth(), drawable.getHeight());
 		text.setColor(Color.BLACK);
 
@@ -747,13 +872,13 @@ public class CastleScene extends JFrame
 		objectList.put("Sky", gl.glGenLists(1));
 		gl.glNewList(objectList.get("Sky"), GL.GL_COMPILE);
 		gl.glPushMatrix();
-		gl.glTranslated(5000, 2500, -500);
-		// sun.display(drawable);
+		gl.glTranslated(7500, 5000, -1500);
+		sun.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();
 		gl.glTranslated(1000, 1000, 8000);
-		moon.display(drawable);
+		// moon.display(drawable);
 		gl.glPopMatrix();
 
 		gl.glPushMatrix();

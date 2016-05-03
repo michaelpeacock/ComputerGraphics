@@ -200,6 +200,10 @@ public class Lion {
 		gl.glRotated(lionObject.getzRotation(), 0.0, 0.0, 1.0);
 	}
 
+	public LION_COLOR getLionColor() {
+		return lionColor;
+	}
+
 	public void setObjectColor(GL gl) {
 		switch (lionColor) {
 		case BLACK:

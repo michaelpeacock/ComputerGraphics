@@ -529,6 +529,12 @@ public class RobotState implements State_I {
 
 	}
 
+	public void setFlyingDown() {
+		do_flying = true;
+		doFly();
+		do_flying = false;
+	}
+
 	@Override
 	public void handleKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -735,6 +741,11 @@ public class RobotState implements State_I {
 		}
 
 		this.hide = hide;
+	}
+
+	@Override
+	public void setyRotation(double yRototation) {
+		// TODO Auto-generated method stub
 	}
 
 }

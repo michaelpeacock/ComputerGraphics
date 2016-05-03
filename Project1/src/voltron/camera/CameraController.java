@@ -215,4 +215,9 @@ public class CameraController implements CameraController_I {
 		}
 
 	}
+
+	@Override
+	public void setCurrentCameraMode(CameraMode mode) {
+		this.mode = mode;
+	}
 }

@@ -119,12 +119,12 @@ public class SpaceScene extends JFrame
 		this.setVisible(visibility);
 		if (visibility == true) {
 			reset();
+			test_fly = true;
 		}
 	}
 
 	public void setOtherScene(CastleScene castleScene) {
 		otherScene = castleScene;
-		System.out.println("SpaceScene - setting other scene");
 
 	}
 
@@ -204,9 +204,11 @@ public class SpaceScene extends JFrame
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();
-		// drawable.swapBuffers();
+		if (this.isVisible() == false)
+			return;
 
+		GL gl = drawable.getGL();
+		drawable.swapBuffers();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 		camera.updateCamera(gl, glu, voltronState);

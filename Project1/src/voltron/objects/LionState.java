@@ -2,7 +2,10 @@ package voltron.objects;
 
 import java.awt.event.KeyEvent;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+
+import voltron.Shapes;
 
 public class LionState implements State_I {
 
@@ -141,125 +144,59 @@ public class LionState implements State_I {
 			}
 		}
 
-		if (true == do_flying || true == currently_flying) {
-			if (true == doFly()) {
-				stateWasChanged = true;
-			}
-		}
-
 		return stateWasChanged;
 	}
 
-	private boolean doFly() {
-		// TODO Auto-generated method stub
+	public boolean doFly(GLAutoDrawable drawable) {
+		GL gl = drawable.getGL();
 		boolean work_was_done = false;
 		boolean do_turn = false;
-
+		System.out.println("lion dofly ypos " + yPosition);
 		// For Macs
 		float speedMult = 4f;
 		float moveSpeed = 15.0f;
-		if (do_running) {
-			speedMult = 4f;
-		}
-		// //For Windows
-		// float speedMult = 1.0f;
-		// float moveSpeed = 5.0f;
-		// if (do_running) {
-		// speedMult = 2.5f;
-		// }
-		// System.out.printf("doFly: do_flying is %b, currently_flying is %b,
-		// default_yPosition is %f, yPosition is %f\n", do_flying,
-		// currently_flying, default_yPosition, yPosition);
-		if (false == do_flying) {
-			if (true == currently_flying) {
-				if (default_yPosition >= yPosition) {
-					currently_flying = false;
-					// voltron.resetRobot();
-				} else {
-					yPosition -= 20;
-					work_was_done = true;
-				}
-			}
+
+		yPosition += 20;
+
+		if (xPosition < 0) {
+			xPosition += 5;
+		} else if (xPosition > 0) {
+			xPosition -= 5;
 		}
 
-		if (true == fly_up) {
-			currently_flying = true;
-			yPosition += 15;
-			work_was_done = true;
-		} else if (true == fly_down) {
-			if (default_yPosition >= yPosition) {
-				// voltron.resetRobot();
-			} else {
-				yPosition -= 15;
-			}
-			work_was_done = true;
+		y_rotation = 180;
+		x_rotation = 45;
+
+		gl.glPushMatrix();
+		switch (lion.getLionColor()) {
+		case BLACK:
+			float black_color[] = { 0f, 0f, 0f, 0.3f };
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, black_color, 0);
+			break;
+		case BLUE:
+			float blue_color[] = { 0.0f, 0.4f, 0.8f, 0.3f };
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, blue_color, 0);
+			break;
+		case GREEN:
+			float green_color[] = { 0.0f, 1.0f, 0.0f, 0.3f };
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, green_color, 0);
+			break;
+		case RED:
+			float red_color[] = { 1.0f, 0.0f, 0.0f, 0.3f };
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red_color, 0);
+			break;
+		case YELLOW:
+			float yellow_color[] = { 0.8f, 0.8f, 0.0f, 0.3f };
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, yellow_color, 0);
+			break;
+		default:
+			break;
 		}
 
-		if (true == currently_flying) {
-			// these are all calculations for the robot around
-			if ((true == left) || (true == right) || (true == forw) || (true == back)) {
-				double rotate = 0.0;
-				if (true == left) {
-					rotate = this.y_rotation + (speedMult * 0.8);
-					do_turn = true;
-				} else if (true == right) {
-					rotate = this.y_rotation - (speedMult * 0.8);
-					do_turn = true;
-				}
+		gl.glTranslated(xPosition, yPosition - 1500, zPosition);
+		Shapes.cube(drawable, 100, 1500, 100);
+		gl.glPopMatrix();
 
-				if (true == do_turn) {
-					if (359 < rotate) {
-						rotate -= 360;
-					} else if (0 > rotate) {
-						rotate += 360;
-					}
-					this.setYRotation(rotate);
-				}
-
-				double calc_rotate = 270 + this.getyRotation();
-				// System.out.printf("calc_rotate before is is %f\n",
-				// calc_rotate);
-				if (359 < calc_rotate) {
-					calc_rotate -= 360;
-				} else if (0 > calc_rotate) {
-					calc_rotate += 360;
-				}
-				// System.out.printf("calc_rotate after is is %f\n",
-				// calc_rotate);
-				work_was_done = true;
-
-				if (true == forw) {
-					System.out.printf("forw, calc_rotate is %f \n", calc_rotate);
-					double x = 1.75 * speedMult * Math.cos(Math.toRadians(calc_rotate));
-					double y = 1.75 * speedMult * Math.sin(Math.toRadians(calc_rotate));
-					this.xPosition += x;
-					this.zPosition -= y;
-					work_was_done = true;
-				} else if (true == back) {
-					System.out.printf("bakc, calc_rotate is %f \n", calc_rotate);
-					double x = 1.75 * speedMult * Math.cos(Math.toRadians(calc_rotate));
-					double y = 1.75 * speedMult * Math.sin(Math.toRadians(calc_rotate));
-					this.xPosition -= x;
-					this.zPosition += y;
-					work_was_done = true;
-				}
-			}
-		}
-		// System.out.printf("xPosition is %f and zPosition is %f\n",
-		// xPosition, zPosition);
-
-		if (true == forw || true == back) {
-			double x_rotate = 90 * Math.cos(this.getyRotation());
-			double z_rotate = 90 * Math.sin(this.getyRotation());
-
-			this.setXRotation(x_rotate);
-			this.setZRotation(z_rotate);
-			// voltron.doRobotModelFly(moveSpeed / speedMult, back);
-		} else {
-			this.setXRotation(0);
-			this.setZRotation(0);
-			// voltron.doRobotModelFly(0, false);
-		}
 		return work_was_done;
 	}
 
@@ -602,6 +539,11 @@ public class LionState implements State_I {
 		}
 
 		this.hide = hide;
+	}
+
+	@Override
+	public void setyRotation(double yRotation) {
+		setYRotation(yRotation);
 	}
 
 }
