@@ -32,6 +32,7 @@ import voltron.camera.CameraMode;
 import voltron.objects.RobotModel;
 import voltron.objects.RobotModel_I;
 import voltron.objects.RobotState;
+import voltron.objects.Spaceship;
 import voltron.objects.State_I;
 
 public class SpaceScene extends JFrame
@@ -78,6 +79,7 @@ public class SpaceScene extends JFrame
 	private CameraController_I camera;
 	private State_I voltronState;
 	private RobotModel_I voltron;
+	private Spaceship spaceShip;
 	private Moon moon;
 	private Earth earth;
 	private Sun sun;
@@ -163,6 +165,10 @@ public class SpaceScene extends JFrame
 		voltron = new RobotModel();
 		voltron.initializeRobot(drawable);
 		voltronState = new RobotState(1200.0, 375.0, 2200.0, 0.0, 0.25, voltron, true);
+		spaceShip = new Spaceship(-1000.0, 500.0, 0.0, 90.0, 0.3);
+		spaceShip.createSpaceShip(drawable);
+		
+		setupSecondLight(drawable);
 
 		moon.initializeMoon(drawable);
 		earth.initializeEarth(drawable);
@@ -200,6 +206,58 @@ public class SpaceScene extends JFrame
 		gl.glEnable(GL.GL_LIGHTING);
 		gl.glEnable(GL.GL_LIGHT0);
 		gl.glEnable(GL.GL_DEPTH_TEST);
+	}
+
+	private void setupSecondLight(GLAutoDrawable drawable) {
+		gl = drawable.getGL();
+		// glu = new GLU();
+
+		float light_position[] = {0.0f, 0.0f, 0.0f, 0.0f};
+		light_position[0] = (float) spaceShip.getxPosition();
+		light_position[1] = (float) spaceShip.getyPosition();
+		light_position[2] = (float) spaceShip.getzPosition();
+		light_position[3] = 1.0f;
+		float direction[] = {0.0f, -1.0f, 0.0f};  // point spotlight straight down
+		// float light_position[] = { -100, 1000, -10000, 1 };
+		float diffuse[] = { .8f, .8f, .8f, 0.0f };
+		float ambient[] = { .7f, .7f, .7f, 0.0f };
+		float specular[] = { .8f, .8f, .8f, 0.0f };
+
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, light_position, 0);
+		gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, ambient, 0);
+		gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, diffuse, 0);
+		gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, specular, 0);
+		gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPOT_DIRECTION, direction,0);
+        //angle of the cone light emitted by the spot : value between 0 to 180
+        gl.glLightf(gl.GL_LIGHT1, gl.GL_SPOT_CUTOFF, 20.0f);
+
+		//gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+		gl.glEnable(GL.GL_LIGHT1);
+	}
+
+	private void updateSecondLight(GLAutoDrawable drawable) {
+		gl = drawable.getGL();
+		// glu = new GLU();
+
+		float light_position[] = {0.0f, 0.0f, 0.0f, 0.0f};
+		light_position[0] = (float) spaceShip.getxPosition();
+		light_position[1] = (float) spaceShip.getyPosition();
+		light_position[2] = (float) spaceShip.getzPosition();
+		light_position[3] = 1.0f;
+		// float light_position[] = { -100, 1000, -10000, 1 };
+		//float diffuse[] = { .8f, .8f, .8f, 0.0f };
+		//float ambient[] = { .7f, .7f, .7f, 0.0f };
+		//float specular[] = { .8f, .8f, .8f, 0.0f };
+
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, light_position, 0);
+		//gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+		//gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, diffuse, 0);
+		//gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, specular, 0);
+
+		//gl.glLightModeli(GL.GL_LIGHT_MODEL_LOCAL_VIEWER, GL.GL_TRUE);
+
+		//gl.glEnable(GL.GL_LIGHT1);
 	}
 
 	@Override
@@ -249,6 +307,17 @@ public class SpaceScene extends JFrame
 
 		gl.glPushMatrix();
 		stars.display(drawable);
+		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		boolean updated = spaceShip.updateSmall();
+		gl.glTranslated(spaceShip.getxPosition(), spaceShip.getyPosition(), spaceShip.getzPosition());
+		gl.glScaled(spaceShip.getScale(), spaceShip.getScale(), spaceShip.getScale());
+		gl.glRotated(spaceShip.getxRotation(), 1, 0, 0);
+		gl.glRotated(spaceShip.getyRotation(), 0, 1, 0);
+		gl.glRotated(spaceShip.getzRotation(), 0, 0, 1);
+		spaceShip.display(drawable, updated);
+		updateSecondLight(drawable);
 		gl.glPopMatrix();
 
 		// voltron
@@ -413,7 +482,7 @@ public class SpaceScene extends JFrame
 	}
 
 	private void testFly(GLAutoDrawable drawable) {
-		if (sample_rate >= 4) {
+		if (sample_rate >= 2) {
 			gl = drawable.getGL();
 			test_fly_x -= test_fly_x_inc;
 			test_fly_y -= test_fly_y_inc;

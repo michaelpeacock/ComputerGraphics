@@ -152,6 +152,26 @@ public class Spaceship implements State_I {
 
 	}
 
+	private boolean flySmall() {
+
+		double s = shipRotation * Shapes.PI / 180;
+		double t = 90.0 * Shapes.PI / 180; // this is here so we can change the
+											// inclination
+		zPosition = (float) (300 * Math.cos(s) * Math.sin(t));
+		xPosition = (float) (300 * Math.sin(s) * Math.sin(t));
+		// yPosition = (float) (5000 * Math.cos(t));
+
+		shipRotation += 0.7;
+		if (shipRotation > 359) {
+			shipRotation = 0.0f;
+		}
+
+		y_rotation = -90 + shipRotation;
+
+		return true;
+
+	}
+
 	@Override
 	public void setxPosition(double x) {
 		this.xPosition = xPosition;
@@ -245,6 +265,10 @@ public class Spaceship implements State_I {
 	@Override
 	public boolean update() {
 		return fly();
+	}
+
+	public boolean updateSmall() {
+		return flySmall();
 	}
 
 	@Override
