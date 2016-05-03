@@ -420,9 +420,9 @@ public class CastleScene extends JFrame
 
 			gl.glTranslated(objectState.getxPosition(), objectState.getyPosition(), objectState.getzPosition());
 			gl.glScaled(objectState.getScale(), objectState.getScale(), objectState.getScale());
-			gl.glRotated(objectState.getxRotation(), 1, 0, 0);
-			gl.glRotated(objectState.getyRotation(), 0, 1, 0);
 			gl.glRotated(objectState.getzRotation(), 0, 0, 1);
+			gl.glRotated(objectState.getxRotation(), 1, 0, 0);
+			gl.glRotated(objectState.getyRotation(), 0, 1, 0);	
 			objectState.display(drawable, updated);
 			gl.glPopMatrix();
 		}
