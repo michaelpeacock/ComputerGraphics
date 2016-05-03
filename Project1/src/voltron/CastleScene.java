@@ -405,12 +405,12 @@ public class CastleScene extends JFrame
 			formVoltron(drawable);
 		}
 
-		if (moveableObjectList.containsKey("Voltron")) {
-			if (moveableObjectList.get("Voltron").getyPosition() > 5000) {
-				otherScene.makeVisible(true);
-				this.setVisible(false);
-			}
-		}
+//		if (moveableObjectList.containsKey("Voltron")) {
+//			if (moveableObjectList.get("Voltron").getyPosition() > 5000) {
+//				otherScene.makeVisible(true);
+//				this.setVisible(false);
+//			}
+//		}
 
 		// draw all moveable objects
 		for (Entry<String, State_I> objects : moveableObjectList.entrySet()) {
