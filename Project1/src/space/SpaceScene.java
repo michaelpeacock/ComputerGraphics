@@ -75,6 +75,8 @@ public class SpaceScene extends JFrame
 	private static final float NUM_FLY_INC = 100;
 	private static final float MOON_ROTATE_DIAMETER = 1200;
 	private float sample_rate;
+	private boolean setDim;
+	private boolean setBright;
 
 	private CameraController_I camera;
 	private State_I voltronState;
@@ -189,6 +191,7 @@ public class SpaceScene extends JFrame
 		// float light_position[] = { -100, 1000, -10000, 1 };
 		float diffuse[] = { .8f, .8f, .8f, 0.0f };
 		float ambient[] = { .7f, .7f, .7f, 0.0f };
+		//float ambient[] = { .1f, .1f, .1f, 0.0f };
 		float specular[] = { .8f, .8f, .8f, 0.0f };
 
 		// gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular, 0);
@@ -206,6 +209,28 @@ public class SpaceScene extends JFrame
 		gl.glEnable(GL.GL_LIGHTING);
 		gl.glEnable(GL.GL_LIGHT0);
 		gl.glEnable(GL.GL_DEPTH_TEST);
+	}
+
+	private void brightenSun(GLAutoDrawable drawable) {
+		gl = drawable.getGL();
+		// glu = new GLU();
+
+		float ambient[] = { .7f, .7f, .7f, 0.0f };
+		//float ambient[] = { .1f, .1f, .1f, 0.0f };
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+		setDim = false;
+		setBright = false;
+	}
+
+	private void dimSun(GLAutoDrawable drawable) {
+		gl = drawable.getGL();
+		// glu = new GLU();
+
+		//float ambient[] = { .7f, .7f, .7f, 0.0f };
+		float ambient[] = { .1f, .1f, .1f, 0.0f };
+		gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, ambient, 0);
+		setDim = false;
+		setBright = false;
 	}
 
 	private void setupSecondLight(GLAutoDrawable drawable) {
@@ -339,6 +364,13 @@ public class SpaceScene extends JFrame
 			voltron.drawRobot(drawable);
 			gl.glPopMatrix();
 		}
+		
+		if (setDim == true) {
+			dimSun(drawable);
+		}
+		if (setBright == true) {
+			brightenSun(drawable);
+		}
 
 		gl.glPopMatrix();
 
@@ -415,6 +447,14 @@ public class SpaceScene extends JFrame
 
 		case 'd':
 			rot_z -= 1.0f;
+			break;
+		case 'k':
+			setDim = true;
+			setBright = false;
+			break;
+		case 'l':
+			setDim = false;
+			setBright = true;
 			break;
 		case 'f':
 			test_fly = true;
@@ -526,6 +566,9 @@ public class SpaceScene extends JFrame
 		rot_x = 10;
 		rot_y = 0;
 		rot_z = 0;
+		
+		setBright = false;
+		setDim = false;
 
 		test_fly = false;
 		test_fly_displayed = false;
