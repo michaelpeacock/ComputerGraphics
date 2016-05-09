@@ -1,7 +1,10 @@
 package voltron;
 
+import java.util.Random;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import voltron.VoltronColor;
 
 public class Shapes {
 	public static final double PI = 3.14159265358979323846;
@@ -161,6 +164,92 @@ public class Shapes {
 
 		// the bottom hemisphere
 		for (int i = steps - 1; i >= 1; i--) {
+			gl.glBegin(GL.GL_QUAD_STRIP);
+			for (int j = 0; j <= slices; j++) {
+				gl.glNormal3d(radii[i] * coss[j], -heights[i], radii[i] * sins[j]);
+				gl.glVertex3d(radii[i] * coss[j], -heights[i], radii[i] * sins[j]);
+				gl.glNormal3d(radii[i + 1] * coss[j], -heights[i + 1], radii[i + 1] * sins[j]);
+				gl.glVertex3d(radii[i + 1] * coss[j], -heights[i + 1], radii[i + 1] * sins[j]);
+			}
+			gl.glEnd();
+		}
+
+		// draw the bottom of the sphere
+		gl.glBegin(GL.GL_TRIANGLE_FAN);
+		gl.glNormal3d(0.0, -radius, 0.0);
+		gl.glVertex3d(0.0, -radius, 0.0); // top center of sphere is on the
+											// Y-axis
+		for (int j = 0; j <= slices; j++) {
+			gl.glNormal3d(radii[1] * coss[j], -heights[1], radii[1] * sins[j]);
+			gl.glVertex3d(radii[1] * coss[j], -heights[1], radii[1] * sins[j]);
+		}
+		gl.glEnd();
+	}
+
+	public static void sphereWithColors(GLAutoDrawable drawable, double radius, double inc, 
+				float rLow, float gLow, float bLow, float rHigh, float gHigh, float bHigh) {
+		GL gl = drawable.getGL();
+		int steps = (int) inc;
+		int slices = steps;
+		double[] radii = new double[steps + 1];
+		double[] heights = new double[steps + 1];
+		double[] sins = new double[slices + 1];
+		double[] coss = new double[slices + 1];
+
+		float[] reds = new float[steps+1];
+		float[] greens = new float[steps+1];
+		float[] blues = new float[steps+1];
+		
+		radii[0] = 0.0;
+		heights[0] = radius;
+		double deg = 360.0 / (steps * 4);
+
+		Random randomGenerator = new Random();
+	
+		for (int i = 1; i <= steps; i++) {
+			double x = radius * Math.cos(Math.toRadians(deg * i));
+			double y = radius * Math.sin(Math.toRadians(deg * i));
+			radii[i] = y;
+			heights[i] = x;
+		}
+		deg = 360.0 / slices;
+		for (int i = 0; i <= slices; i++) {
+			double cos = Math.cos(Math.toRadians(deg * i));
+			double sin = Math.sin(Math.toRadians(deg * i));
+			sins[i] = sin;
+			coss[i] = cos;
+			reds[i] = rLow + (rHigh - rLow)/(float)(randomGenerator.nextInt(10) +1);
+			greens[i] = gLow + (gHigh - gLow)/(float)(randomGenerator.nextInt(10) +1);
+			blues[i] = bLow + (bHigh - bLow)/(float)(randomGenerator.nextInt(10) +1);
+		}
+		VoltronColor.setColor(drawable, reds[0], greens[0], blues[0]);
+		// draw the top of the sphere
+		gl.glBegin(GL.GL_TRIANGLE_FAN);
+		gl.glNormal3d(0.0, radius, 0.0);
+		gl.glVertex3d(0.0, radius, 0.0); // top center of sphere is on the
+											// Y-axis
+		for (int j = slices; j >= 0; j--) {
+			gl.glNormal3d(radii[1] * coss[j], heights[1], radii[1] * sins[j]);
+			gl.glVertex3d(radii[1] * coss[j], heights[1], radii[1] * sins[j]);
+		}
+		gl.glEnd();
+
+		// finish the top hemisphere
+		for (int i = 1; i < steps; i++) {
+			VoltronColor.setColor(drawable, reds[i], greens[i], blues[i]);
+			gl.glBegin(GL.GL_QUAD_STRIP);
+			for (int j = 0; j <= slices; j++) {
+				gl.glNormal3d(radii[i + 1] * coss[j], heights[i + 1], radii[i + 1] * sins[j]);
+				gl.glVertex3d(radii[i + 1] * coss[j], heights[i + 1], radii[i + 1] * sins[j]);
+				gl.glNormal3d(radii[i] * coss[j], heights[i], radii[i] * sins[j]);
+				gl.glVertex3d(radii[i] * coss[j], heights[i], radii[i] * sins[j]);
+			}
+			gl.glEnd();
+		}
+
+		// the bottom hemisphere
+		for (int i = steps - 1; i >= 1; i--) {
+			VoltronColor.setColor(drawable, reds[i], greens[i], blues[i]);
 			gl.glBegin(GL.GL_QUAD_STRIP);
 			for (int j = 0; j <= slices; j++) {
 				gl.glNormal3d(radii[i] * coss[j], -heights[i], radii[i] * sins[j]);
